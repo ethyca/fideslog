@@ -33,10 +33,10 @@ use database raw;
 
 show schemas in database raw;
 
-create schema fides;
+create schema if not exists fides;
 use schema fides;
 
-create table anonymous_usage_events (
+create table if not exists anonymous_usage_events (
   event_id number autoincrement start 1 increment 1,
   client_id varchar,
   product_name varchar,

@@ -49,3 +49,9 @@ create table if not exists anonymous_usage_events (
   event_created_at timestamp_tz,
   event_loaded_at timestamp default sysdate() // this is the utc timestamp
 );
+
+create table if not exists api_keys (
+  api_key varchar,
+  created_at timestamp_tz,
+  expired_at timestamp_tz
+)

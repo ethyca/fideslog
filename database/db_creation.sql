@@ -41,13 +41,19 @@ create table if not exists anonymous_usage_events (
   client_id varchar,
   product_name varchar,
   production_version varchar,
-  event variant,
-  endpoint varchar,
-  status_code number,
   os varchar,
   docker boolean,
+  resource_counts object,
+  event varchar,
+  command varchar,
+  flags array,
+  endpoint varchar,
+  status_code number,
+  error varchar,
+  local_host boolean,
+  extra_data object,
   event_created_at timestamp_tz,
-  event_loaded_at timestamp default sysdate() // this is the utc timestamp
+  event_loaded_at timestamp default sysdate() -- this is the utc timestamp
 );
 
 create table if not exists api_keys (

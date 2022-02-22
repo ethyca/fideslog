@@ -1,0 +1,10 @@
+########
+# Pylint
+########
+[tool.pylint.messages_control]
+disable=[
+    "import-error",
+    "missing-module-docstring",
+    "too-few-public-methods",
+]
+extension-pkg-whitelist = "pydantic"

@@ -1,30 +1,3 @@
--- create the database, role, and warehouse
-
-use role accountadmin;
-create database if not exists raw;
-create warehouse if not exists fides_log;
-
-use role securityadmin;
-
-create role if not exists event_writer;
-
-
--- add a user for fideslog
-
-create user event_writer password=******************* default_role=event_writer default_warehouse=fides_log default_namespace='raw'; -- replace the asterisks with an appropriate password
-
--- grants for role and user
-
-grant usage on warehouse fides_log to role event_writer;
-
-grant usage, create schema, monitor on database raw to role event_writer;
-
-grant usage on future schemas in database raw to role event_writer;
-
-grant role event_writer to role sysadmin;
-
-grant role event_writer to user event_writer;
-
 -- create the schema and table
 
 use role event_writer;
@@ -74,15 +47,3 @@ create table if not exists cli_api_mapping (
 
 
 show tables in schema raw.fides;
-
-
--- downgrade, destroy, etc.
-
-/*
-use role accountadmin;
--- drop warehouse fides_log;
-drop database raw;
-use role securityadmin;
-drop role fides_log;
-drop user fides_log;
-*/

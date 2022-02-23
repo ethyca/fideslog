@@ -34,7 +34,7 @@ create table if not exists api_keys (
   client_id varchar,
   created_at timestamp_tz,
   expired_at timestamp_tz
-)
+);
 
 create table if not exists cli_api_mapping (
   id number autoincrement start 1 increment 1,
@@ -43,7 +43,7 @@ create table if not exists cli_api_mapping (
   created_at timestamp_tz,
   updated_at timestamp_tz,
   constraint unique_api_cli_map unique (api_id, cli_id) not enforced 
-)
+);
 
 
 show tables in schema raw.fides;

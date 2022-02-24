@@ -6,5 +6,6 @@ disable=[
     "import-error",
     "missing-module-docstring",
     "too-few-public-methods",
+    "unsubscriptable-object",
 ]
 extension-pkg-whitelist = "pydantic"

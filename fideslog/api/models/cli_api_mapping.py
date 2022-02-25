@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-from pydantic import BaseModel, validator, Field
+from pydantic import BaseModel, Field, validator
 
 
 class CLIAPIMapping(BaseModel):

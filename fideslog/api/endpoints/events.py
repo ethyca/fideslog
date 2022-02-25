@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.openapi.models import APIKey
 
 from models.analytics_event import AnalyticsEvent
+
 from utils.auth import get_api_key
 
 router = APIRouter(tags=["Events"], prefix="/events")

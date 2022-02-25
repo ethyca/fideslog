@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from models.analytics_event import AnalyticsEvent
-from models import APIKey, AnalyticsEvent as AnalyticsEventORM
+from database.models import APIKey, AnalyticsEvent as AnalyticsEventORM
 
 
 # TODO: Finish this

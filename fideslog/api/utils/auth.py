@@ -2,8 +2,8 @@ from fastapi import Depends
 from fastapi.security.api_key import APIKeyHeader
 from sqlalchemy.orm import Session
 
-from api.database.dal import api_key_exists
-from api.database.database import get_db
+from database.dal import api_key_exists
+from database.database import get_db
 from utils.exceptions import (
     AuthenticationException,
     InvalidAuthorizationSchemeException,

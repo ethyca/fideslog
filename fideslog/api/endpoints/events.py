@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Security, status
 from fastapi.openapi.models import APIKey
 
 from models.analytics_event import AnalyticsEvent
-
 from utils.auth import get_api_key
 
 router = APIRouter(tags=["Events"], prefix="/events")
@@ -16,7 +15,7 @@ router = APIRouter(tags=["Events"], prefix="/events")
 )
 async def create(
     event: AnalyticsEvent,
-    _: APIKey = Depends(get_api_key),
+    _: APIKey = Security(get_api_key),
 ) -> AnalyticsEvent:
     """Create a new analytics event."""
 

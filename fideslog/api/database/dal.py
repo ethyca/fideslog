@@ -17,5 +17,9 @@ def api_key_exists(db: Session, token: str) -> bool:
     Return whether the provided token exists in the database.
     """
 
-    result = db.execute(select(APIKey).where(APIKey.api_key == token))
-    return len(result) > 0
+    return (
+        db.execute(
+            select(APIKey).where(APIKey.api_key == token).limit(1),
+        ).first()
+        is not None
+    )

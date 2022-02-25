@@ -24,11 +24,11 @@ def get_api_key(
     header. The header's value must be formatted as "Token <API key>".
     """
 
-    if not header_value.startswith(API_KEY_PREFIX):
-        raise InvalidAuthorizationSchemeException()
+    if header_value.startswith(API_KEY_PREFIX):
+        token = header_value.removeprefix(API_KEY_PREFIX)
+        if api_key_exists(db, token):
+            return token
 
-    token = header_value.removeprefix(API_KEY_PREFIX)
-    if not api_key_exists(db, token):
         raise AuthenticationException()
 
-    return token
+    raise InvalidAuthorizationSchemeException()

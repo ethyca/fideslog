@@ -1,6 +1,26 @@
 # pylint: disable=too-many-arguments
 
 from typing import Any, Optional
+
+from requests import PreparedRequest, post
+from requests.auth import AuthBase
+
+from event import AnalyticsEvent
+
+
+class AnalyticsAuth(AuthBase):
+    """
+    Attaches fideslog authentication to a given Request object.
+    """
+
+    def __init__(self, api_key: str):
+        self.token = api_key
+
+    def __call__(self, r: PreparedRequest) -> PreparedRequest:
+        r.headers["Authorization"] = f"Token {self.token}"
+        return r
+
+
 class AnalyticsClient:
     """
     An instance of a fides tool that wishes to send
@@ -40,3 +60,54 @@ class AnalyticsClient:
         self.product_name = product_name
         self.production_version = production_version
         self.extra_data = extra_data
+
+    async def send(self, event: AnalyticsEvent) -> None:
+        """
+        Record a new event.
+        """
+
+        payload = {
+            "client_id": self.client_id,
+            "docker": event.docker,
+            "event": event.event,
+            "event_created_at": event.event_created_at,
+            "local_host": event.local_host,
+            "os": self.os,
+            "product_name": self.product_name,
+            "production_version": self.production_version,
+        }
+
+        if event.command is not None:
+            payload["command"] = event.command
+
+        if event.endpoint is not None:
+            payload["endpoint"] = event.endpoint
+
+        if event.error is not None:
+            payload["error"] = event.error
+
+        extra_data: dict[str, Any] = {}
+        if self.extra_data is not None:
+            extra_data = self.extra_data
+
+        if event.extra_data is not None:
+            for key, val in event.extra_data.items():
+                extra_data[key] = val
+
+        payload["extra_data"] = extra_data
+
+        if event.flags is not None:
+            payload["flags"] = event.flags
+
+        if event.resource_counts is not None:
+            payload["resource_counts"] = event.resource_counts
+
+        if event.status_code is not None:
+            payload["status_code"] = event.status_code
+
+        post(
+            "http://localhost:8080",
+            auth=AnalyticsAuth(self.api_key),
+            json=payload,
+            timeout=(3.05, 120),
+        )

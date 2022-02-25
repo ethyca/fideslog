@@ -1,5 +1,5 @@
 from snowflake.sqlalchemy import ARRAY, OBJECT
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, Sequence
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 
 from database.database import Base
 
@@ -14,7 +14,6 @@ class AnalyticsEvent(Base):
     id = Column(
         "EVENT_ID",
         Integer,
-        Sequence("id_seq"),  # TODO: Make sure this is a thing
         autoincrement=True,
         nullable=True,
         primary_key=True,
@@ -51,13 +50,21 @@ class APIKey(Base):
 
     __tablename__ = "API_KEYS"
 
+    id = Column(
+        "ID",
+        Integer,
+        autoincrement=True,
+        nullable=True,
+        primary_key=True,
+        unique=True,
+    )
     api_key = Column("API_KEY", String, default=None, nullable=True)
     client_id = Column("CLIENT_ID", String, default=None, nullable=True)
     created_at = Column(
         "CREATED_AT", DateTime(timezone=True), default=None, nullable=True
     )
-    updated_at = Column(
-        "UPDATED_AT", DateTime(timezone=True), default=None, nullable=True
+    expired_at = Column(
+        "EXPIRED_AT", DateTime(timezone=True), default=None, nullable=True
     )
 
 

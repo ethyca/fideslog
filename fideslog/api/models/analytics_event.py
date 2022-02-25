@@ -1,4 +1,4 @@
-# pylint: disable= invalid-name, line-too-long, no-self-argument, no-self-use
+# pylint: disable= line-too-long, no-self-argument, no-self-use
 
 from datetime import datetime, timezone
 from typing import Optional, Union
@@ -107,3 +107,8 @@ class AnalyticsEvent(BaseModel):
             v = v.split(char)[0]
 
         return v
+
+    class Config:
+        """Modifies pydantic behavior."""
+
+        orm_mode = True

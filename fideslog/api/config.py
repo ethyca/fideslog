@@ -1,7 +1,7 @@
 # pylint: disable= no-self-argument, no-self-use
 
+import logging
 import os
-from logging import getLogger
 from typing import Any, Optional, Tuple
 
 from pydantic import BaseSettings, Field, validator
@@ -13,7 +13,11 @@ ENV_PREFIX = "FIDESLOG__"
 CONFIG_FILE_NAME = "fideslog.toml"
 CONFIG_PATH_VAR = f"{ENV_PREFIX}CONFIG_PATH"
 
-log = getLogger(__name__)
+logging.basicConfig(
+    format="%(asctime)s [%(levelname)s]: %(message)s",
+    level=logging.INFO,
+)
+log = logging.getLogger(__name__)
 
 
 class Settings(BaseSettings):
@@ -158,3 +162,6 @@ def get_config() -> FideslogSettings:
 
     log.info("Configuration in use: %s", settings.json())
     return settings
+
+
+config = get_config()

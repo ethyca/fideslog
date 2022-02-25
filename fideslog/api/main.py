@@ -6,14 +6,9 @@ from typing import Callable
 from fastapi import FastAPI, Request, Response
 from uvicorn import run
 
-from config import ServerSettings, get_config
-from database.database import Snowflake
+from config import ServerSettings, config
 from routes.api import api_router
 
-logging.basicConfig(
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-    level=logging.INFO,
-)
 log = logging.getLogger(__name__)
 
 app = FastAPI(title="fideslog")
@@ -54,6 +49,4 @@ def run_webserver(server_config: ServerSettings) -> None:
 
 
 if __name__ == "__main__":
-    config = get_config()
-    db = Snowflake(config.database)
     run_webserver(config.server)

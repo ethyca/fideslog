@@ -4,6 +4,7 @@
 [tool.pylint.messages_control]
 disable=[
     "import-error",
+    "invalid-name",
     "missing-module-docstring",
     "too-few-public-methods",
     "unsubscriptable-object",

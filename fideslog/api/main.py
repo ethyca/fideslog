@@ -7,6 +7,7 @@ from fastapi import FastAPI, Request, Response
 from uvicorn import run
 
 from config import ServerSettings, get_config
+from database.database import Snowflake
 from routes.api import api_router
 
 logging.basicConfig(
@@ -24,7 +25,7 @@ async def log_request(request: Request, call_next: Callable) -> Response:
     "Log basic information about every request handled by the server."
     start = datetime.now()
     response = await call_next(request)
-    handler_time = (datetime.now() - start).microseconds * 0.001
+    handler_time = round((datetime.now() - start).microseconds * 0.001, 3)
     log.info(
         'Request received (handled in %sms):\t"%s %s" %s',
         handler_time,
@@ -54,4 +55,5 @@ def run_webserver(server_config: ServerSettings) -> None:
 
 if __name__ == "__main__":
     config = get_config()
+    db = Snowflake(config.database)
     run_webserver(config.server)

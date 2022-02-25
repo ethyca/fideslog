@@ -1,11 +1,14 @@
 # pylint: disable=too-many-arguments
 
 from typing import Any, Optional
+from urllib.error import HTTPError
 
 from requests import PreparedRequest, post
 from requests.auth import AuthBase
+from requests.exceptions import RequestException
 
 from event import AnalyticsEvent
+from exceptions import AnalyticsException
 
 
 class AnalyticsAuth(AuthBase):
@@ -105,9 +108,18 @@ class AnalyticsClient:
         if event.status_code is not None:
             payload["status_code"] = event.status_code
 
-        post(
-            "http://localhost:8080",
-            auth=AnalyticsAuth(self.api_key),
-            json=payload,
-            timeout=(3.05, 120),
-        )
+        try:
+            response = post(
+                "http://localhost:8080",
+                auth=AnalyticsAuth(self.api_key),
+                json=payload,
+                timeout=(3.05, 120),
+            )
+
+            try:
+                response.raise_for_status()
+            except HTTPError as e:
+                raise AnalyticsException(e.reason, e.args, status_code=e.code) from e
+
+        except RequestException as e:
+            raise AnalyticsException(e.strerror, e.args) from e

@@ -1,9 +1,12 @@
+# pylint: disable= no-self-argument, no-self-use
+
 import os
 from logging import getLogger
-from typing import Any, Tuple
+from typing import Any, Optional, Tuple
 
-from pydantic import BaseSettings
+from pydantic import BaseSettings, Field, validator
 from pydantic.env_settings import SettingsSourceCallable
+from snowflake.sqlalchemy import URL
 from toml import load
 
 ENV_PREFIX = "FIDESLOG__"
@@ -35,6 +38,49 @@ class Settings(BaseSettings):
             return env_settings, init_settings, file_secret_settings
 
 
+class DatabaseSettings(Settings):
+    """Configuration options for Snowflake."""
+
+    account: str = Field(..., exclude=True)
+    database: str = Field(..., exclude=True)
+    db_schema: str = Field("fides", exclude=True)
+    password: str = Field(..., exclude=True)
+    role: str = Field("event_writer", exclude=True)
+    warehouse: str = Field("fides_log", exclude=True)
+    user: str = Field(..., exclude=True)
+
+    db_connection_uri: Optional[str] = None
+
+    @validator("db_connection_uri", pre=True, always=True)
+    def assemble_db_connection_uri(
+        cls,
+        v: Optional[str],
+        values: dict[str, str],
+    ) -> str:
+        """
+        Ensures a valid connection string is built from the provided details.
+        """
+
+        return (
+            v
+            if isinstance(v, str)
+            else URL(
+                account=values["account"],
+                database=values["database"],
+                password=values["password"],
+                role=values["role"],
+                schema=values["db_schema"],
+                warehouse=values["warehouse"],
+                user=values["user"],
+            )
+        )
+
+    class Config:
+        """Modifies pydantic behavior."""
+
+        env_prefix = f"{ENV_PREFIX}DATABASE_"
+
+
 class ServerSettings(Settings):
     """Configuration options for the API server."""
 
@@ -51,7 +97,8 @@ class ServerSettings(Settings):
 class FideslogSettings(Settings):
     """Configuration options for fideslog."""
 
-    server: ServerSettings = ServerSettings()
+    database: DatabaseSettings
+    server: ServerSettings
 
 
 def load_file(filename: str) -> dict[str, Any]:

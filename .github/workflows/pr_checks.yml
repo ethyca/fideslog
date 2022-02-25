@@ -1,0 +1,135 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - fideslog/**
+      - .github/workflows/pr_checks.yaml
+
+env:
+  CONTAINER: fideslog-local
+  IMAGE: ethyca/fideslog:local
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build fideslog container
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: ./
+          outputs: type=docker,dest=/tmp/${{ env.CONTAINER }}.tar
+          push: false
+          tags: ${{ env.IMAGE }}
+
+      - name: Upload fideslog container
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.CONTAINER }}
+          path: /tmp/${{ env.CONTAINER }}.tar
+          retention-days: 1
+
+  Black:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download fideslog container
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.CONTAINER }}
+          path: /tmp/
+
+      - name: Load fideslog image
+        run: docker load --input /tmp/${{ env.CONTAINER }}.tar
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run formatter
+        run: make black
+
+  Pylint:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download fideslog container
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.CONTAINER }}
+          path: /tmp/
+
+      - name: Load fideslog image
+        run: docker load --input /tmp/${{ env.CONTAINER }}.tar
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run linter
+        run: make pylint
+
+  Mypy:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download fideslog container
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.CONTAINER }}
+          path: /tmp/
+
+      - name: Load fideslog image
+        run: docker load --input /tmp/${{ env.CONTAINER }}.tar
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run typechecker
+        run: make mypy
+
+  Xenon:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download fidescls container
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.CONTAINER }}
+          path: /tmp/
+
+      - name: Load fidescls image
+        run: docker load --input /tmp/${{ env.CONTAINER }}.tar
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run cyclomatic complexity check
+        run: make xenon
+
+  Pytest:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download fidescls container
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.CONTAINER }}
+          path: /tmp/
+
+      - name: Load fidescls image
+        run: docker load --input /tmp/${{ env.CONTAINER }}.tar
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run Pytest
+        run: make pytest

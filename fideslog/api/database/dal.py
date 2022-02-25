@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from models.analytics_event import AnalyticsEvent
-from database.models import APIKey, AnalyticsEvent as AnalyticsEventORM
+from fideslog.api.models.analytics_event import AnalyticsEvent
+from fideslog.api.database.models import APIKey, AnalyticsEvent as AnalyticsEventORM
 
 
 # TODO: Finish this

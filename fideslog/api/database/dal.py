@@ -1,25 +1,26 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from models.analytics_event import AnalyticsEvent
+
 from fideslog.api.database.models import AnalyticsEvent as AnalyticsEventORM
 from fideslog.api.database.models import APIKey
-from models.analytics_event import AnalyticsEvent
 
 
 # TODO: Finish this
-def create_event(db: Session, event: AnalyticsEvent) -> AnalyticsEventORM:
+def create_event(database: Session, event: AnalyticsEvent) -> AnalyticsEventORM:
     """Create a new analytics event."""
 
-    db.add(AnalyticsEventORM())
+    database.add(AnalyticsEventORM())
 
 
-def api_key_exists(db: Session, token: str) -> bool:
+def api_key_exists(database: Session, token: str) -> bool:
     """
     Return whether the provided token exists in the database.
     """
 
     return (
-        db.execute(
+        database.execute(
             select(APIKey).where(APIKey.api_key == token).limit(1),
         ).first()
         is not None

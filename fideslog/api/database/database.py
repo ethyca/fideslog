@@ -14,8 +14,8 @@ def get_db():
     Return a database session.
     """
 
-    db = SessionLocal()
+    database = SessionLocal()
     try:
-        yield db
+        yield database
     finally:
-        db.close()
+        database.close()

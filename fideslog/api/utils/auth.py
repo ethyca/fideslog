@@ -16,7 +16,7 @@ api_key_header = APIKeyHeader(name=API_KEY_HEADER)
 
 
 def get_api_key(
-    db: Session = Depends(get_db),
+    database: Session = Depends(get_db),
     header_value: str = Depends(api_key_header),
 ) -> str:
     """
@@ -26,7 +26,7 @@ def get_api_key(
 
     if header_value.startswith(API_KEY_PREFIX):
         token = header_value.removeprefix(API_KEY_PREFIX)
-        if api_key_exists(db, token):
+        if api_key_exists(database, token):
             return token
 
         raise AuthenticationException()

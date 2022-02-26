@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Optional, Union
 from urllib.parse import urlparse
 
-from pydantic import BaseModel, validator, Field, Json
+from pydantic import BaseModel, Field, Json, validator
 
 from .manifest_file_counts import ManifestFileCounts
 

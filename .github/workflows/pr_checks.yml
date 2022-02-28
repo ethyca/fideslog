@@ -4,9 +4,10 @@ on:
   pull_request:
     branches:
       - main
+      - ps/create-api-server
     paths:
       - fideslog/**
-      - .github/workflows/pr_checks.yml
+      - .github/workflows/pr_checks.yaml
 
 env:
   CONTAINER: fideslog-local

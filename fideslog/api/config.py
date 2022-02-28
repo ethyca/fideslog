@@ -2,7 +2,7 @@
 
 import logging
 import os
-from typing import Any, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 from pydantic import BaseSettings, Field, validator
 from pydantic.env_settings import SettingsSourceCallable

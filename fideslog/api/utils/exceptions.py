@@ -20,7 +20,7 @@ class InvalidAuthorizationSchemeException(HTTPException):
     Authorization header value.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Failed to authenticate",

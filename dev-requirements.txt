@@ -1,3 +1,7 @@
 black==21.8b0
 mypy==0.910
 pylint==2.6.0
+pytest==6.2.2
+pytest-cov==2.11.1
+types-toml
+xenon==0.7.3

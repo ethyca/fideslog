@@ -30,7 +30,7 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
             resource_counts=event.resource_counts,
             event=event.event,
             command=event.command,
-            flags=event.flags,
+            flags=", ".join(event.flags) if event.flags else None,
             endpoint=event.endpoint,
             status_code=event.status_code,
             error=event.error,

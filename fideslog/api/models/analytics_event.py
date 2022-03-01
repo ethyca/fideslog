@@ -1,7 +1,7 @@
 # pylint: disable= line-too-long, no-self-argument, no-self-use
 
 from datetime import datetime, timezone
-from typing import Optional, Union
+from typing import List, Optional, Union
 from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field, Json, validator
@@ -41,7 +41,7 @@ class AnalyticsEvent(BaseModel):
         None,
         description="A JSON object containing any additional data desired",
     )
-    flags: Optional[list[str]] = Field(
+    flags: Optional[List[str]] = Field(
         None,
         description="For events submitted as a result of running CLI commands, the flags in use when the command was submitted. Omits flag values when they exist.",
     )

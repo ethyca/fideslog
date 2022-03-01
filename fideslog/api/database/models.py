@@ -1,5 +1,12 @@
-from snowflake.sqlalchemy import ARRAY, OBJECT
-from sqlalchemy import Boolean, Column, DateTime, Integer, Sequence, String
+from snowflake.sqlalchemy import OBJECT
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Integer,
+    Sequence,
+    String,
+)
 
 from fideslog.api.database.database import Base
 
@@ -22,7 +29,7 @@ class AnalyticsEvent(Base):
     resource_counts = Column("RESOURCE_COUNTS", OBJECT, default=None, nullable=True)
     event = Column("EVENT", String, default=None, nullable=True)
     command = Column("COMMAND", String, default=None, nullable=True)
-    flags = Column("FLAGS", ARRAY, default=None, nullable=True)
+    flags = Column("FLAGS", String, default=None, nullable=True)
     endpoint = Column("ENDPOINT", String, default=None, nullable=True)
     status_code = Column("STATUS_CODE", Integer, default=None, nullable=True)
     error = Column("ERROR", String, default=None, nullable=True)

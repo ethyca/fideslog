@@ -1,4 +1,3 @@
-from snowflake.sqlalchemy import OBJECT
 from sqlalchemy import (
     Boolean,
     Column,
@@ -26,7 +25,7 @@ class AnalyticsEvent(Base):
     )
     os = Column("OS", String, default=None, nullable=True)
     docker = Column("DOCKER", Boolean, default=None, nullable=True)
-    resource_counts = Column("RESOURCE_COUNTS", OBJECT, default=None, nullable=True)
+    resource_counts = Column("RESOURCE_COUNTS", String, default=None, nullable=True)
     event = Column("EVENT", String, default=None, nullable=True)
     command = Column("COMMAND", String, default=None, nullable=True)
     flags = Column("FLAGS", String, default=None, nullable=True)
@@ -34,7 +33,7 @@ class AnalyticsEvent(Base):
     status_code = Column("STATUS_CODE", Integer, default=None, nullable=True)
     error = Column("ERROR", String, default=None, nullable=True)
     local_host = Column("LOCAL_HOST", Boolean, default=None, nullable=True)
-    extra_data = Column("EXTRA_DATA", OBJECT, default=None, nullable=True)
+    extra_data = Column("EXTRA_DATA", String, default=None, nullable=True)
     event_created_at = Column(
         "EVENT_CREATED_AT", DateTime(timezone=True), default=None, nullable=True
     )

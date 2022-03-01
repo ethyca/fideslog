@@ -1,10 +1,10 @@
 # pylint: disable= line-too-long, no-self-argument, no-self-use
 
 from datetime import datetime, timezone
-from typing import List, Optional, Union
+from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
-from pydantic import BaseModel, Field, Json, validator
+from pydantic import BaseModel, Field, validator
 
 from .manifest_file_counts import ManifestFileCounts
 
@@ -37,7 +37,7 @@ class AnalyticsEvent(BaseModel):
         ...,
         description="The UTC timestamp when the event occurred, in ISO 8601 format. Must include the UTC timezone, and represent a datetime in the past.",
     )
-    extra_data: Optional[Json] = Field(
+    extra_data: Optional[Dict] = Field(
         None,
         description="A JSON object containing any additional data desired",
     )
@@ -61,7 +61,7 @@ class AnalyticsEvent(BaseModel):
         ...,
         description="The fides product's version number",
     )
-    resource_counts: Union[ManifestFileCounts, Json, None] = None
+    resource_counts: Optional[ManifestFileCounts]
     status_code: Optional[int] = Field(
         None,
         description="For events submitted as a result of making API server requests, the HTTP status code included in the response",

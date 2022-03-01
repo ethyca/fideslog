@@ -1,4 +1,5 @@
 import logging
+import json
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -27,7 +28,9 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
             production_version=event.production_version,
             os=event.os,
             docker=event.docker,
-            resource_counts=event.resource_counts,
+            resource_counts=json.dumps(event.resource_counts.dict())
+            if event.resource_counts
+            else None,
             event=event.event,
             command=event.command,
             flags=", ".join(event.flags) if event.flags else None,
@@ -35,7 +38,7 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
             status_code=event.status_code,
             error=event.error,
             local_host=event.local_host,
-            extra_data=event.extra_data,
+            extra_data=json.dumps(event.extra_data) if event.extra_data else None,
             event_created_at=event.event_created_at,
         )
         database.add(event_record)

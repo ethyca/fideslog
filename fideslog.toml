@@ -1,0 +1,13 @@
+[database]
+account = "redacted"
+database = "redacted"
+password = "redacted"
+role = "redacted"
+db_schema = "redacted"
+warehouse = "redacted"
+user = "redacted"
+
+[server]
+host = "localhost"
+hot_reload = true
+port = 8080

@@ -6,8 +6,8 @@ from typing import Callable
 from fastapi import FastAPI, Request, Response
 from uvicorn import run
 
-from config import ServerSettings, config
-from routes.api import api_router
+from fideslog.api.config import ServerSettings, config
+from fideslog.api.routes.api import api_router
 
 log = logging.getLogger(__name__)
 

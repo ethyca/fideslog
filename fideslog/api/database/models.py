@@ -1,7 +1,7 @@
 from snowflake.sqlalchemy import ARRAY, OBJECT
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
 
-from database.database import Base
+from fideslog.api.database.database import Base
 
 
 class AnalyticsEvent(Base):

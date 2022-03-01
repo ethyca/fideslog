@@ -24,23 +24,23 @@ class APIKey(BaseModel):
     )
 
     @validator("client_id")
-    def check_not_an_email_address(cls, v: str) -> str:
+    def check_not_an_email_address(cls, value: str) -> str:
         """
         Validate that client_id does not contain an email address literal.
         """
 
-        assert v.find("@") == -1, "client_id must not be identifiable"
-        return v
+        assert value.find("@") == -1, "client_id must not be identifiable"
+        return value
 
     @validator("created_at", "updated_at")
-    def check_in_the_past(cls, v: datetime) -> datetime:
+    def check_in_the_past(cls, value: datetime) -> datetime:
         """
         Validate that a timestamp is in the past.
         """
 
-        assert v.tzinfo == timezone.utc, "date must be an explicit UTC timestamp"
-        assert v < datetime.now(timezone.utc), "date must be in the past"
-        return v
+        assert value.tzinfo == timezone.utc, "date must be an explicit UTC timestamp"
+        assert value < datetime.now(timezone.utc), "date must be in the past"
+        return value
 
     class Config:
         """Modifies pydantic behavior."""

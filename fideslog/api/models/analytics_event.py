@@ -68,45 +68,47 @@ class AnalyticsEvent(BaseModel):
     )
 
     @validator("client_id")
-    def check_not_an_email_address(cls, v: str) -> str:
+    def check_not_an_email_address(cls, value: str) -> str:
         """
         Validate that client_id does not contain an email address literal.
         """
 
-        assert v.find("@") == -1, "client_id must not be identifiable"
-        return v
+        assert value.find("@") == -1, "client_id must not be identifiable"
+        return value
 
     @validator("endpoint")
-    def check_no_hostname(cls, v: str) -> str:
+    def check_no_hostname(cls, value: str) -> str:
         """
         Ensure that endpoints contain only the URL path.
         """
 
-        return urlparse(v).path
+        return urlparse(value).path
 
     @validator("event_created_at")
-    def check_in_the_past(cls, v: datetime) -> datetime:
+    def check_in_the_past(cls, value: datetime) -> datetime:
         """
         Validate that the event creation timestamp is in the past.
         """
 
         assert (
-            v.tzinfo == timezone.utc
+            value.tzinfo == timezone.utc
         ), "event_created_at must be an explicit UTC timestamp"
-        assert v < datetime.now(timezone.utc), "event_created_at must be in the past"
-        return v
+        assert value < datetime.now(
+            timezone.utc
+        ), "event_created_at must be in the past"
+        return value
 
     @validator("flags", each_item=True)
-    def check_no_values(cls, v: str) -> str:
+    def check_no_values(cls, value: str) -> str:
         """
         Ensure that flags do not include the value provided by the user, if one existed.
         """
 
         includes_value_chars = ["=", " "]
         for char in includes_value_chars:
-            v = v.split(char)[0]
+            value = value.split(char)[0]
 
-        return v
+        return value
 
     class Config:
         """Modifies pydantic behavior."""

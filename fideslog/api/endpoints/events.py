@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Security, status
 from fastapi.openapi.models import APIKey
 
-from models.analytics_event import AnalyticsEvent
-from utils.auth import get_api_key
+from fideslog.api.models.analytics_event import AnalyticsEvent
+from fideslog.api.utils.auth import get_api_key
 
 router = APIRouter(tags=["Events"], prefix="/events")
 

@@ -2,7 +2,7 @@
 
 import logging
 import os
-from typing import Any, Optional, Tuple
+from typing import Optional, Tuple, Union
 
 from pydantic import BaseSettings, Field, validator
 from pydantic.env_settings import SettingsSourceCallable
@@ -58,7 +58,7 @@ class DatabaseSettings(Settings):
     @validator("db_connection_uri", pre=True, always=True)
     def assemble_db_connection_uri(
         cls,
-        v: Optional[str],
+        value: Optional[str],
         values: dict[str, str],
     ) -> str:
         """
@@ -66,8 +66,8 @@ class DatabaseSettings(Settings):
         """
 
         return (
-            v
-            if isinstance(v, str)
+            value
+            if isinstance(value, str)
             else URL(
                 account=values["account"],
                 database=values["database"],
@@ -105,7 +105,7 @@ class FideslogSettings(Settings):
     server: ServerSettings
 
 
-def load_file(filename: str) -> dict[str, Any]:
+def load_file(filename: str) -> dict[str, Union[str, int, bool]]:
     """
     Load a toml file from the first matching location. Raises a
     `FileNotFoundError` if none is found.

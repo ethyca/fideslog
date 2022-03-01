@@ -18,15 +18,15 @@ create table if not exists anonymous_usage_events (
   production_version varchar,
   os varchar,
   docker boolean,
-  resource_counts object,
+  resource_counts varchar,
   event varchar,
   command varchar,
-  flags array,
+  flags varchar,
   endpoint varchar,
   status_code number,
   error varchar,
   local_host boolean,
-  extra_data object,
+  extra_data varchar,
   event_created_at timestamp_tz,
   event_loaded_at timestamp default sysdate() -- this is the utc timestamp
 );

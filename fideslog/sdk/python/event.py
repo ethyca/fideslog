@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 from json import dumps
-from typing import Any, Optional
+from typing import Dict, Optional
 from urllib.parse import urlparse
 
 
@@ -19,7 +19,7 @@ class AnalyticsEvent:
         docker: bool = False,
         endpoint: Optional[str] = None,
         error: Optional[str] = None,
-        extra_data: Optional[dict[str, Any]] = None,
+        extra_data: Optional[Dict] = None,
         flags: Optional[list[str]] = None,
         local_host: bool = False,
         resource_counts: Optional[dict[str, int]] = None,

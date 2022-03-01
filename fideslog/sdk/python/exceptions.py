@@ -16,7 +16,7 @@ class AnalyticsException(Exception):
         self.status_code = status_code
         super().__init__(self.message, *args)
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.status_code is not None:
             return f"{self.status_code} response from fideslog: {self.message}"
 

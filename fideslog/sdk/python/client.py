@@ -1,6 +1,6 @@
 # pylint: disable=too-many-arguments
 
-from typing import Any, Optional
+from typing import Dict, Optional
 from urllib.error import HTTPError
 
 from requests import PreparedRequest, post
@@ -37,7 +37,7 @@ class AnalyticsClient:
         os: str,
         product_name: str,
         production_version: str,
-        extra_data: Optional[dict[str, Any]] = None,
+        extra_data: Optional[Dict] = None,
     ) -> None:
         # pylint: disable=line-too-long
         """
@@ -89,7 +89,7 @@ class AnalyticsClient:
         if event.error is not None:
             payload["error"] = event.error
 
-        extra_data: dict[str, Any] = {}
+        extra_data: Dict = {}
         if self.extra_data is not None:
             extra_data = self.extra_data
 

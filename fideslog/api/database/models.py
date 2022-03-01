@@ -1,7 +1,7 @@
 from snowflake.sqlalchemy import ARRAY, OBJECT
-from sqlalchemy import Boolean, Column, DateTime, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Integer, Sequence, String
 
-from database.database import Base
+from fideslog.api.database.database import Base
 
 
 class AnalyticsEvent(Base):
@@ -11,14 +11,7 @@ class AnalyticsEvent(Base):
 
     __tablename__ = "ANONYMOUS_USAGE_EVENTS"
 
-    id = Column(
-        "EVENT_ID",
-        Integer,
-        autoincrement=True,
-        nullable=True,
-        primary_key=True,
-        unique=True,
-    )
+    id = Column("EVENT_ID", Integer, Sequence("event_id_seq"), primary_key=True)
     client_id = Column("CLIENT_ID", String, default=None, nullable=True)
     product_name = Column("PRODUCT_NAME", String, default=None, nullable=True)
     production_version = Column(
@@ -50,14 +43,7 @@ class APIKey(Base):
 
     __tablename__ = "API_KEYS"
 
-    id = Column(
-        "ID",
-        Integer,
-        autoincrement=True,
-        nullable=True,
-        primary_key=True,
-        unique=True,
-    )
+    id = Column("ID", Integer, Sequence("keys_id_seq"), primary_key=True)
     api_key = Column("API_KEY", String, default=None, nullable=True)
     client_id = Column("CLIENT_ID", String, default=None, nullable=True)
     created_at = Column(
@@ -75,14 +61,7 @@ class CLIAPIMapping(Base):
 
     __tablename__ = "CLI_API_MAPPING"
 
-    id = Column(
-        "ID",
-        Integer,
-        autoincrement=True,
-        nullable=True,
-        primary_key=True,
-        unique=True,
-    )
+    id = Column("ID", Integer, Sequence("mapping_id_seq"), primary_key=True)
     api_id = Column("API_ID", String, default=None, nullable=True)
     cli_id = Column("CLI_ID", String, default=None, nullable=True)
     created_at = Column(

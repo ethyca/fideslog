@@ -7,7 +7,9 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = open("README.md").read()
 
 # Requirements
-install_requires = open("requirements.txt").read().strip().split("\n")
+install_requires = (
+    open("fideslog/sdk/python/requirements.txt").read().strip().split("\n")
+)
 dev_requires = open("dev-requirements.txt").read().strip().split("\n")
 
 setup(

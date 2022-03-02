@@ -15,7 +15,10 @@ RUN pip install -U pip
 COPY dev-requirements.txt dev-requirements.txt
 RUN pip install -r dev-requirements.txt
 
-COPY requirements.txt requirements.txt
+COPY fideslog/api/requirements.txt api-requirements.txt
+RUN pip install -r api-requirements.txt
+
+COPY fideslog/sdk/python/requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
 # Copy in the application files and install it locally

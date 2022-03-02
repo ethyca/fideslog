@@ -7,8 +7,8 @@ from requests import PreparedRequest, post
 from requests.auth import AuthBase
 from requests.exceptions import RequestException
 
-from event import AnalyticsEvent
-from exceptions import AnalyticsException
+from fideslog.sdk.python.event import AnalyticsEvent
+from fideslog.sdk.python.exceptions import AnalyticsException
 
 
 class AnalyticsAuth(AuthBase):
@@ -19,9 +19,9 @@ class AnalyticsAuth(AuthBase):
     def __init__(self, api_key: str):
         self.token = api_key
 
-    def __call__(self, r: PreparedRequest) -> PreparedRequest:
-        r.headers["Authorization"] = f"Token {self.token}"
-        return r
+    def __call__(self, request: PreparedRequest) -> PreparedRequest:
+        request.headers["Authorization"] = f"Token {self.token}"
+        return request
 
 
 class AnalyticsClient:

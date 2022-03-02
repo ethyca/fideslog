@@ -31,7 +31,7 @@ API_KEY = "12345"
 
 fideslog_client = client.AnalyticsClient(
     api_key=API_KEY,
-    client_id="fake_client_id",
+    client_id="test_client_id",
     os="Darwin",
     product_name="fideslog",
     production_version="1.2.3",
@@ -43,4 +43,16 @@ fideslog_event = event.AnalyticsEvent(
 )
 
 asyncio.run(fideslog_client.send(event=fideslog_event))
+```
+
+Example structure of a minimum working payload
+```
+{
+    "client_id": "test_client_id",
+    "event": "test_event",
+    "event_created_at": "2022-02-21 19:56:11Z",
+    "os": "darwin",
+    "product_name": "fideslog",
+    "production_version": "1.2.3"
+}
 ```

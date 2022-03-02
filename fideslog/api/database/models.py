@@ -1,3 +1,6 @@
+from sqlalchemy.sql import expression
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.types import DateTime
 from sqlalchemy import (
     Boolean,
     Column,
@@ -8,6 +11,16 @@ from sqlalchemy import (
 )
 
 from fideslog.api.database.database import Base
+
+
+class utcnow(expression.FunctionElement):
+    type = DateTime()
+    inherit_cache = True
+
+
+@compiles(utcnow, "snowflake")
+def sf_utcnow(element, compiler, **kw):
+    return "sysdate()"
 
 
 class AnalyticsEvent(Base):
@@ -38,7 +51,7 @@ class AnalyticsEvent(Base):
         "EVENT_CREATED_AT", DateTime(timezone=True), default=None, nullable=True
     )
     event_loaded_at = Column(
-        "EVENT_LOADED_AT", DateTime(timezone=True), default=None, nullable=False
+        "EVENT_LOADED_AT", DateTime(timezone=True), server_default=utcnow()
     )
 
 

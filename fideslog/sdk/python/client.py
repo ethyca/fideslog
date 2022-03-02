@@ -80,14 +80,20 @@ class AnalyticsClient:
             "production_version": self.production_version,
         }
 
-        if event.command is not None:
-            payload["command"] = event.command
+        payload_extras = [
+            "command",
+            "endpoint",
+            "error",
+            # "extra_data",
+            "flags",
+            "resource_counts",
+            "status_code",
+        ]
 
-        if event.endpoint is not None:
-            payload["endpoint"] = event.endpoint
-
-        if event.error is not None:
-            payload["error"] = event.error
+        event_dict = event.dict()
+        for extra in payload_extras:
+            if event_dict[extra]:
+                payload[extra] = event_dict[extra]
 
         extra_data: Dict = {}
         if self.extra_data is not None:
@@ -98,15 +104,6 @@ class AnalyticsClient:
                 extra_data[key] = val
 
         payload["extra_data"] = extra_data
-
-        if event.flags is not None:
-            payload["flags"] = event.flags
-
-        if event.resource_counts is not None:
-            payload["resource_counts"] = event.resource_counts
-
-        if event.status_code is not None:
-            payload["status_code"] = event.status_code
 
         try:
             response = post(

@@ -1,6 +1,5 @@
 from sqlalchemy.sql import expression
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.types import DateTime
 from sqlalchemy import (
     Boolean,
     Column,
@@ -13,13 +12,16 @@ from sqlalchemy import (
 from fideslog.api.database.database import Base
 
 
-class utcnow(expression.FunctionElement):
+class UtcNow(expression.FunctionElement):  # pylint: disable=too-many-ancestors
+    """Defines the use of a default load of a UTC timestamp"""
+
     type = DateTime()
     inherit_cache = True
 
 
-@compiles(utcnow, "snowflake")
-def sf_utcnow(element, compiler, **kw):
+@compiles(UtcNow, "snowflake")
+def sf_utcnow(element: Column, compiler: str, **kw: dict) -> str:
+    """Defines the use of a default load of a UTC timestamp"""
     return "sysdate()"
 
 
@@ -51,7 +53,7 @@ class AnalyticsEvent(Base):
         "EVENT_CREATED_AT", DateTime(timezone=True), default=None, nullable=True
     )
     event_loaded_at = Column(
-        "EVENT_LOADED_AT", DateTime(timezone=True), server_default=utcnow()
+        "EVENT_LOADED_AT", DateTime(timezone=True), server_default=UtcNow()
     )
 
 

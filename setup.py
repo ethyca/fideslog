@@ -7,20 +7,22 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = open("README.md").read()
 
 # Requirements
-install_requires = open("requirements.txt").read().strip().split("\n")
+install_requires = (
+    open("fideslog/sdk/python/requirements.txt").read().strip().split("\n")
+)
 dev_requires = open("dev-requirements.txt").read().strip().split("\n")
 
 setup(
     name="fideslog",
     # version=versioneer.get_version(),
     # cmdclass=versioneer.get_cmdclass(),
-    description="CLI for fideslog",
+    description="SDK for interacting with fideslog",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ethyca/fideslog",
-    entry_points={"console_scripts": ["fideslog=fideslog.cli.context:cli"]},
+    # entry_points={"console_scripts": ["fideslog=fideslog.cli.context:cli"]},
     python_requires=">=3.8, <4",
-    package_dir={"fideslog": "fideslog"},
+    package_dir={"fideslog": "fideslog/sdk/python"},
     packages=["fideslog"],
     author="Ethyca, Inc.",
     author_email="fidesteam@ethyca.com",

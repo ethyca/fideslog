@@ -90,7 +90,7 @@ class ServerSettings(Settings):
 
     host: str = "0.0.0.0"
     hot_reload: bool = False
-    port: int = 8080
+    port: int = 8888
 
     class Config:
         """Modifies pydantic behavior."""

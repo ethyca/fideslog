@@ -1,5 +1,5 @@
 import pathlib
-from setuptools import setup, find_packages
+from setuptools import setup
 
 # import versioneer
 
@@ -20,7 +20,6 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ethyca/fideslog",
-    # entry_points={"console_scripts": ["fideslog=fideslog.cli.context:cli"]},
     python_requires=">=3.8, <4",
     package_dir={"fideslog": "fideslog"},
     packages=["fideslog.sdk.python"],

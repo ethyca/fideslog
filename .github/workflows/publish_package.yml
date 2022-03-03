@@ -2,8 +2,10 @@ name: Publish fideslog
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - main
+  release:
+    types: [published]
 
 jobs:
   upload_to_pypi:

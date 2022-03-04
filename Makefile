@@ -85,7 +85,7 @@ xenon:
 	--max-modules B \
 	--max-average A \
 	--ignore "tests" \
-	--exclude "fideslog/sdk/python/event.py"
+	--exclude "fideslog/sdk/python/event.py,fideslog/sdk/python/_version.py"
 
 ####################
 # Utils

@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from fideslog.api.models.analytics_event import AnalyticsEvent
 from fideslog.api.utils.auth import get_api_key
-from fideslog.api.database.dal import create_event
+from fideslog.api.database.data_access import create_event
 from fideslog.api.database.database import get_db
 
 router = APIRouter(tags=["Events"], prefix="/events")

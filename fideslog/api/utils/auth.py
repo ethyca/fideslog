@@ -2,7 +2,7 @@ from fastapi import Depends
 from fastapi.security.api_key import APIKeyHeader
 from sqlalchemy.orm import Session
 
-from fideslog.api.database.dal import api_key_exists
+from fideslog.api.database.data_access import api_key_exists
 from fideslog.api.database.database import get_db
 from fideslog.api.utils.exceptions import (
     AuthenticationException,

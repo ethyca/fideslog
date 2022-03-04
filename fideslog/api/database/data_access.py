@@ -48,11 +48,8 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
 def api_key_exists(database: Session, token: str) -> bool:
     """
     Return whether the provided token exists in the database.
+
+    Temporarily returns True to negate the need for an API key.
     """
 
-    return (
-        database.execute(
-            select(APIKey).where(APIKey.api_key == token).limit(1),
-        ).first()
-        is not None
-    )
+    return True

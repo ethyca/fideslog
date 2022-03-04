@@ -1,7 +1,6 @@
 import logging
 import json
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import DBAPIError
 
@@ -10,7 +9,6 @@ from sqlalchemy.exc import DBAPIError
 from fideslog.api.models.analytics_event import AnalyticsEvent
 
 from fideslog.api.database.models import AnalyticsEvent as AnalyticsEventORM
-from fideslog.api.database.models import APIKey
 
 log = logging.getLogger(__name__)
 

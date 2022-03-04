@@ -73,7 +73,7 @@ class AnalyticsClient:
             "client_id": self.client_id,
             "docker": event.docker,
             "event": event.event,
-            "event_created_at": event.event_created_at,
+            "event_created_at": event.event_created_at.isoformat(),
             "local_host": event.local_host,
             "os": self.os,
             "product_name": self.product_name,
@@ -90,7 +90,7 @@ class AnalyticsClient:
             "status_code",
         ]
 
-        event_dict = event.dict()
+        event_dict = vars(event)
         for extra in payload_extras:
             if event_dict[extra]:
                 payload[extra] = event_dict[extra]
@@ -107,16 +107,17 @@ class AnalyticsClient:
 
         try:
             response = post(
-                "http://localhost:8080",
+                "http://localhost:8888/events",
                 auth=AnalyticsAuth(self.api_key),
                 json=payload,
                 timeout=(3.05, 120),
             )
-
             try:
                 response.raise_for_status()
-            except HTTPError as e:
-                raise AnalyticsException(e.reason, e.args, status_code=e.code) from e
+            except HTTPError as error:
+                raise AnalyticsException(
+                    error.reason, error.args, status_code=error.code
+                ) from error
 
-        except RequestException as e:
-            raise AnalyticsException(e.strerror, e.args) from e
+        except RequestException as exc:
+            raise AnalyticsException(exc.strerror, exc.args) from exc

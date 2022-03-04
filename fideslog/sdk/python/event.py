@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 from json import dumps
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
 
@@ -20,9 +20,9 @@ class AnalyticsEvent:
         endpoint: Optional[str] = None,
         error: Optional[str] = None,
         extra_data: Optional[Dict] = None,
-        flags: Optional[list[str]] = None,
+        flags: Optional[List[str]] = None,
         local_host: bool = False,
-        resource_counts: Optional[dict[str, int]] = None,
+        resource_counts: Optional[Dict[str, int]] = None,
         status_code: Optional[int] = None,
     ) -> None:
         # pylint: disable=line-too-long

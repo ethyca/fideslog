@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from fideslog.sdk.python import client, event
 
 
-API_KEY = "Token 12345"
+API_KEY = "12345"
 
 
 @pytest.fixture()

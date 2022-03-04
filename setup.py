@@ -1,7 +1,7 @@
 import pathlib
-from setuptools import setup, find_packages
+from setuptools import setup
 
-# import versioneer
+import versioneer
 
 here = pathlib.Path(__file__).parent.resolve()
 long_description = open("README.md").read()
@@ -14,13 +14,12 @@ dev_requires = open("dev-requirements.txt").read().strip().split("\n")
 
 setup(
     name="fideslog",
-    # version=versioneer.get_version(),
-    # cmdclass=versioneer.get_cmdclass(),
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     description="SDK for interacting with fideslog",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ethyca/fideslog",
-    # entry_points={"console_scripts": ["fideslog=fideslog.cli.context:cli"]},
     python_requires=">=3.8, <4",
     package_dir={"fideslog": "fideslog"},
     packages=["fideslog.sdk.python"],

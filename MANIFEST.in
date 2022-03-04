@@ -1,0 +1,2 @@
+include versioneer.py
+include fideslog/sdk/python/_version.py

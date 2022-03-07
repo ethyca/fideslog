@@ -45,13 +45,13 @@ class Settings(BaseSettings):
 class DatabaseSettings(Settings):
     """Configuration options for Snowflake."""
 
-    account: str = Field(..., exclude=True)
+    account: str = Field(..., exclude=True, env="SNOWFLAKE_ACCOUNT")
     database: str = Field(..., exclude=True)
     db_schema: str = Field("fides", exclude=True)
-    password: str = Field(..., exclude=True)
+    password: str = Field(..., exclude=True, env="SNOWFLAKE_DB_PASSWORD")
     role: str = Field("event_writer", exclude=True)
     warehouse: str = Field("fides_log", exclude=True)
-    user: str = Field(..., exclude=True)
+    user: str = Field(..., exclude=True, env="SNOWFLAKE_DB_USER")
 
     db_connection_uri: Optional[str] = None
 
@@ -154,7 +154,7 @@ def get_config() -> FideslogSettings:
 
     try:
         settings = FideslogSettings.parse_obj(load_file(CONFIG_FILE_NAME))
-        log.debug("Successfully loaded configuration options from %s", CONFIG_FILE_NAME)
+        log.info("Successfully loaded configuration options from %s", CONFIG_FILE_NAME)
     except FileNotFoundError:
         log.warning("No %s file found", CONFIG_FILE_NAME)
         log.info("Loading configuration from environment variables...")

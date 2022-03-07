@@ -12,7 +12,7 @@ from fideslog.api.database.models import AnalyticsEvent as AnalyticsEventORM
 
 log = logging.getLogger(__name__)
 
-# TODO: Finish this
+
 def create_event(database: Session, event: AnalyticsEvent) -> None:
     """Create a new analytics event."""
 

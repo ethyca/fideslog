@@ -1,18 +1,18 @@
 services:
   fideslog:
     image: ethyca/fideslog:local
-    command: uvicorn --host 0.0.0.0 --port 8888 --reload fideslog.api.main:app
+    command: uvicorn --host 0.0.0.0 --port 8080 --reload fideslog.api.main:app
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8888/health" ]
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
       interval: 5s
       timeout: 5s
       retries: 5
     env_file:
       - fideslog.env
     expose:
-      - 8888
+      - 8080
     ports:
-      - "8888:8888"
+      - "8080:8080"
     volumes:
       - type: bind
         source: .

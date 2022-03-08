@@ -7,5 +7,4 @@ warehouse = "fides_log"
 [server]
 host = "localhost"
 hot_reload = true
-port = 8888
-
+port = 8080

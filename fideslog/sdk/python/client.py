@@ -107,7 +107,7 @@ class AnalyticsClient:
 
         try:
             response = post(
-                "http://localhost:8888/events",
+                "http://localhost:8080/events",
                 auth=AnalyticsAuth(self.api_key),
                 json=payload,
                 timeout=(3.05, 120),

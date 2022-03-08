@@ -3,7 +3,7 @@ import pytest
 import requests
 
 
-LOCAL_SERVER_URL = "http://fideslog:8888"
+LOCAL_SERVER_URL = "http://fideslog:8080"
 
 
 def test_health():

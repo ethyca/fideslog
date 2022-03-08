@@ -25,7 +25,6 @@ class AnalyticsClient:
         production_version: str,
         extra_data: Optional[Dict] = None,
     ) -> None:
-        # pylint: disable=line-too-long
         """
         Define a new client from which to send analytics events to the fideslog server.
 
@@ -36,7 +35,6 @@ class AnalyticsClient:
         :param production_version: The semantic version number of the fides tool in which this client is integrated.
         :param extra_data: Any additional information that should be included in all analytics events sent by this client. Any key/value pairs included here will be merged with key/value pairs included directly on specific `AnalyticsEvent`s, with the `AnalyticsEvent`'s `extra_data` taking priority.
         """
-        # pylint: enable=line-too-long
 
         for arg in [api_key, client_id, os, product_name, production_version]:
             assert arg is not None and arg != "", (

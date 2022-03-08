@@ -50,6 +50,7 @@ disable=[
     "duplicate-code",
     "import-error",
     "invalid-name",
+    "line-too-long",
     "missing-module-docstring",
     "too-few-public-methods",
     "unsubscriptable-object",

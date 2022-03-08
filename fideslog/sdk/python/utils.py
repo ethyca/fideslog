@@ -9,7 +9,6 @@ FIDESOPS = b"fidesops"
 
 
 def generate_client_id(application: bytes) -> str:
-    # pylint: disable=line-too-long
     """
     Generates a cryptographically secure, fully anonymized string
     that is globally unique to the machine on which it is generated.
@@ -18,6 +17,5 @@ def generate_client_id(application: bytes) -> str:
     :param application: A bytestring corresponding to the fides tool currently in use. Consider `import`ing and using the constants available in this function's package.
     :returns: The hash digest, as a hexadecimal string, to be used as the analytics identifier for the machine on which this function is executed.
     """
-    # pylint: enable=line-too-long
 
     return md5(uuid1().bytes + gensalt() + application).hexdigest()

@@ -4,24 +4,10 @@ from typing import Dict, Optional
 from urllib.error import HTTPError
 
 from requests import PreparedRequest, post
-from requests.auth import AuthBase
 from requests.exceptions import RequestException
 
 from fideslog.sdk.python.event import AnalyticsEvent
 from fideslog.sdk.python.exceptions import AnalyticsException
-
-
-class AnalyticsAuth(AuthBase):
-    """
-    Attaches fideslog authentication to a given Request object.
-    """
-
-    def __init__(self, api_key: str):
-        self.token = api_key
-
-    def __call__(self, request: PreparedRequest) -> PreparedRequest:
-        request.headers["Authorization"] = f"Token {self.token}"
-        return request
 
 
 class AnalyticsClient:
@@ -84,7 +70,6 @@ class AnalyticsClient:
             "command",
             "endpoint",
             "error",
-            # "extra_data",
             "flags",
             "resource_counts",
             "status_code",
@@ -108,7 +93,6 @@ class AnalyticsClient:
         try:
             response = post(
                 "http://localhost:8080/events",
-                auth=AnalyticsAuth(self.api_key),
                 json=payload,
                 timeout=(3.05, 120),
             )

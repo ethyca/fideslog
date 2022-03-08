@@ -46,13 +46,13 @@ class Settings(BaseSettings):
 class DatabaseSettings(Settings):
     """Configuration options for Snowflake."""
 
-    account: str = Field(..., exclude=True, env="SNOWFLAKE_ACCOUNT")
+    account: str = Field(..., exclude=True)
     database: str = Field(..., exclude=True)
     db_schema: str = Field("fides", exclude=True)
-    password: str = Field(..., exclude=True, env="SNOWFLAKE_DB_PASSWORD")
+    password: str = Field(..., exclude=True)
     role: str = Field("event_writer", exclude=True)
     warehouse: str = Field("fides_log", exclude=True)
-    user: str = Field(..., exclude=True, env="SNOWFLAKE_DB_USER")
+    user: str = Field(..., exclude=True)
 
     db_connection_uri: Optional[str] = None
 

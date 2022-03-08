@@ -1,13 +1,8 @@
-from sqlalchemy.sql import expression
+from typing import Dict
+
+from sqlalchemy import Boolean, Column, DateTime, Integer, Sequence, String
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    Integer,
-    Sequence,
-    String,
-)
+from sqlalchemy.sql import expression
 
 from fideslog.api.database.database import Base
 
@@ -20,9 +15,7 @@ class UtcNow(expression.FunctionElement):  # pylint: disable=too-many-ancestors
 
 
 @compiles(UtcNow, "snowflake")
-def sf_utcnow(
-    element: Column, compiler: str, **kw: dict  # pylint: disable=unused-argument
-) -> str:
+def sf_utcnow(_: Column, __: str, ___: Dict) -> str:
     """Defines the use of a default load of a UTC timestamp"""
     return "sysdate()"
 

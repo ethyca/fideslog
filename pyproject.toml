@@ -47,13 +47,12 @@ exclude = '''
 ########
 [tool.pylint.messages_control]
 disable=[
-    "duplicate-code",
     "import-error",
     "invalid-name",
     "missing-module-docstring",
     "too-few-public-methods",
-    "unsubscriptable-object", # Otherwise throws errors on certain Type annotations
-    ]
+    "unsubscriptable-object",
+]
 extension-pkg-whitelist = "pydantic"
 
 [tool.pylint.reports]

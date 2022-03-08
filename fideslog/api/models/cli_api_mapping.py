@@ -1,4 +1,4 @@
-# pylint: disable= line-too-long, no-self-argument, no-self-use
+# pylint: disable=line-too-long
 
 from datetime import datetime
 from typing import Optional
@@ -30,11 +30,15 @@ class CLIAPIMapping(BaseModel):
     )
 
     _check_not_an_email_address: classmethod = validator(
-        "api_id", "client_id", allow_reuse=True
+        "api_id",
+        "client_id",
+        allow_reuse=True,
     )(check_not_an_email_address)
 
     _check_in_the_past: classmethod = validator(
-        "created_at", "updated_at", allow_reuse=True
+        "created_at",
+        "updated_at",
+        allow_reuse=True,
     )(check_in_the_past)
 
     class Config:

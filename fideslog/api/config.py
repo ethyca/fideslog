@@ -1,4 +1,4 @@
-# pylint: disable=no-self-argument
+# pylint: disable= no-self-argument, no-self-use
 
 import logging
 import os

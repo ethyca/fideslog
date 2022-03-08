@@ -1,12 +1,10 @@
-from logging import getLogger
 from json import dumps
+from logging import getLogger
 
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import DBAPIError
+from sqlalchemy.orm import Session
 
 from fideslog.api.database.models import AnalyticsEvent as AnalyticsEventORM
-
-# from fidesapi.database.session import async_session ## future to do after working sync
 from fideslog.api.models.analytics_event import AnalyticsEvent
 
 log = getLogger(__name__)

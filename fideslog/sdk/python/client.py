@@ -3,7 +3,7 @@
 from typing import Dict, Optional
 from urllib.error import HTTPError
 
-from requests import PreparedRequest, post
+from requests import post
 from requests.exceptions import RequestException
 
 from fideslog.sdk.python.event import AnalyticsEvent

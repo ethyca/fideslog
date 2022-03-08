@@ -1,12 +1,9 @@
 # fideslog
-Privacy conscious usage analytics collection.
+Privacy respecting usage analytics collection.
 
-This public repository is available so anyone can validate that we do what we say we do.
+## Development
 
-
-## Required Environemnt Variables
-
-The following env vars are required to successfully use the API
+The following environment variables must be set in order to successfully run the API server locally:
 
 ```
 export SNOWFLAKE_ACCOUNT=[see 1Password]
@@ -74,12 +71,12 @@ All opt-out functionality will reside in the fides family tool implementing `fid
 The current copy to be used is as follows:
 > Fides needs your permission to send Ethyca a limited set of anonymous usage statistics.
 > Ethyca will only use this anonymous usage data to improve the product experience, and will never collect sensitive or personal data.
-> 
+>
 > ***
 > Don't believe us? Check out the open-source code here:
->     https://github.com/ethyca/fideslog 
+>     https://github.com/ethyca/fideslog
 > ***
-> 
+>
 > To opt-out of all telemetry, press "n". To continue with telemetry, press any other key.
 
 

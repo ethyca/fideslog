@@ -118,6 +118,10 @@ jobs:
   Pytest:
     needs: Build
     runs-on: ubuntu-latest
+    env:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_DB_PASSWORD: ${{ secrets.SNOWFLAKE_DB_PASSWORD }}
+      SNOWFLAKE_DB_USER: ${{ secrets.SNOWFLAKE_DB_USER }}
     steps:
       - name: Download fidescls container
         uses: actions/download-artifact@v2

@@ -47,6 +47,7 @@ exclude = '''
 ########
 [tool.pylint.messages_control]
 disable=[
+    "duplicate-code",
     "import-error",
     "invalid-name",
     "missing-module-docstring",

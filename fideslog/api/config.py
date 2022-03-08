@@ -36,7 +36,8 @@ class Settings(BaseSettings):
             file_secret_settings: SettingsSourceCallable,
         ) -> Tuple[SettingsSourceCallable, ...]:
             """
-            Sets ENV variable values to be treated as higher priority than __init__ values.
+            Sets ENV variable values to be treated as
+            higher priority than __init__ values.
             """
 
             return env_settings, init_settings, file_secret_settings

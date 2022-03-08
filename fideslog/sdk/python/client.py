@@ -1,5 +1,4 @@
 # pylint: disable=too-many-arguments
-import os
 
 from typing import Dict, Optional
 from urllib.error import HTTPError
@@ -106,11 +105,9 @@ class AnalyticsClient:
 
         payload["extra_data"] = extra_data
 
-        host_server = os.getenv("FIDESLOG_PROD_URL") or "localhost"
-
         try:
             response = post(
-                f"http://{host_server}:8888/events",
+                "http://localhost:8888/events",
                 auth=AnalyticsAuth(self.api_key),
                 json=payload,
                 timeout=(3.05, 120),

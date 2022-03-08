@@ -52,24 +52,6 @@ class AnalyticsEvent(Base):
     )
 
 
-class APIKey(Base):
-    """
-    The persisted details about API access keys.
-    """
-
-    __tablename__ = "API_KEYS"
-
-    id = Column("ID", Integer, Sequence("keys_id_seq"), primary_key=True)
-    api_key = Column("API_KEY", String, default=None, nullable=True)
-    client_id = Column("CLIENT_ID", String, default=None, nullable=True)
-    created_at = Column(
-        "CREATED_AT", DateTime(timezone=True), default=None, nullable=True
-    )
-    expired_at = Column(
-        "EXPIRED_AT", DateTime(timezone=True), default=None, nullable=True
-    )
-
-
 class CLIAPIMapping(Base):
     """
     The persisted details mapping a CLI instance to an API instance.

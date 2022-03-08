@@ -44,15 +44,3 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
         database.commit()
     except DBAPIError:
         log.error("Insert Failed")
-
-
-def api_key_exists(
-    database: Session, token: str  # pylint: disable=unused-argument
-) -> bool:
-    """
-    Return whether the provided token exists in the database.
-
-    Temporarily returns True to negate the need for an API key.
-    """
-
-    return True

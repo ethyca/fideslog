@@ -1,12 +1,15 @@
-import pytest
+from fastapi import status
+from fastapi.testclient import TestClient
 
-import requests
+from fideslog.api.main import app
+
+client = TestClient(app)
 
 
-LOCAL_SERVER_URL = "http://fideslog:8080"
+def test_health() -> None:
+    """Test that the /health endpoint responds"""
 
+    response = client.get("/health")
 
-def test_health():
-    response = requests.get(f"{LOCAL_SERVER_URL}/health")
-
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {"status": "healthy"}

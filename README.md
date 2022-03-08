@@ -1,6 +1,18 @@
 # fideslog
-Privacy respecting usage analytics collection.
+Privacy conscious usage analytics collection.
 
+This public repository is available so anyone can validate that we do what we say we do.
+
+
+## Required Environemnt Variables
+
+The following env vars are required to successfully use the API
+
+```
+export SNOWFLAKE_ACCOUNT=[see 1Password]
+export SNOWFLAKE_DB_USER=[see 1Password]
+export SNOWFLAKE_DB_PASSWORD=[see 1Password]
+```
 
 ## Sample Working Implementation
 _(Working from a local installation)_
@@ -25,12 +37,9 @@ import asyncio
 from datetime import datetime, timezone
 from fideslog.sdk.python import event, client
 
-API_KEY = "12345" # currently de-implemented, any string still required
-
 product_name = "fideslog"
 
 fideslog_client = client.AnalyticsClient(
-    api_key=API_KEY,
     client_id="test_client_id",
     os=platform.system(),
     product_name=product_name,

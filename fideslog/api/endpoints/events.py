@@ -1,14 +1,10 @@
 from typing import Dict
 
-from fastapi import APIRouter, Depends, Security, status
-from fastapi.openapi.models import APIKey
-
+from fastapi import APIRouter, Depends, status
 from pydantic import ValidationError
-
 from sqlalchemy.orm import Session
 
 from fideslog.api.models.analytics_event import AnalyticsEvent
-from fideslog.api.utils.auth import get_api_key
 from fideslog.api.database.data_access import create_event
 from fideslog.api.database.database import get_db
 
@@ -23,7 +19,6 @@ router = APIRouter(tags=["Events"], prefix="/events")
 )
 async def create(
     event: Dict,
-    _: APIKey = Security(get_api_key),
     database: Session = Depends(get_db),
 ) -> AnalyticsEvent:
     """Create a new analytics event."""

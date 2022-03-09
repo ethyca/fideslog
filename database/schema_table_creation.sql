@@ -31,16 +31,6 @@ create table if not exists anonymous_usage_events (
   event_loaded_at timestamp default sysdate() -- this is the utc timestamp
 );
 
-create sequence if not exists keys_id_seq start = 1 increment = 1;
-
-create table if not exists api_keys (
-  id integer,
-  api_key varchar,
-  client_id varchar,
-  created_at timestamp_tz,
-  expired_at timestamp_tz
-);
-
 create sequence if not exists mapping_id_seq start = 1 increment = 1;
 
 create table if not exists cli_api_mapping (

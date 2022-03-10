@@ -1,4 +1,4 @@
-# pylint: disable= line-too-long, no-self-argument, no-self-use
+# pylint: disable= no-self-argument, no-self-use
 
 from datetime import datetime, timezone
 from typing import Dict, List, Optional

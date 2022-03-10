@@ -1,10 +1,17 @@
+# pylint: disable=redefined-outer-name
+
+from typing import Generator
 import pytest
 
 from fideslog.api.models.analytics_event import AnalyticsEvent
 
 
 @pytest.fixture()
-def test_full_payload():
+def test_full_payload() -> Generator:
+    """
+    Yield a test request payload.
+    """
+
     yield {
         "client_id": "test_client_id",
         "event": "test_event_type",
@@ -24,7 +31,9 @@ def test_full_payload():
     }
 
 
-def test_analytic_event_model(test_full_payload):
-    analytic_event = AnalyticsEvent.parse_obj(test_full_payload)
+def test_analytic_event_model(test_full_payload: dict) -> None:
+    """
+    Test that pydantic validations succeed for a valid payload.
+    """
 
-    assert analytic_event is not None
+    assert AnalyticsEvent.parse_obj(test_full_payload) is not None

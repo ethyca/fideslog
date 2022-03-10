@@ -25,7 +25,6 @@ class AnalyticsEvent:
         resource_counts: Optional[Dict[str, int]] = None,
         status_code: Optional[int] = None,
     ) -> None:
-        # pylint: disable=line-too-long
         """
         Define a new analytics event to send to the fideslog server.
 
@@ -41,7 +40,6 @@ class AnalyticsEvent:
         :param resource_counts: Should contain the counts of dataset, policy, and system manifests in use when this event was submitted. Include all three keys, even if one or more of their values are `0`. Ex: `{ "datasets": 7, "policies": 26, "systems": 9 }`.
         :param status_code: For events submitted as a result of making API server requests, the HTTP status code included in the response.
         """
-        # pylint: enable=line-too-long
 
         assert event is not None, "An event name/type is required"
         self.event = event

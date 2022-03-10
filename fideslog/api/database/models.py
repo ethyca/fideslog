@@ -1,13 +1,8 @@
-from sqlalchemy.sql import expression
+from typing import Dict
+
+from sqlalchemy import Boolean, Column, DateTime, Integer, Sequence, String
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    Integer,
-    Sequence,
-    String,
-)
+from sqlalchemy.sql import expression
 
 from fideslog.api.database.database import Base
 
@@ -20,7 +15,7 @@ class UtcNow(expression.FunctionElement):  # pylint: disable=too-many-ancestors
 
 
 @compiles(UtcNow, "snowflake")
-def sf_utcnow(element: Column, compiler: str, **kw: dict) -> str:
+def sf_utcnow(_: Column, __: str, ___: Dict) -> str:
     """Defines the use of a default load of a UTC timestamp"""
     return "sysdate()"
 
@@ -54,24 +49,6 @@ class AnalyticsEvent(Base):
     )
     event_loaded_at = Column(
         "EVENT_LOADED_AT", DateTime(timezone=True), server_default=UtcNow()
-    )
-
-
-class APIKey(Base):
-    """
-    The persisted details about API access keys.
-    """
-
-    __tablename__ = "API_KEYS"
-
-    id = Column("ID", Integer, Sequence("keys_id_seq"), primary_key=True)
-    api_key = Column("API_KEY", String, default=None, nullable=True)
-    client_id = Column("CLIENT_ID", String, default=None, nullable=True)
-    created_at = Column(
-        "CREATED_AT", DateTime(timezone=True), default=None, nullable=True
-    )
-    expired_at = Column(
-        "EXPIRED_AT", DateTime(timezone=True), default=None, nullable=True
     )
 
 

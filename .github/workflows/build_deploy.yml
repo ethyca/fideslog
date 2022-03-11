@@ -31,7 +31,32 @@ jobs:
       - name: Push fideslog
         run: make push
 
-  # deploy-fideslog:
-  #   needs: push-fideslog
-  #   runs-on: ubuntu-latest
-    
+  deploy-fideslog:
+    needs: push-fideslog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Add secrets to Task Definition
+        run: |
+          sed -i "s/<snowflake_db_account>/$SNOWFLAKE_DB_ACCOUNT/g" sample-task-definition
+          sed -i "s/<snowflake_db_user>/$SNOWFLAKE_DB_USER/g" sample-task-definition
+          sed -i "s/<snowflake_db_password>/$SNOWFLAKE_DB_PASSWORD/g" sample-task-definition
+        env:
+          SNOWFLAKE_DB_ACCOUNT: ${{secrets.SNOWFLAKE_DB_ACCOUNT}}
+          SNOWFLAKE_DB_USER: ${{secrets.SNOWFLAKE_DB_USER}}
+          SNOWFLAKE_DB_PASSWORD: ${{secrets.SNOWFLAKE_DB_PASSWORD}}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1a
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: sample-task-definition.json
+          service: my-service
+          cluster: my-cluster
+          wait-for-service-stability: true

@@ -1,2 +1,4 @@
-include versioneer.py
+include dev-requirements.txt
 include fideslog/sdk/python/_version.py
+include fideslog/sdk/python/requirements.txt
+include versioneer.py

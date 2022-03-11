@@ -1,11 +1,8 @@
 [database]
-account = "redacted"
-database = "redacted"
-password = "redacted"
-role = "redacted"
-db_schema = "redacted"
-warehouse = "redacted"
-user = "redacted"
+database = "raw"
+role = "event_writer"
+db_schema = "fides"
+warehouse = "fides_log"
 
 [server]
 host = "localhost"

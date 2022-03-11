@@ -1,16 +1,21 @@
-import pytest
+# pylint: disable=redefined-outer-name
+
 from datetime import datetime, timezone
+from typing import Generator
 
-from fideslog.sdk.python import client, event
+import pytest
 
-
-API_KEY = "12345"
+from fideslog.sdk.python.client import AnalyticsClient
+from fideslog.sdk.python.event import AnalyticsEvent
 
 
 @pytest.fixture()
-def test_create_client():
-    yield client.AnalyticsClient(
-        api_key=API_KEY,
+def test_create_client() -> Generator:
+    """
+    Yield a test AnalyticsClient.
+    """
+
+    yield AnalyticsClient(
         client_id="fake_client_id",
         os="Darwin",
         product_name="fideslog",
@@ -19,16 +24,24 @@ def test_create_client():
 
 
 @pytest.fixture()
-def test_basic_additional_payload():
-    yield event.AnalyticsEvent(
+def test_basic_additional_payload() -> Generator:
+    """
+    Yield a simple test AnalyticsEvent.
+    """
+
+    yield AnalyticsEvent(
         event="test_event",
         event_created_at=datetime.now(timezone.utc),
     )
 
 
 @pytest.fixture()
-def test_rich_additional_payload():
-    yield event.AnalyticsEvent(
+def test_rich_additional_payload() -> Generator:
+    """
+    Yield a complex test AnalyticsEvent.
+    """
+
+    yield AnalyticsEvent(
         event="test_event",
         event_created_at=datetime.now(timezone.utc),
         command="test_command",
@@ -38,16 +51,28 @@ def test_rich_additional_payload():
     )
 
 
-def test_create_client_attribute(test_create_client):
+def test_create_client_attribute(test_create_client: AnalyticsClient) -> None:
+    """
+    Test that AnalyticsClients are created as expected.
+    """
+
     assert test_create_client.client_id == "fake_client_id"
-    assert test_create_client.extra_data == None
+    assert test_create_client.extra_data is None
 
 
-def test_basic_event_payload(test_basic_additional_payload):
+def test_basic_event_payload(test_basic_additional_payload: AnalyticsEvent) -> None:
+    """
+    Test that simple AnalyticsEvents are created as expected.
+    """
+
     assert test_basic_additional_payload.event == "test_event"
 
 
-def test_rich_event_payload(test_rich_additional_payload):
+def test_rich_event_payload(test_rich_additional_payload: AnalyticsEvent) -> None:
+    """
+    Test that complex AnalyticsEvents are created as expected.
+    """
+
     assert test_rich_additional_payload.command == "test_command"
     assert test_rich_additional_payload.docker
     assert test_rich_additional_payload.status_code == 200

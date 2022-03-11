@@ -46,14 +46,14 @@ class DatabaseSettings(Settings):
     """Configuration options for Snowflake."""
 
     account: str = Field(..., exclude=True)
-    database: str = Field(..., exclude=True)
-    db_schema: str = Field("fides", exclude=True)
+    database: str = "raw"
+    db_schema: str = "fides"
     password: str = Field(..., exclude=True)
-    role: str = Field("event_writer", exclude=True)
-    warehouse: str = Field("fides_log", exclude=True)
+    role: str = "event_writer"
+    warehouse: str = "fides_log"
     user: str = Field(..., exclude=True)
 
-    db_connection_uri: Optional[str] = None
+    db_connection_uri: Optional[str] = Field(None, exclude=True)
 
     @validator("db_connection_uri", pre=True, always=True)
     def assemble_db_connection_uri(
@@ -90,7 +90,7 @@ class ServerSettings(Settings):
 
     host: str = "0.0.0.0"
     hot_reload: bool = False
-    port: int = 8888
+    port: int = 8080
 
     class Config:
         """Modifies pydantic behavior."""

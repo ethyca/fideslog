@@ -12,7 +12,7 @@
             "environment": [
                 {
                     "name": "FIDESLOG__DATABASE_ACCOUNT",
-                    "value": "<snowflake_db_account>"
+                    "value": "<snowflake_account>"
                 },
                 {
                     "name": "FIDESLOG__DATABASE_USER",

@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - main
-    tags:
-      - "*"
+      - SteveDMurphy-7-deploy-api
+    # tags:
+    #   - "*"
 
 env:
   DOCKER_USER: ethycaci

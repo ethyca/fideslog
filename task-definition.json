@@ -23,20 +23,20 @@
                     "value": "<snowflake_db_password>"
                 }
             ],
-            "image": "httpd:2.4",
+            "image": "ethyca/fideslog:latest",
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/fargate-task-definition",
-                    "awslogs-region": "us-east-1a",
+                    "awslogs-group": "fideslog-production/ecs",
+                    "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
             },
             "name": "fideslog",
             "portMappings": [
                 {
-                    "containerPort": 80,
-                    "hostPort": 80,
+                    "containerPort": 8080,
+                    "hostPort": 8080,
                     "protocol": "tcp"
                 }
             ]

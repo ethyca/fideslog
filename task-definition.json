@@ -23,7 +23,7 @@
                     "value": "<snowflake_db_password>"
                 }
             ],
-            "image": "httpd:2.4",
+            "image": "fideslog:latest",
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {

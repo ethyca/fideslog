@@ -50,6 +50,29 @@ class AnalyticsClient:
         Record a new event.
         """
 
+        payload = self._prepare_payload(event)
+
+        try:
+            response = post(
+                "http://localhost:8080/events",
+                json=payload,
+                timeout=(3.05, 120),
+            )
+            try:
+                response.raise_for_status()
+            except HTTPError as error:
+                raise AnalyticsException(
+                    error.reason, error.args, status_code=error.code
+                ) from error
+
+        except RequestException as exc:
+            raise AnalyticsException(exc.strerror, exc.args) from exc
+
+    def _prepare_payload(self, event: AnalyticsEvent) -> Dict:
+        """
+        Build the payload for the event
+        """
+
         payload = {
             "client_id": self.client_id,
             "docker": event.docker,
@@ -85,18 +108,4 @@ class AnalyticsClient:
 
         payload["extra_data"] = extra_data
 
-        try:
-            response = post(
-                "http://localhost:8080/events",
-                json=payload,
-                timeout=(3.05, 120),
-            )
-            try:
-                response.raise_for_status()
-            except HTTPError as error:
-                raise AnalyticsException(
-                    error.reason, error.args, status_code=error.code
-                ) from error
-
-        except RequestException as exc:
-            raise AnalyticsException(exc.strerror, exc.args) from exc
+        return payload

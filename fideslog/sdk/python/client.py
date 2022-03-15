@@ -16,6 +16,8 @@ class AnalyticsClient:
     analytics events to the fideslog server.
     """
 
+    server_url = "https://fideslog.ethyca.com"
+
     def __init__(
         self,
         client_id: str,
@@ -87,7 +89,7 @@ class AnalyticsClient:
 
         try:
             response = post(
-                "http://localhost:8080/events",
+                f"{self.server_url}/events",
                 json=payload,
                 timeout=(3.05, 120),
             )

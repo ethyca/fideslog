@@ -1,10 +1,10 @@
 # pylint: disable= no-self-argument, no-self-use
 
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
-from pydantic import BaseModel, Field, Json, validator
+from pydantic import BaseModel, Field, validator
 
 from .manifest_file_counts import ManifestFileCounts
 
@@ -61,7 +61,7 @@ class AnalyticsEvent(BaseModel):
         ...,
         description="The fides product's version number",
     )
-    resource_counts: Optional[Union[ManifestFileCounts, Json]]
+    resource_counts: Optional[ManifestFileCounts]
     status_code: Optional[int] = Field(
         None,
         description="For events submitted as a result of making API server requests, the HTTP status code included in the response",

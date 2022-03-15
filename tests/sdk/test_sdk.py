@@ -61,21 +61,6 @@ def test_rich_additional_payload() -> Generator:
     )
 
 
-@pytest.yield_fixture()
-def test_rich_additional_payload_with_error(
-    test_rich_additional_payload: AnalyticsEvent,
-) -> Generator:
-    """
-    Yield a complex test AnalyticsEvent.
-    """
-
-    event = test_rich_additional_payload
-    event.status_code = 1
-    event.error = "Internal Server Error"
-
-    yield event
-
-
 def test_create_client_attribute(test_create_client: AnalyticsClient) -> None:
     """
     Test that AnalyticsClients are created as expected.
@@ -120,14 +105,16 @@ def test_sdk_to_api_types(
 
 def test_sdk_to_api_types_with_error(
     test_create_client: AnalyticsClient,
-    test_rich_additional_payload_with_error: AnalyticsEvent,
+    test_rich_additional_payload: AnalyticsEvent,
 ) -> None:
     """
     Validate that all sdk values align with their API equivalent
     """
 
-    prepared_payload = test_create_client._prepare_payload(
-        test_rich_additional_payload_with_error
-    )
+    event = test_rich_additional_payload
+    event.status_code = 1
+    event.error = "Internal Server Error"
+
+    prepared_payload = test_create_client._prepare_payload(event)
 
     assert APIAnalyticsEvent.parse_obj(prepared_payload)

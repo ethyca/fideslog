@@ -8,3 +8,9 @@ warehouse = "fides_log"
 host = "localhost"
 hot_reload = true
 port = 8080
+
+[test_database]
+database = "raw"
+role = "event_writer"
+db_schema = "fides_test"
+warehouse = "fides_log"

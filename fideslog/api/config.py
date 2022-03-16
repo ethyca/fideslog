@@ -43,7 +43,7 @@ class Settings(BaseSettings):
 
 
 class DatabaseSettings(Settings):
-    """Configuration options for Snowflake."""
+    """Configuration options for the Snowflake event database."""
 
     account: str = Field(..., exclude=True)
     database: str = "raw"
@@ -98,11 +98,55 @@ class ServerSettings(Settings):
         env_prefix = f"{ENV_PREFIX}SERVER_"
 
 
+class TestDatabaseSettings(Settings):
+    """Configuration options for the Snowflake test event database."""
+
+    account: str = Field(..., exclude=True)
+    database: str = "raw"
+    db_schema: str = "fides_test"
+    password: str = Field(..., exclude=True)
+    role: str = "event_writer"
+    warehouse: str = "fides_log"
+    user: str = Field(..., exclude=True)
+
+    db_connection_uri: Optional[str] = Field(None, exclude=True)
+
+    @validator("db_connection_uri", pre=True, always=True)
+    def assemble_db_connection_uri(
+        cls,
+        value: Optional[str],
+        values: dict[str, str],
+    ) -> str:
+        """
+        Ensures a valid connection string is built from the provided details.
+        """
+
+        return (
+            value
+            if isinstance(value, str)
+            else URL(
+                account=values["account"],
+                database=values["database"],
+                password=values["password"],
+                role=values["role"],
+                schema=values["db_schema"],
+                warehouse=values["warehouse"],
+                user=values["user"],
+            )
+        )
+
+    class Config:
+        """Modifies pydantic behavior."""
+
+        env_prefix = f"{ENV_PREFIX}TEST_DATABASE_"
+
+
 class FideslogSettings(Settings):
     """Configuration options for fideslog."""
 
     database: DatabaseSettings
     server: ServerSettings
+    test_database: TestDatabaseSettings
 
 
 def load_file(filename: str) -> dict[str, Union[str, int, bool]]:

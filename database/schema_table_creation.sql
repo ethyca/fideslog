@@ -1,4 +1,4 @@
--- create the schema and table
+-- create the production schema and tables
 
 use role event_writer;
 use warehouse fides_log;
@@ -44,3 +44,18 @@ create table if not exists cli_api_mapping (
 
 
 show tables in schema raw.fides;
+
+---------------------------------------------------
+-- create the test schema and tables
+
+-- instead of maintaining dualing ddl statements,
+-- uses cloning to create copy of the structure and data in a test schema
+
+-- This should result in only the schema being changed when passing test events. 
+
+-- TODO: create a task to execute the clone on some regular cadence
+---------------------------------------------------
+
+create or replace schema fides_test clone fides;
+
+show tables in schema raw.fides_test;

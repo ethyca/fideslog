@@ -24,6 +24,7 @@ class AnalyticsEvent:
         local_host: bool = False,
         resource_counts: Optional[Dict[str, int]] = None,
         status_code: Optional[int] = None,
+        test: bool = False,
     ) -> None:
         """
         Define a new analytics event to send to the fideslog server.
@@ -39,6 +40,7 @@ class AnalyticsEvent:
         :param local_host: For events submitted as a result of making API server requests, `True` if the API server is running on the user's local host. Default: `False`.
         :param resource_counts: Should contain the counts of dataset, policy, and system manifests in use when this event was submitted. Include all three keys, even if one or more of their values are `0`. Ex: `{ "datasets": 7, "policies": 26, "systems": 9 }`.
         :param status_code: For events submitted as a result of making API server requests, the HTTP status code included in the response.
+        :param test: `True` if the event should be sent to the test event database. Default: 'False'.
         """
 
         assert event is not None, "An event name/type is required"
@@ -79,6 +81,7 @@ class AnalyticsEvent:
         self.flags = flags
         self.local_host = local_host
         self.status_code = status_code
+        self.test = test
 
         if self.command is not None or self.endpoint is not None:
             assert self.status_code is not None, "status_code must be provided"

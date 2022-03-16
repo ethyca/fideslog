@@ -86,10 +86,11 @@ class AnalyticsClient:
                 extra_data[key] = val
 
         payload["extra_data"] = extra_data
+        endpoint_path = "/test-events" if event.test else "/events"
 
         try:
             response = post(
-                f"{self.server_url}/events",
+                self.server_url + endpoint_path,
                 json=payload,
                 timeout=(3.05, 120),
             )

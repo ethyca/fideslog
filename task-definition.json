@@ -21,6 +21,18 @@
                 {
                     "name": "FIDESLOG__DATABASE_PASSWORD",
                     "value": "<snowflake_db_password>"
+                },
+                {
+                    "name": "FIDESLOG__TEST_DATABASE_ACCOUNT",
+                    "value": "<snowflake_account>"
+                },
+                {
+                    "name": "FIDESLOG__TEST_DATABASE_USER",
+                    "value": "<snowflake_db_user>"
+                },
+                {
+                    "name": "FIDESLOG__TEST_DATABASE_PASSWORD",
+                    "value": "<snowflake_db_password>"
                 }
             ],
             "image": "ethyca/fideslog:latest",

@@ -5,7 +5,6 @@ from typing import Generator
 
 import pytest
 
-from fideslog.api.models.analytics_event import AnalyticsEvent as APIAnalyticsEvent
 from fideslog.sdk.python.client import AnalyticsClient
 from fideslog.sdk.python.event import AnalyticsEvent
 
@@ -47,17 +46,8 @@ def test_rich_additional_payload() -> Generator:
         event_created_at=datetime.now(timezone.utc),
         command="test_command",
         docker=True,
-        status_code=0,
+        status_code=200,
         extra_data={"extra": "data"},
-        resource_counts={
-            "datasets": 0,
-            "policies": 0,
-            "systems": 0,
-        },
-        endpoint="https://www.example.com/path/string",
-        flags=["-f", "-y", "--test"],
-        error=None,
-        local_host=True,
     )
 
 
@@ -85,36 +75,5 @@ def test_rich_event_payload(test_rich_additional_payload: AnalyticsEvent) -> Non
 
     assert test_rich_additional_payload.command == "test_command"
     assert test_rich_additional_payload.docker
-    assert test_rich_additional_payload.status_code == 0
+    assert test_rich_additional_payload.status_code == 200
     assert isinstance(test_rich_additional_payload.extra_data, dict)
-
-
-def test_sdk_to_api_types(
-    test_create_client: AnalyticsClient,
-    test_rich_additional_payload: AnalyticsEvent,
-) -> None:
-    """
-    Validate that all sdk values align with their API equivalent
-    """
-
-    prepared_payload = test_create_client._prepare_payload(test_rich_additional_payload)
-    api_analytics_event = APIAnalyticsEvent.parse_obj(prepared_payload)
-
-    assert api_analytics_event
-
-
-def test_sdk_to_api_types_with_error(
-    test_create_client: AnalyticsClient,
-    test_rich_additional_payload: AnalyticsEvent,
-) -> None:
-    """
-    Validate that all sdk values align with their API equivalent
-    """
-
-    event = test_rich_additional_payload
-    event.status_code = 1
-    event.error = "Internal Server Error"
-
-    prepared_payload = test_create_client._prepare_payload(event)
-
-    assert APIAnalyticsEvent.parse_obj(prepared_payload)

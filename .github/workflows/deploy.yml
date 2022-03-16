@@ -1,0 +1,85 @@
+name: Deploy Fideslog
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  PyPI:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Twine
+        run: pip install twine
+
+      - name: Twine Upload
+        run: |
+          python setup.py sdist
+          twine upload dist/*
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+
+  Docker:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USER: ethycaci
+      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # This is required to properly tag images
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ env.DOCKER_USER }}
+          password: ${{ env.DOCKER_TOKEN }}
+
+      - name: Build Fideslog Image
+        run: make build
+
+      - name: Push Fideslog Image
+        run: make push
+
+  Deploy:
+    needs:
+      - PyPI
+      - Docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Add Secrets to Task Definition
+        run: |
+          sed -i "s%<snowflake_account>%$SNOWFLAKE_ACCOUNT%g" task-definition.json
+          sed -i "s%<snowflake_db_user>%$SNOWFLAKE_DB_USER%g" task-definition.json
+          sed -i "s%<snowflake_db_password>%$SNOWFLAKE_DB_PASSWORD%g" task-definition.json
+          sed -i "s%<cluster_name>%$ECS_CLUSTER_NAME%g" task-definition.json
+          sed -i "s%<role_arn>%$ROLE_ARN%g" task-definition.json
+        env:
+          SNOWFLAKE_ACCOUNT: ${{secrets.SNOWFLAKE_ACCOUNT}}
+          SNOWFLAKE_DB_USER: ${{secrets.SNOWFLAKE_DB_USER}}
+          SNOWFLAKE_DB_PASSWORD: ${{secrets.SNOWFLAKE_DB_PASSWORD}}
+          ECS_CLUSTER_NAME: ${{ secrets.ECS_CLUSTER_NAME }}
+          ROLE_ARN: ${{ secrets.ROLE_ARN }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy Amazon ECS Task Definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          service: ${{ secrets.ECS_SERVICE_NAME }}
+          cluster: ${{ secrets.ECS_CLUSTER_NAME }}
+          wait-for-service-stability: true

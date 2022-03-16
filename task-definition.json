@@ -1,0 +1,56 @@
+{
+    "containerDefinitions": [
+        {
+            "command": [
+                "/bin/sh -c \"uvicorn --host 0.0.0.0 --port 8080 fideslog.api.main:app\""
+            ],
+            "entryPoint": [
+                "sh",
+                "-c"
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "FIDESLOG__DATABASE_ACCOUNT",
+                    "value": "<snowflake_account>"
+                },
+                {
+                    "name": "FIDESLOG__DATABASE_USER",
+                    "value": "<snowflake_db_user>"
+                },
+                {
+                    "name": "FIDESLOG__DATABASE_PASSWORD",
+                    "value": "<snowflake_db_password>"
+                }
+            ],
+            "image": "ethyca/fideslog:latest",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "fideslog-production/ecs",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "name": "fideslog",
+            "portMappings": [
+                {
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "protocol": "tcp"
+                }
+            ]
+        }
+    ],
+    "cpu": "256",
+    "executionRoleArn": "<role_arn>",
+    "family": "<cluster_name>",
+    "memory": "512",
+    "networkMode": "awsvpc",
+    "runtimePlatform": {
+        "operatingSystemFamily": "LINUX"
+    },
+    "requiresCompatibilities": [
+        "FARGATE"
+    ]
+}

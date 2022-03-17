@@ -24,6 +24,7 @@ class AnalyticsClient:
         os: str,
         product_name: str,
         production_version: str,
+        developer_mode: bool = False,
         extra_data: Optional[Dict] = None,
     ) -> None:
         """
@@ -34,6 +35,7 @@ class AnalyticsClient:
         :param product_name: The name of the fides tool in which this client is integrated.
         :param production_version: The semantic version number of the fides tool in which this client is integrated.
         :param extra_data: Any additional information that should be included in all analytics events sent by this client. Any key/value pairs included here will be merged with key/value pairs included directly on specific `AnalyticsEvent`s, with the `AnalyticsEvent`'s `extra_data` taking priority.
+        :param developer_mode: `True` if this client exists for the purposes of local development. Default: `False`.
         """
 
         for arg in [client_id, os, product_name, production_version]:
@@ -45,6 +47,7 @@ class AnalyticsClient:
         self.os = os
         self.product_name = product_name
         self.production_version = production_version
+        self.developer_mode = developer_mode
         self.extra_data = extra_data
 
     async def send(self, event: AnalyticsEvent) -> None:
@@ -54,6 +57,7 @@ class AnalyticsClient:
 
         payload = {
             "client_id": self.client_id,
+            "developer": self.developer_mode,
             "docker": event.docker,
             "event": event.event,
             "event_created_at": event.event_created_at.isoformat(),

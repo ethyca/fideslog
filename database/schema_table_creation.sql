@@ -26,6 +26,7 @@ create table if not exists anonymous_usage_events (
   status_code number,
   error varchar,
   local_host boolean,
+  developer boolean,
   extra_data varchar,
   event_created_at timestamp_tz,
   event_loaded_at timestamp default sysdate() -- this is the utc timestamp

@@ -83,3 +83,21 @@ jobs:
           service: ${{ secrets.ECS_SERVICE_NAME }}
           cluster: ${{ secrets.ECS_CLUSTER_NAME }}
           wait-for-service-stability: true
+
+  Conda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Anaconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-activate-base: true
+          activate-environment: ""
+      - name: Conda Upload
+        shell: bash -l {0}
+        run: |
+          conda install conda-build
+          conda install anaconda-client
+          conda install conda-verify
+          conda build --output-folder ./conda-out/ ./conda/ -c conda-forge
+          anaconda -t "${{ secrets.CONDA_TOKEN }}" upload -u ethyca ./conda-out/noarch/fideslog*.bz2

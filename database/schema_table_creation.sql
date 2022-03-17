@@ -48,14 +48,46 @@ show tables in schema raw.fides;
 ---------------------------------------------------
 -- create the test schema and tables
 
--- instead of maintaining dualing ddl statements,
--- uses cloning to create copy of the structure and data in a test schema
+-- instead of maintaining dualing ddl statements, copy the
+-- production table structure. A second set of steps defines a
+-- multi-step routine to backup test data, copy the production table
+-- structure again, and restore test data to the recreated table
 
 -- This should result in only the schema being changed when passing test events. 
-
--- TODO: create a task to execute the clone on some regular cadence
 ---------------------------------------------------
 
-create or replace schema fides_test clone fides;
+-- initial schema and table creation
 
-show tables in schema raw.fides_test;
+create schema if not exists fides_test;
+use schema fides_test;
+
+create sequence if not exists event_id_seq start = 1 increment = 1;
+
+create or replace table raw.fides_test.anonymous_usage_events like raw.fides.anonymous_usage_events;
+
+create sequence if not exists mapping_id_seq start = 1 increment = 1;
+
+create or replace table raw.fides_test.cli_api_mapping like raw.fides.cli_api_mapping;
+
+
+-- attempt to recreate the test table with any prod updates
+
+-- -- create a backup of the test data
+create or replace table raw.fides_test.anonymous_usage_events_bak clone raw.fides_test.anonymous_usage_events;
+create or replace table raw.fides_test.cli_api_mapping_bak clone raw.fides_test.cli_api_mapping;
+
+-- -- re-create an empty copy of the prod data table
+create or replace table raw.fides_test.anonymous_usage_events like raw.fides.anonymous_usage_events;
+create or replace table raw.fides_test.cli_api_mapping like raw.fides.cli_api_mapping;
+
+
+-- -- attempt to reinsert the data from the test data backup to the replaced test table
+insert into raw.fides_test.anonymous_usage_events
+select * from raw.fides_test.anonymous_usage_events_bak;
+
+insert into raw.fides_test.cli_api_mapping
+select * from raw.fides_test.cli_api_mapping_bak;
+
+-- -- clean up backup table (if successfuly reinserted)
+drop table raw.fides_test.anonymous_usage_events_bak;
+drop table raw.fides_test.cli_api_mapping_bak;

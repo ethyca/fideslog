@@ -34,25 +34,8 @@ Fideslog is the [API server](./fideslog/api/), [developer SDK](./fideslog/sdk/),
 
 ### The Fideslog API
 
-The fideslog API server exposes the endpoints that handle interactions with analytics event data. The below documentation is automatically generated based on the OpenAPI specification, and includes request requirements and response details:
-
-<!--
-The ReDoc version of the documentation is embedded here
-because it doesn't allow users to easily make requests,
-and it looks prettier than the default documentation.
-
-Sandboxing the `iframe` (which can prevent requests from
-being made) is not done because it also prevents the
-content from loading, due to cross-origin request (CORS)
-policy restrictions.
--->
-<iframe
-    height="750px"
-    id="fideslogAPISpec"
-    src="https://fideslog.ethyca.com/redoc"
-    title="Fideslog API Specification"
-    width="100%"
-></iframe>
+<!-- The ReDoc version of the documentation is embedded here because it doesn't allow users to easily make requests, and it looks prettier than the default documentation. -->
+The fideslog API server exposes the endpoints that handle interactions with analytics event data. For a complete list of available endpoints, as well as request requirements and response details, see [the automatically generated API spec documentation](https://fideslog.ethyca.com/redoc).
 
 ### The Fideslog SDKs
 

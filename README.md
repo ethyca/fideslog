@@ -102,7 +102,9 @@ export SNOWFLAKE_DB_PASSWORD="--REDACTED--"
 
 ### Deployment
 
-The creation of a new tag in this repository will trigger [the deployment workflow](./.github/workflows/deploy.yml) via GitHub Actions. In general, tags are only created as part of creating a new release. All releases should include a changelog.
+The creation of a new tag in this repository will trigger [the deployment workflow](./.github/workflows/deploy.yml) via GitHub Actions.
+
+In general, tags are only created as part of creating a new release. All releases must include a changelog. Any breaking changes to the API and/or SDK libraries will result in a new major version release/tag. To ensure compatibility, any pull requests resulting in breaking API changes must also include updates to all SDK libraries.
 
 ## Contributing
 

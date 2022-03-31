@@ -9,23 +9,6 @@
 
 ![Fideslog banner](./assets/fideslog.png "Fideslog banner")
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Usage](#usage)
-    - [The Fideslog API](#the-fideslog-api)
-    - [The Fideslog SDKs](#the-fideslog-sdks)
-- [Development](#development)
-    - [Installation](#installation)
-    - [Configuration](#configuration)
-        - [Options](#options)
-        - [Example Configuration File](#example-configuration-file)
-        - [Enabling Database Access for Local Development](#enabling-database-access-for-local-development)
-    - [Deployment](#deployment)
-- [Contributing](#contributing)
-    - [Support](#support)
-- [License](#license)
-
 ## Overview
 
 Fideslog is the [API server](./fideslog/api/), [developer SDK](./fideslog/sdk/), and [supporting infrastructure](./.github/workflows/deploy.yml) intended to provide Ethyca with an understanding of user interactions with fides tooling. Analytics are always fully anonymized, and are only used either as a factor in Ethyca's internal product roadmap determination process, or as insight into product adoption. Information collected by fideslog is received via HTTPs request, stored in a secure database, and never shared with third parties for any reason.

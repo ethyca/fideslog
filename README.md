@@ -26,6 +26,16 @@ The official fideslog SDK libraries are the recommended means by which to automa
 
 - **Python** ([README](./fideslog/sdk/python/README.md)): Available via [PyPI](https://pypi.org/project/fideslog/) and [Conda](https://anaconda.org/ethyca/fideslog).
 
+### Guidelines for Establishing User Consent
+
+It is the opinion of Ethyca that analytics data can only be collected after receiving explicit consent from the user. While the specific workflow to establish user consent will be unique to each application, the process must generally adhere to the following principles. Each SDK library exposes convenience functions, methods, and/or constants to assist with adherence to these guidelines.
+
+1. Alert the user to Ethyca's request for analytics data as soon as possible
+1. Describe the intended usage of the collected data clearly, completely, and concisely
+1. Guarantee that all analytics data is always fully anonymized
+1. Provide a simple and accessible mechanism for a user to opt-out of data collection
+1. Do not repeatedly ask for consent; store the user's decision as state within the application or its configuration
+
 ## Development
 
 ### Installation

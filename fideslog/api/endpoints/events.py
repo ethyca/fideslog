@@ -1,8 +1,7 @@
 from logging import getLogger
-from typing import Dict
 
-from fastapi import APIRouter, Depends, status
-from pydantic import ValidationError
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 
 from fideslog.api.database.data_access import create_event
@@ -19,12 +18,18 @@ router = APIRouter(tags=["Events"], prefix="/events")
     response_model=AnalyticsEvent,
     status_code=status.HTTP_201_CREATED,
 )
-async def create(event: Dict, database: Session = Depends(get_db)) -> AnalyticsEvent:
+async def create(
+    event: AnalyticsEvent,
+    database: Session = Depends(get_db),
+) -> AnalyticsEvent:
     """Create a new analytics event."""
     try:
-        event_obj = AnalyticsEvent.parse_obj(event)
-        create_event(database=database, event=event_obj)
-    except ValidationError as e:
-        log.error(e.__str__())
-
-    return event_obj
+        create_event(database=database, event=event)
+    except DBAPIError as err:
+        log.error("Failed to create event: %s", err, exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create event",
+        ) from err
+    else:
+        return event

@@ -4,7 +4,7 @@ from setuptools import setup
 import versioneer
 
 here = pathlib.Path(__file__).parent.resolve()
-long_description = open("README.md").read()
+long_description = open("./fideslog/sdk/python/README.md").read()
 
 # Requirements
 install_requires = (

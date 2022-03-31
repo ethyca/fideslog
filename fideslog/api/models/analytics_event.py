@@ -14,36 +14,36 @@ class AnalyticsEvent(BaseModel):
 
     client_id: str = Field(
         ...,
-        description="The fully anonymized, globally unique identifier for the event sender",
+        description="The fully anonymized, globally unique identifier for the event sender.",
     )
     command: Optional[str] = Field(
         None,
-        description="For events submitted as a result of running CLI commands, the name of the command that was submitted",
+        description="For events submitted as a result of running CLI commands, the name of the command that was submitted.",
     )
     developer: bool = Field(
         False,
-        description="`true` if the command was submitted during local development of a fides tool, otherwise `false`",
+        description="`true` if the command was submitted during local development of a fides tool, otherwise `false`.",
     )
     docker: bool = Field(
         False,
-        description="`true` if the command was submitted within a Docker container, otherwise `false`",
+        description="`true` if the command was submitted within a Docker container, otherwise `false`.",
     )
     endpoint: Optional[str] = Field(
         None,
-        description="For events submitted as a result of making API server requests, the API endpoint path that was requested",
+        description="For events submitted as a result of making API server requests, the API endpoint path that was requested.",
     )
     error: Optional[str] = Field(
         None,
-        description="For events submitted as a result of running CLI commands that exit with a non-0 status code, or events submitted as a result of API server requests that respond with a non-2xx status code, the error **type**, without specific error details",
+        description="For events submitted as a result of running CLI commands that exit with a non-0 status code, or events submitted as a result of API server requests that respond with a non-2xx status code, the error **type**, without specific error details.",
     )
-    event: str = Field(..., description="The name/type of event submitted")
+    event: str = Field(..., description="The name/type of event submitted.")
     event_created_at: datetime = Field(
         ...,
         description="The UTC timestamp when the event occurred, in ISO 8601 format. Must include the UTC timezone, and represent a datetime in the past.",
     )
     extra_data: Optional[Dict] = Field(
         None,
-        description="A JSON object containing any additional data desired",
+        description="A JSON object containing any additional data desired.",
     )
     flags: Optional[List[str]] = Field(
         None,
@@ -51,24 +51,24 @@ class AnalyticsEvent(BaseModel):
     )
     local_host: bool = Field(
         False,
-        description="For events submitted as a result of making API server requests, `true` if the API server is running on the user's local host, otherwise `false`",
+        description="For events submitted as a result of making API server requests, `true` if the API server is running on the user's local host, otherwise `false`.",
     )
     os: str = Field(
         ...,
-        description="The operating system in use when the event was submitted",
+        description="The operating system in use when the event was submitted.",
     )
     product_name: str = Field(
         ...,
-        description="The fides product from which the analytics event was sent",
+        description="The fides product from which the analytics event was sent.",
     )
     production_version: str = Field(
         ...,
-        description="The fides product's version number",
+        description="The fides product's version number.",
     )
     resource_counts: Optional[ManifestFileCounts]
     status_code: Optional[int] = Field(
         None,
-        description="For events submitted as a result of making API server requests, the HTTP status code included in the response",
+        description="For events submitted as a result of making API server requests, the HTTP status code included in the response.",
     )
 
     @validator("client_id")

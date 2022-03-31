@@ -9,14 +9,17 @@ from fideslog.api.models.validation import check_in_the_past, check_not_an_email
 class CLIAPIMapping(BaseModel):
     """The model for CLI/API mappings."""
 
-    id: Optional[str] = Field(None, description="The unique identifier for the mapping")
+    id: Optional[str] = Field(
+        None,
+        description="The unique identifier for the mapping.",
+    )
     api_id: str = Field(
         ...,
-        description="The fully anonymized, globally unique identifier for an API server instance",
+        description="The fully anonymized, globally unique identifier for an API server instance.",
     )
     cli_id: str = Field(
         ...,
-        description="The fully anonymized, globally unique identifier for a CLI instance",
+        description="The fully anonymized, globally unique identifier for a CLI instance.",
     )
     created_at: Optional[datetime] = Field(
         None,

@@ -1,167 +1,171 @@
-# fideslog
-Privacy respecting usage analytics collection.
+# Fideslog: Privacy Respecting Usage Analytics
+
+[![Latest Release Version][release-image]][release-url]
+[![Latest Deployment][deploy-image]][actions-url]
+[![License][license-image]][license-url]
+[![Code style: black][black-image]][black-url]
+[![Checked with mypy][mypy-image]][mypy-url]
+[![Twitter][twitter-image]][twitter-url]
+
+![Fideslog banner](./assets/fideslog.png "Fideslog banner")
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Usage](#usage)
+    - [The Fideslog API](#the-fideslog-api)
+    - [The Fideslog SDKs](#the-fideslog-sdks)
+- [Development](#development)
+    - [Installation](#installation)
+    - [Configuration](#configuration)
+        - [Options](#options)
+        - [Example Configuration File](#example-configuration-file)
+        - [Enabling Database Access for Local Development](#enabling-database-access-for-local-development)
+    - [Deployment](#deployment)
+- [Contributing](#contributing)
+    - [Support](#support)
+- [License](#license)
+
+## Overview
+
+Fideslog is the [API server](./fideslog/api/), [developer SDK](./fideslog/sdk/), and [supporting infrastructure](./.github/workflows/deploy.yml) intended to provide Ethyca with an understanding of user interactions with fides tooling. Analytics are always fully anonymized, and are only used either as a factor in Ethyca's internal product roadmap determination process, or as insight into product adoption. Information collected by fideslog is received via HTTPs request, stored in a secure database, and never shared with third parties for any reason.
+
+## Usage
+
+### The Fideslog API
+
+The fideslog API server exposes the endpoints that handle interactions with analytics event data. The below documentation is automatically generated based on the OpenAPI specification, and includes request requirements and response details:
+
+<!--
+The ReDoc version of the documentation is embedded here
+because it doesn't allow users to easily make requests,
+and it looks prettier than the default documentation.
+
+Sandboxing the `iframe` (which can prevent requests from
+being made) is not done because it also prevents the
+content from loading, due to cross-origin request (CORS)
+policy restrictions.
+-->
+<iframe
+    height="750px"
+    id="fideslogAPISpec"
+    src="https://fideslog.ethyca.com/redoc"
+    title="Fideslog API Specification"
+    width="100%"
+></iframe>
+
+### The Fideslog SDKs
+
+The official fideslog SDK libraries are the recommended means by which to automate the submission of analytics data to the fideslog API server from any application. For language-specific documentation, best practice recommendations, and code examples, see the dedicated README for each library:
+
+- **Python** ([README](./fideslog/sdk/python/README.md)): Available via [PyPI](https://pypi.org/project/fideslog/) and [Conda](https://anaconda.org/ethyca/fideslog).
 
 ## Development
 
-The following environment variables must be set in order to successfully run the API server locally:
+### Installation
 
-```
-export SNOWFLAKE_ACCOUNT=[see 1Password]
-export SNOWFLAKE_DB_USER=[see 1Password]
-export SNOWFLAKE_DB_PASSWORD=[see 1Password]
-```
+The simplest way to run the API server locally is via [Docker](https://www.docker.com/get-started/) and Make. Ensure that both tools are installed, and clone this repository. Then, from the repository's root directory, run the following command:
 
-## Sample Working Implementation
-_(Working from a local installation)_
-
-First, start up a local api server
-```
-$ make api
+```sh
+make api
 ```
 
-Next create a virtual environment, install fideslog, and open up a python env
-```bash
-$ python3 -m venv env && source env/bin/activate
-$ pip install -e .
-$ python
-```
+By default, this will start an instance of the fideslog API server on `localhost:8080`, and attach to the container. Log output will be written to `stdout` within the container instance. Once the logs begin to show repeated [successful] requests to the `/health` endpoint, the API server is running and healthy.
 
-The following below should work as is (provided you have a populated `fideslog.toml`/ environment variables)
-```python
-import platform
-from importlib.metadata import version
-import asyncio
-from datetime import datetime, timezone
-from fideslog.sdk.python import event, client
+| :memo: Note | The API server will error when using only the provided [`fideslog.toml` configuration file](./fideslog.toml) and no additional environment variables. See [Enabling Database Access for Local Development](#enabling-database-access-for-local-development) below for configuration changes necessary to ensure a successful connection to the supporting database. |
+|:-----------:|:---|
 
-product_name = "fideslog"
+### Configuration
 
-fideslog_client = client.AnalyticsClient(
-    client_id="test_client_id",
-    os=platform.system(),
-    product_name=product_name,
-    production_version=version(product_name),
-)
+The recommended way to configure the fideslog API server is with a `fideslog.toml` configuration file, but local environment variables may be used to override these values. The fideslog API server will look for a configuration file in the following locations (ordered by priority):
 
-fideslog_event = event.AnalyticsEvent(
-    event="test_event",
-    event_created_at=datetime.now(timezone.utc),
-)
+1. A path defined by a `FIDESLOG__CONFIG_PATH` environment variable
+1. The current working directory
+1. The parent directory of the current working directory
+1. The user's `$HOME` directory
 
-asyncio.run(fideslog_client.send(event=fideslog_event))
-```
+#### Options
 
-Example structure of a minimum working payload
-```json
-{
-    "client_id": "test_client_id",
-    "event": "test_event",
-    "event_created_at": "2022-02-21 19:56:11Z",
-    "os": "darwin",
-    "product_name": "fideslog",
-    "production_version": "1.2.3"
-}
-```
+|     Name     | Configuration File Section |   Environment Variable Name    |  Type   | Required |     Default      | Description |
+|:------------:|:--------------------------:|:------------------------------:|:-------:|:--------:|:----------------:|-------------|
+|   `account`  |        `[database]`        |  `FIDESLOG__DATABASE_ACCOUNT`  | String  |    Yes   |                  | The Snowflake account in which the fideslog database can be found. Ethyca employees may access this value internally. |
+|  `database`  |        `[database]`        |  `FIDESLOG__DATABASE_DATABASE` | String  |    No    |      `"raw"`     | The name of the Snowflake database in which analytics events should be stored. |
+|  `db_schema` |        `[database]`        | `FIDESLOG__DATABASE_DB_SCHEMA` | String  |    No    |     `"fides"`    | The Snowflake database schema to target. |
+|  `password`  |        `[database]`        |  `FIDESLOG__DATABASE_PASSWORD` | String  |    Yes   |                  | The password associated with the Snowflake account for `user`. Ethyca employees may access this value internally. |
+|    `role`    |        `[database]`        |    `FIDESLOG__DATABASE_ROLE`   | String  |    No    | `"event_writer"` | The permissions with which to access the specified Snowflake `database`.  |
+|    `user`    |        `[database]`        |    `FIDESLOG__DATABASE_USER`   | String  |    Yes   |                  | The ID of the user with which to authenticate to Snowflake. Ethyca employees may access this value internally. |
+|  `warehouse` |        `[database]`        | `FIDESLOG__DATABASE_WAREHOUSE` | String  |    No    |   `"fides_log"`  | The Snowflake data warehouse in which the fideslog database can be found. |
+|    `host`    |         `[server]`         |     `FIDESLOG__SERVER_HOST`    | String  |    No    |    `"0.0.0.0"`   | The hostname on which the API server should respond. |
+| `hot_reload` |         `[server]`         |  `FIDESLOG__SERVER_HOT_RELOAD` | Boolean |    No    |      `False`     | Whether or not to automatically apply code changes during local development. |
+|    `port`    |         `[server]`         |     `FIDESLOG__SERVER_PORT`    | Integer |    No    |      `8080`      | The port number on which the API server should listen. |
 
+#### Example Configuration File
 
-## Example of an opt-out routine
+| :warning: WARNING | Never commit changes to the included [`fidesctl.toml` file](./fideslog.toml) to version control! |
+|:-----------------:|:-------------------------------------------------------------------------------------------------|
 
-All opt-out functionality will reside in the fides family tool implementing `fideslog`
-
-The current copy to be used is as follows:
-> Fides needs your permission to send Ethyca a limited set of anonymous usage statistics.
-> Ethyca will only use this anonymous usage data to improve the product experience, and will never collect sensitive or personal data.
->
-> ***
-> Don't believe us? Check out the open-source code here:
->     https://github.com/ethyca/fideslog
-> ***
->
-> To opt-out of all telemetry, press "n". To continue with telemetry, press any other key.
-
-
-### Sample storing of values for fideslog
-All values are currently stored in the fides tool configuration toml file, as below:
 ```toml
-[cli]
-analytics_id = "some_generated_anonymous_unique_id"
+# fidesctl.toml
 
-[user]
-analytics_opt_out = false
+[database]
+account = "--REDACTED--"
+database = "raw"
+db_schema = "fides"
+password = "--REDACTED--"
+role = "event_writer"
+user = "--REDACTED--"
+warehouse = "fides_log"
+
+[server]
+host = "localhost"
+hot_reload = true
+port = 8080
 ```
 
+#### Enabling Database Access for Local Development
 
-### Generating a unique id
+The `account`, `user`, and `password` configuration options mentioned above must be populated for the fideslog API server to successfully connect to the supporting database. Ethyca employees may access these values internally. For convenience, the included [`fideslog.env` file](./fideslog.env) will automate the process of populating the required values as environment variables, as long as the user's local environment includes the following:
 
-Using Pydantic defaults will create a unique ID if one doesn't exist:
+```sh
+# Add to .zshrc, .bash_profile, etc.
 
-```python
-from fideslog.sdk.python.utils import generate_client_id, FIDESCTL_CLI
-
-class CLISettings(FidesSettings):
-    """Class used to store values from the 'cli' section of the config."""
-
-    local_mode: bool = False
-    server_url: str = "http://localhost:8080"
-    analytics_id: str = generate_client_id(FIDESCTL_CLI)
-
-    class Config:
-        env_prefix = "FIDESCTL__CLI__"
+export SNOWFLAKE_ACCOUNT="--REDACTED--"
+export SNOWFLAKE_DB_USER="--REDACTED--"
+export SNOWFLAKE_DB_PASSWORD="--REDACTED--"
 ```
 
+### Deployment
 
-### Gaining consent in a conspicuous way
+The creation of a new tag in this repository will trigger [the deployment workflow](./.github/workflows/deploy.yml) via GitHub Actions. In general, tags are only created as part of creating a new release. All releases should include a changelog.
 
+## Contributing
 
-A user should be asked only once if they would like to provide anonymous analytics to Ethyca.
+We welcome and encourage all types of contributions and improvements!  Please see our [contribution guide](https://ethyca.github.io/fides/development/overview/) to opening issues for bugs, new features, and security or experience enhancements.
 
-Integrating with an initial workflow (i.e. `fidesctl init`) is a great way to capture and generate the required values up front.
+Read about the [Fides community](https://ethyca.github.io/fides/community/hints_tips/) or dive into the [development guides](https://ethyca.github.io/fides/development/overview) for information about contributions, documentation, code style, testing and more. Ethyca is committed to fostering a safe and collaborative environment, such that all interactions are governed by the [Fides Code of Conduct](https://ethyca.github.io/fides/community/code_of_conduct/).
 
-Additionally, having a catch in the top-most level click command can provide an alternative method to ask only once for permission.
+### Support
 
+Join the conversation on [Slack](https://fid.es/join-slack) and [Twitter](https://twitter.com/ethyca)!
 
-### Implementing the sdk
+## License
 
-There are two items required for successfully sending an event to `fideslog`: `AnalyticsClient` & `AnalyticsEvent`
+Fideslog and the fides ecosystem of tools are licensed under the [Apache Software License Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+Fides tools are built on [fideslang](https://github.com/ethyca/privacy-taxonomy), the fides language specification, which is licensed under [CC by 4](https://github.com/ethyca/privacy-taxonomy/blob/main/LICENSE).
 
-`AnalyticsClient` establishes some (relatively) constant properties that are required upon instantiation.
-
-`AnalyticsEvent` is much more variable in makeup and can contain a number of extra properties for tacking purposes. Some of these will depend on the fides ecosystem being tracked (`endpoint` should align with `api` events for instance) with only the `event` and `event_created_at` properties required to send an event.
-
-Example function of sending an event:
-```python
-def opt_out_anonymous_usage(
-    analytics_values: Optional[Dict] = None, config_path: str = ""
-) -> bool:
-    """
-    This function handles the verbiage and response of opting
-    in or out of anonymous usage analytic tracking.
-
-    If opting out, return True to set the opt out config.
-    """
-    opt_in = input(OPT_OUT_COPY)
-    if analytics_values:
-        analytics_values["user"]["analytics_opt_out"] = bool(opt_in.lower() == "n")
-        update_config_file(analytics_values)
-    return bool(opt_in.lower() == "n")
-```
+Fides is created and sponsored by [Ethyca](https://ethyca.com/): a developer tools company building the trust infrastructure of the internet. If you have questions or need assistance getting started, let us know at fides@ethyca.com!
 
 
-Click allows for embedding a call to a function at higher levels of grouped commands. This will allow for consistent capturing of event data without having to touch every single implemented command. For nested groups however, you will likely be required to have function calls at the lower-tier group level as well. (i.e. `fidesctl export organization` will require an event on the `export` function to return the invoked subcommand)
 
-Example at top-level cli group:
-```python
-if not ctx.obj["CONFIG"].user.analytics_opt_out:
-    send_anonymous_event(
-        command=ctx.invoked_subcommand, client_id=ctx.obj["CONFIG"].cli.analytics_id
-    )
-```
-
-Example at nested cli group:
-```python
-if not ctx.obj["CONFIG"].user.analytics_opt_out:
-    command = " ".join(filter(None, [ctx.info_name, ctx.invoked_subcommand]))
-    send_anonymous_event(
-        command=command, client_id=ctx.obj["CONFIG"].cli.analytics_id
-    )
-```
+[release-image]:https://img.shields.io/github/v/release/ethyca/fideslog
+[release-url]: https://github.com/ethyca/fideslog/releases
+[deploy-image]: https://github.com/ethyca/fideslog/actions/workflows/deploy.yml/badge.svg
+[actions-url]: https://github.com/ethyca/fideslog/actions
+[license-image]: https://img.shields.io/:license-Apache%202-blue.svg
+[license-url]: https://www.apache.org/licenses/LICENSE-2.0.txt
+[black-image]: https://img.shields.io/badge/code%20style-black-000000.svg
+[black-url]: https://github.com/psf/black/
+[mypy-image]: http://www.mypy-lang.org/static/mypy_badge.svg
+[mypy-url]: http://mypy-lang.org/
+[twitter-image]: https://img.shields.io/twitter/follow/ethyca?style=social
+[twitter-url]: https://twitter.com/ethyca

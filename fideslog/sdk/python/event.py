@@ -65,7 +65,7 @@ class AnalyticsEvent:
                     val, int
                 ), f'The value of resource_counts["{key}"] must be an integer'
 
-            self.resource_counts = dumps(resource_counts)
+            self.resource_counts = resource_counts
 
         self.endpoint = None
         if endpoint is not None:

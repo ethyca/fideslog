@@ -20,6 +20,10 @@ class AnalyticsEvent(BaseModel):
         None,
         description="For events submitted as a result of running CLI commands, the name of the command that was submitted",
     )
+    developer: bool = Field(
+        False,
+        description="`true` if the command was submitted during local development of a fides tool, otherwise `false`",
+    )
     docker: bool = Field(
         False,
         description="`true` if the command was submitted within a Docker container, otherwise `false`",

@@ -9,35 +9,33 @@ show schemas in database raw;
 create schema if not exists fides;
 use schema fides;
 
+create sequence if not exists event_id_seq start = 1 increment = 1;
+
 create table if not exists anonymous_usage_events (
-  event_id number autoincrement start 1 increment 1,
+  event_id integer,
   client_id varchar,
   product_name varchar,
   production_version varchar,
   os varchar,
   docker boolean,
-  resource_counts object,
+  resource_counts varchar,
   event varchar,
   command varchar,
-  flags array,
+  flags varchar,
   endpoint varchar,
   status_code number,
   error varchar,
   local_host boolean,
-  extra_data object,
+  developer boolean,
+  extra_data varchar,
   event_created_at timestamp_tz,
   event_loaded_at timestamp default sysdate() -- this is the utc timestamp
 );
 
-create table if not exists api_keys (
-  api_key varchar,
-  client_id varchar,
-  created_at timestamp_tz,
-  expired_at timestamp_tz
-);
+create sequence if not exists mapping_id_seq start = 1 increment = 1;
 
 create table if not exists cli_api_mapping (
-  id number autoincrement start 1 increment 1,
+  id integer,
   api_id varchar,
   cli_id varchar,
   created_at timestamp_tz,

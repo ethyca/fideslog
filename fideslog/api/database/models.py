@@ -34,6 +34,7 @@ class AnalyticsEvent(Base):
         "PRODUCTION_VERSION", String, default=None, nullable=True
     )
     os = Column("OS", String, default=None, nullable=True)
+    developer = Column("DEVELOPER", Boolean, default=False, nullable=True)
     docker = Column("DOCKER", Boolean, default=None, nullable=True)
     resource_counts = Column("RESOURCE_COUNTS", String, default=None, nullable=True)
     event = Column("EVENT", String, default=None, nullable=True)

@@ -24,6 +24,7 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
             AnalyticsEventORM(
                 client_id=event.client_id,
                 command=event.command,
+                developer=event.developer,
                 docker=event.docker,
                 endpoint=event.endpoint,
                 error=event.error,

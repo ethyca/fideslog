@@ -1,4 +1,4 @@
-# Fideslog: Privacy Respecting Usage Analytics
+# Fideslog: Privacy-Respecting Usage Analytics
 
 [![Latest Release Version][release-image]][release-url]
 [![Latest Deployment][deploy-image]][actions-url]

@@ -75,7 +75,7 @@ class AnalyticsEvent:
         self.command = command
         self.docker = docker
         self.error = error
-        self.extra_data = extra_data
+        self.extra_data = extra_data or {}
         self.flags = flags
         self.local_host = local_host
         self.status_code = status_code

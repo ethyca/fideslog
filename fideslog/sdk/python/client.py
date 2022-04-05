@@ -48,7 +48,7 @@ class AnalyticsClient:
         self.product_name = product_name
         self.production_version = production_version
         self.developer_mode = developer_mode
-        self.extra_data = extra_data
+        self.extra_data = extra_data or {}
 
     async def send(self, event: AnalyticsEvent) -> None:
         """
@@ -61,6 +61,7 @@ class AnalyticsClient:
             "docker": event.docker,
             "event": event.event,
             "event_created_at": event.event_created_at.isoformat(),
+            "extra_data": self.extra_data | event.extra_data,
             "local_host": event.local_host,
             "os": self.os,
             "product_name": self.product_name,
@@ -80,16 +81,6 @@ class AnalyticsClient:
         for extra in payload_extras:
             if event_dict[extra]:
                 payload[extra] = event_dict[extra]
-
-        extra_data: Dict = {}
-        if self.extra_data is not None:
-            extra_data = self.extra_data
-
-        if event.extra_data is not None:
-            for key, val in event.extra_data.items():
-                extra_data[key] = val
-
-        payload["extra_data"] = extra_data
 
         try:
             response = post(

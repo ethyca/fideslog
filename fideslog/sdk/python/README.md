@@ -215,8 +215,8 @@ cli_command_event = AnalyticsEvent(
 
 try:
     client.send(cli_command_event)
-except AnalyticsException as err:                               # It is not recommended to raise this exception,
-	print(f"Failed to send analytics event: {err['message']}")  # to prevent interrupting the application workflow.
+except AnalyticsException as err:                   # It is not recommended to raise this exception,
+	print(f"Failed to send analytics event: {err}") # to prevent interrupting the application workflow.
 else:
 	print("Analytics event sent")
 ```

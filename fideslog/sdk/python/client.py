@@ -1,10 +1,9 @@
 # pylint: disable=too-many-arguments
 
+from asyncio import run
 from typing import Dict, Optional
-from urllib.error import HTTPError
 
-from requests import post
-from requests.exceptions import RequestException
+from aiohttp import ClientResponseError, ClientSession, ClientTimeout
 
 from fideslog.sdk.python.event import AnalyticsEvent
 from fideslog.sdk.python.exceptions import AnalyticsException
@@ -50,9 +49,17 @@ class AnalyticsClient:
         self.developer_mode = developer_mode
         self.extra_data = extra_data or {}
 
-    async def send(self, event: AnalyticsEvent) -> None:
+    def send(self, event: AnalyticsEvent) -> None:
         """
         Record a new event.
+        """
+
+        run(self.__send(event))
+
+    def __get_request_payload(self, event: AnalyticsEvent) -> Dict:
+        """
+        Construct the `POST` body required for a new `AnalyticsEvent` to
+        be recorded via the API server.
         """
 
         payload = {
@@ -82,18 +89,26 @@ class AnalyticsClient:
             if event_dict[extra]:
                 payload[extra] = event_dict[extra]
 
-        try:
-            response = post(
-                f"{self.server_url}/events",
-                json=payload,
-                timeout=(3.05, 120),
-            )
-            try:
-                response.raise_for_status()
-            except HTTPError as error:
-                raise AnalyticsException(
-                    error.reason, error.args, status_code=error.code
-                ) from error
+        return payload
 
-        except RequestException as exc:
-            raise AnalyticsException(exc.strerror, exc.args) from exc
+    async def __send(self, event: AnalyticsEvent) -> None:
+        """
+        Asynchronously record a new `AnalyticsEvent`.
+        """
+
+        async with ClientSession(
+            self.server_url,
+            timeout=ClientTimeout(connect=3.05, total=120),
+        ) as session:
+            async with session.post(
+                "/events",
+                json=self.__get_request_payload(event),
+            ) as resp:
+                try:
+                    resp.raise_for_status()
+                except ClientResponseError as err:
+                    raise AnalyticsException(
+                        err.message,
+                        err.args,
+                        status_code=err.status,
+                    ) from err

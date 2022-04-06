@@ -68,7 +68,7 @@ class AnalyticsClient:
             "docker": event.docker,
             "event": event.event,
             "event_created_at": event.event_created_at.isoformat(),
-            "extra_data": self.extra_data | event.extra_data,
+            "extra_data": {**self.extra_data, **event.extra_data},
             "local_host": event.local_host,
             "os": self.os,
             "product_name": self.product_name,

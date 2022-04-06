@@ -20,7 +20,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ethyca/fideslog",
-    python_requires=">=3.8, <4",
+    python_requires=">=3.9, <4",
     package_dir={"fideslog": "fideslog"},
     packages=["fideslog.sdk.python"],
     author="Ethyca, Inc.",
@@ -30,8 +30,6 @@ setup(
     dev_requires=dev_requires,
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Topic :: Software Development :: Libraries",
     ],

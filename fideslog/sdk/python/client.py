@@ -1,10 +1,9 @@
 # pylint: disable=too-many-arguments
 
+from asyncio import run
 from typing import Dict, Optional
-from urllib.error import HTTPError
 
-from requests import post
-from requests.exceptions import RequestException
+from aiohttp import ClientResponseError, ClientSession, ClientTimeout
 
 from fideslog.sdk.python.event import AnalyticsEvent
 from fideslog.sdk.python.exceptions import AnalyticsException
@@ -48,11 +47,19 @@ class AnalyticsClient:
         self.product_name = product_name
         self.production_version = production_version
         self.developer_mode = developer_mode
-        self.extra_data = extra_data
+        self.extra_data = extra_data or {}
 
-    async def send(self, event: AnalyticsEvent) -> None:
+    def send(self, event: AnalyticsEvent) -> None:
         """
         Record a new event.
+        """
+
+        run(self.__send(event))
+
+    def __get_request_payload(self, event: AnalyticsEvent) -> Dict:
+        """
+        Construct the `POST` body required for a new `AnalyticsEvent` to
+        be recorded via the API server.
         """
 
         payload = {
@@ -61,6 +68,7 @@ class AnalyticsClient:
             "docker": event.docker,
             "event": event.event,
             "event_created_at": event.event_created_at.isoformat(),
+            "extra_data": {**self.extra_data, **event.extra_data},
             "local_host": event.local_host,
             "os": self.os,
             "product_name": self.product_name,
@@ -81,28 +89,26 @@ class AnalyticsClient:
             if event_dict[extra]:
                 payload[extra] = event_dict[extra]
 
-        extra_data: Dict = {}
-        if self.extra_data is not None:
-            extra_data = self.extra_data
+        return payload
 
-        if event.extra_data is not None:
-            for key, val in event.extra_data.items():
-                extra_data[key] = val
+    async def __send(self, event: AnalyticsEvent) -> None:
+        """
+        Asynchronously record a new `AnalyticsEvent`.
+        """
 
-        payload["extra_data"] = extra_data
-
-        try:
-            response = post(
-                f"{self.server_url}/events",
-                json=payload,
-                timeout=(3.05, 120),
-            )
-            try:
-                response.raise_for_status()
-            except HTTPError as error:
-                raise AnalyticsException(
-                    error.reason, error.args, status_code=error.code
-                ) from error
-
-        except RequestException as exc:
-            raise AnalyticsException(exc.strerror, exc.args) from exc
+        async with ClientSession(
+            self.server_url,
+            timeout=ClientTimeout(connect=3.05, total=120),
+        ) as session:
+            async with session.post(
+                "/events",
+                json=self.__get_request_payload(event),
+            ) as resp:
+                try:
+                    resp.raise_for_status()
+                except ClientResponseError as err:
+                    raise AnalyticsException(
+                        err.message,
+                        err.args,
+                        status_code=err.status,
+                    ) from err

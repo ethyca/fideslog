@@ -57,7 +57,7 @@ def test_create_client_attribute(test_create_client: AnalyticsClient) -> None:
     """
 
     assert test_create_client.client_id == "fake_client_id"
-    assert test_create_client.extra_data is None
+    assert test_create_client.extra_data == {}
 
 
 def test_basic_event_payload(test_basic_additional_payload: AnalyticsEvent) -> None:

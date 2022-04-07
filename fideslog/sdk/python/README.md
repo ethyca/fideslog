@@ -32,7 +32,7 @@ conda install fideslog
 | :memo: Note | See Ethyca's [Guidelines for Establishing User Consent](../../../README.md#guidelines-for-establishing-user-consent) for a list of requirements for collecting analytics. |
 |:-----------:|:---|
 
-It is recommended to display the content of the [`OPT_OUT_COPY` constant](https://github.com/ethyca/fideslog/blob/3dcebe735a64286d8638435a55094fbd020c153b/fideslog/sdk/python/utils.py#L9-L19) as a means of prompting users to opt in or out of analytics data collection **as early as possible within the usage workflow of the application**.
+It is recommended to display the content of the `OPT_OUT_COPY` constant exposed by [the `utils.py` file](./utils.py) as a means of informing users of the application's intent to collect analytics data **as early as possible within the usage workflow of the application**. If the application uses a CLI interface, the content of the `OPT_OUT_PROMPT` constant (also exposed by [the `utils.py` file](./utils.py)) can be displayed to collect explicit consent.
 
 If the application is stateful, store the user's response within the top-level state-maintaining mechanism.
 

@@ -59,6 +59,7 @@ from fideslog.sdk.python.utils import generate_client_id
 
 CLIENT_ID: str = generate_client_id(b"a_fides_tool")  # utils.py also exposes some helpful bytestrings
 
+
 def get_version() -> str:
     return "1.0.0"
 
@@ -96,6 +97,7 @@ from fideslog.sdk.python.event import AnalyticsEvent
 from fideslog.sdk.python.utils import generate_client_id
 
 CLIENT_ID: str = generate_client_id(b"a_fides_tool")  # utils.py exposes some helpful bytestrings
+
 
 def get_version() -> str:
     return "1.0.0"
@@ -149,7 +151,7 @@ client.send(cli_command_event)
 
 ### Handling Exceptions
 
-The SDK exposes an `AnalyticsException` type from [the `exceptions.py` file](./exceptions.py). In the event that an exception is raised by this library, it will always be of the type `AnalyticsException`. In general, it is not recommended to raise these exceptions within application code, to prevent breaking the application and/or user workflow; these exceptions are intended to be written to log output, and otherwise ignored.
+The SDK exposes an `AnalyticsError` type from [the `exceptions.py` file](./exceptions.py). In the event that an exception is raised by this library, it will either be a literal `AnalyticsError`, or inherit from `AnalyticsError`. In general, it is not recommended to raise these exceptions within application code, to prevent breaking the application and/or user workflow; these exceptions are intended to be written to log output, and otherwise ignored.
 
 #### Example
 
@@ -161,10 +163,11 @@ from platform import system
 
 from fideslog.sdk.python.client import AnalyticsClient
 from fideslog.sdk.python.event import AnalyticsEvent
-from fideslog.sdk.python.exceptions import AnalyticsException
+from fideslog.sdk.python.exceptions import AnalyticsError
 from fideslog.sdk.python.utils import generate_client_id
 
 CLIENT_ID: str = generate_client_id(b"a_fides_tool")  # utils.py exposes some helpful bytestrings
+
 
 def get_version() -> str:
     return "1.0.0"
@@ -178,47 +181,48 @@ def in_docker_container() -> bool:
 def running_on_local_host() -> bool:
     return False
 
-client = AnalyticsClient(
-    client_id=CLIENT_ID,
-    developer_mode=in_developer_mode(),
-    extra_data={
-        "this data": "will be included with every event sent by this client",
-        "include": "any context that every event requires",
-        "never include": "identifying information of any kind",
-    },
-    os=system(),
-    product_name="a_fides_tool",
-    production_version=get_version(),
-)
-
-cli_command_event = AnalyticsEvent(
-    command="cli_command_name sub_command_name",
-    docker=in_docker_container(),
-    event="cli_command_executed",
-    error=None,
-    event_created_at=datetime.now(tz=timezone.utc),
-    extra_data={
-        "this data": "will be included only on this event",
-        "it will": "overwrite keys included in the client's extra_data",
-        "include": "any context that this event requires",
-        "never include": "identifying information of any kind",
-    },
-    flags=["--dry", "-v"],
-    local_host=running_on_local_host(),
-    resource_counts={
-        "datasets": 7,
-        "policies": 26,
-        "systems": 9,
-    },
-    status_code=0,
-)
-
 try:
+    client = AnalyticsClient(
+        client_id=CLIENT_ID,
+        developer_mode=in_developer_mode(),
+        extra_data={
+            "this data": "will be included with every event sent by this client",
+            "include": "any context that every event requires",
+            "never include": "identifying information of any kind",
+        },
+        os=system(),
+        product_name="a_fides_tool",
+        production_version=get_version(),
+    )
+
+    cli_command_event = AnalyticsEvent(
+        command="cli_command_name sub_command_name",
+        docker=in_docker_container(),
+        event="cli_command_executed",
+        error=None,
+        event_created_at=datetime.now(tz=timezone.utc),
+        extra_data={
+            "this data": "will be included only on this event",
+            "it will": "overwrite keys included in the client's extra_data",
+            "include": "any context that this event requires",
+            "never include": "identifying information of any kind",
+        },
+        flags=["--dry", "-v"],
+        local_host=running_on_local_host(),
+        resource_counts={
+            "datasets": 7,
+            "policies": 26,
+            "systems": 9,
+        },
+        status_code=0,
+    )
+
     client.send(cli_command_event)
-except AnalyticsException as err:                   # It is not recommended to raise this exception,
-	print(f"Failed to send analytics event: {err}") # to prevent interrupting the application workflow.
+
+except AnalyticsError as err:   # It is not recommended to raise this exception,
+    print(err)                  # to prevent interrupting the application workflow.
 else:
-	print("Analytics event sent")
+    print("Analytics event sent")
 ```
 
 ## Contributing

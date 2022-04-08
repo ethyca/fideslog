@@ -1,7 +1,7 @@
 [database]
 database = "raw"
-role = "event_writer"
 db_schema = "fides"
+role = "event_writer"
 warehouse = "fides_log"
 
 [server]

@@ -3,7 +3,8 @@ from datetime import datetime
 from http import HTTPStatus
 from typing import Callable
 
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, status
+from fastapi.responses import JSONResponse
 from uvicorn import run
 
 from fideslog.api.config import ServerSettings, config
@@ -15,9 +16,35 @@ app = FastAPI(title="fideslog")
 app.include_router(api_router)
 
 
+# Defined before `log_request` to ensure that both are always executed.
+@app.middleware("http")
+async def require_version_header(request: Request, call_next: Callable) -> Response:
+    """
+    Enforce that the `X-Fideslog-Version` header was included on the request.
+    Does not apply to the `/docs` and `/openapi.json` endpoints, to ensure
+    that they remain publicly available.
+
+    This header is intentionally undocumented, for mildly increased security.
+    """
+
+    excluded_endpoints = ["/docs", "/openapi.json"]
+    version = request.headers.get("x-fideslog-version", None)
+
+    if version is None and request.url.path not in excluded_endpoints:
+        return JSONResponse(
+            {"error": "Missing required header(s)"},
+            status.HTTP_400_BAD_REQUEST,
+        )
+
+    return await call_next(request)
+
+
 @app.middleware("http")
 async def log_request(request: Request, call_next: Callable) -> Response:
-    "Log basic information about every request handled by the server."
+    """
+    Log basic information about every request handled by the server.
+    """
+
     start = datetime.now()
     response = await call_next(request)
     handler_time = round((datetime.now() - start).microseconds * 0.001, 3)

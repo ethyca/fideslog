@@ -43,12 +43,9 @@ class AnalyticsEvent:
         """
 
         try:
-            assert event is not None, "event (name or type) is required"
+            assert len(event) > 0, "event (name or type) is required"
             self.event = event
 
-            assert (
-                event_created_at is not None
-            ), "event_created_at is required, in UTC and ISO 8601 format"
             assert (
                 event_created_at.tzinfo is not None
                 and event_created_at.tzinfo == timezone.utc

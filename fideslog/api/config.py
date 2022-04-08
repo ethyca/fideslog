@@ -50,8 +50,8 @@ class DatabaseSettings(Settings):
     db_schema: str = "fides"
     password: str = Field(..., exclude=True)
     role: str = "event_writer"
-    warehouse: str = "fides_log"
     user: str = Field(..., exclude=True)
+    warehouse: str = "fides_log"
 
     db_connection_uri: Optional[str] = Field(None, exclude=True)
 

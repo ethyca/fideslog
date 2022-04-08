@@ -9,13 +9,13 @@ class ManifestFileCounts(BaseModel):
 
     datasets: int = Field(
         0,
-        description="The number of dataset manifests currently in use",
+        description="The number of dataset manifests currently in use.",
     )
     policies: int = Field(
         0,
-        description="The number of policy manifests currently in use",
+        description="The number of policy manifests currently in use.",
     )
     systems: int = Field(
         0,
-        description="The number of system manifests currently in use",
+        description="The number of system manifests currently in use.",
     )

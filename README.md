@@ -1,5 +1,7 @@
 # Fideslog: Privacy-Respecting Usage Analytics
 
+_A part of the [greater Fides ecosystem](https://github.com/ethyca/fides)._
+
 [![Latest Release Version][release-image]][release-url]
 [![Latest Deployment][deploy-image]][actions-url]
 [![License][license-image]][license-url]
@@ -13,7 +15,16 @@
 
 Fideslog is the [API server](./fideslog/api/), [developer SDK](./fideslog/sdk/), and [supporting infrastructure](./.github/workflows/deploy.yml) intended to provide Ethyca with an understanding of user interactions with fides tooling. Analytics are always fully anonymized, and are only used either as a factor in Ethyca's internal product roadmap determination process, or as insight into product adoption. Information collected by fideslog is received via HTTPs request, stored in a secure database, and never shared with third parties for any reason unless required by law.
 
-## Usage
+## Using Fideslog
+
+Ethyca's mission is to build trustworthy software and Fideslog takes the opinionated stance that analytics data can only be collected after receiving explicit consent from the user. While the specific workflow to establish user consent will be unique to each application, the process must generally adhere to the following principles. Each SDK library exposes convenience functions, methods, and/or constants to assist with adherence to these guidelines:
+
+1. Notify the user of Ethyca's request for analytics data as soon as possible
+2. Describe the intended usage of the collected data clearly, completely, and concisely
+3. Guarantee that all analytics data is always fully anonymized
+4. Provide a simple and accessible mechanism for a user to opt-out of data collection
+5. Do not repeatedly ask for consent; store the user's decision as state within the application or its configuration
+
 
 ### The Fideslog API
 
@@ -26,17 +37,7 @@ The official fideslog SDK libraries are the recommended means by which to automa
 
 - **Python** ([README](./fideslog/sdk/python/README.md)): Available via [PyPI](https://pypi.org/project/fideslog/) and [Conda](https://anaconda.org/ethyca/fideslog).
 
-### Guidelines for Establishing User Consent
-
-It is the opinion of Ethyca that analytics data can only be collected after receiving explicit consent from the user. While the specific workflow to establish user consent will be unique to each application, the process must generally adhere to the following principles. Each SDK library exposes convenience functions, methods, and/or constants to assist with adherence to these guidelines.
-
-1. Alert the user to Ethyca's request for analytics data as soon as possible
-1. Describe the intended usage of the collected data clearly, completely, and concisely
-1. Guarantee that all analytics data is always fully anonymized
-1. Provide a simple and accessible mechanism for a user to opt-out of data collection
-1. Do not repeatedly ask for consent; store the user's decision as state within the application or its configuration
-
-## Development
+## Get Started
 
 ### Installation
 
@@ -100,7 +101,7 @@ port = 8080
 
 #### Enabling Database Access for Local Development
 
-The `account`, `user`, and `password` configuration options mentioned above must be populated for the fideslog API server to successfully connect to the supporting database. Ethyca employees may access these values internally. For convenience, the included [`fideslog.env` file](./fideslog.env) will automate the process of populating the required values as environment variables, as long as the user's local environment includes the following:
+The `account`, `user`, and `password` configuration options mentioned above must be populated for the fideslog API server to successfully connect to the supporting database. Only Ethyca employees may access these values internally. For convenience, the included [`fideslog.env` file](./fideslog.env) will automate the process of populating the required values as environment variables, as long as the user's local environment includes the following:
 
 ```sh
 # Add to .zshrc, .bash_profile, etc.
@@ -116,22 +117,26 @@ The creation of a new tag in this repository will trigger [the deployment workfl
 
 In general, tags are only created as part of creating a new release. All releases must include a changelog. Any breaking changes to the API and/or SDK libraries will result in a new major version release/tag. To ensure compatibility, any pull requests resulting in breaking API changes must also include updates to all SDK libraries.
 
-## Contributing
+## Learn More
 
-We welcome and encourage all types of contributions and improvements!  Please see our [contribution guide](https://ethyca.github.io/fides/development/overview/) to opening issues for bugs, new features, and security or experience enhancements.
-
-Read about the [Fides community](https://ethyca.github.io/fides/community/hints_tips/) or dive into the [development guides](https://ethyca.github.io/fides/development/overview) for information about contributions, documentation, code style, testing and more. Ethyca is committed to fostering a safe and collaborative environment, such that all interactions are governed by the [Fides Code of Conduct](https://ethyca.github.io/fides/community/code_of_conduct/).
+The Fides core team is committed to providing a variety of documentation to help get you started using Fideslog.  As such, all interactions are governed by the [Fides Code of Conduct](https://ethyca.github.io/fides/community/code_of_conduct/).
 
 ### Support
 
 Join the conversation on [Slack](https://fid.es/join-slack) and [Twitter](https://twitter.com/ethyca)!
 
+### Contributing
+
+We welcome and encourage all types of contributions and improvements!  Please see our [contribution guide](https://ethyca.github.io/fides/development/overview/) to opening issues for bugs, new features, and security or experience enhancements.
+
+Read about the [Fides community](https://ethyca.github.io/fides/community/hints_tips/) or dive into the [development guides](https://ethyca.github.io/fides/development/overview) for information about contributions, documentation, code style, testing and more. Ethyca is committed to fostering a safe and collaborative environment, such that all interactions are governed by the [Fides Code of Conduct](https://ethyca.github.io/fides/community/code_of_conduct/).
+
 ## License
 
-Fideslog and the fides ecosystem of tools are licensed under the [Apache Software License Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
-Fides tools are built on [fideslang](https://github.com/ethyca/privacy-taxonomy), the fides language specification, which is licensed under [CC by 4](https://github.com/ethyca/privacy-taxonomy/blob/main/LICENSE).
+The Fides ecosystem of tools ([Fideslog](https://github.com/ethyca/fideslog), [Fidesops](https://github.com/ethyca/fidesops) and [Fidesctl](https://github.com/ethyca/fides)) are licensed under the [Apache Software License Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+Fides tools are built on [Fideslang](https://github.com/ethyca/fideslang), the Fides language specification, which is licensed under [CC by 4](https://github.com/ethyca/fideslang/blob/main/LICENSE).
 
-Fides is created and sponsored by [Ethyca](https://ethyca.com/): a developer tools company building the trust infrastructure of the internet. If you have questions or need assistance getting started, let us know at fides@ethyca.com!
+Fides is created and sponsored by Ethyca: a developer tools company building the trust infrastructure of the internet. If you have questions or need assistance getting started, let us know at fides@ethyca.com!
 
 
 

@@ -6,7 +6,7 @@ from typing import Dict, Optional
 from aiohttp import ClientResponseError, ClientSession, ClientTimeout
 
 from fideslog.sdk.python.event import AnalyticsEvent
-from fideslog.sdk.python.exceptions import AnalyticsException
+from fideslog.sdk.python.exceptions import AnalyticsSendError, InvalidClientError
 
 
 class AnalyticsClient:
@@ -37,10 +37,13 @@ class AnalyticsClient:
         :param developer_mode: `True` if this client exists for the purposes of local development. Default: `False`.
         """
 
-        for arg in [client_id, os, product_name, production_version]:
-            assert arg is not None and arg != "", (
-                f"{arg=}".split("=")[0] + " must be provided"
-            )
+        try:
+            assert client_id != "", "client_id must be provided"
+            assert os != "", "os must be provided"
+            assert product_name != "", "product_name must be provided"
+            assert production_version != "", "production_version must be provided"
+        except AssertionError as err:
+            raise InvalidClientError(err) from None
 
         self.client_id = client_id
         self.os = os
@@ -107,8 +110,4 @@ class AnalyticsClient:
                 try:
                     resp.raise_for_status()
                 except ClientResponseError as err:
-                    raise AnalyticsException(
-                        err.message,
-                        err.args,
-                        status_code=err.status,
-                    ) from err
+                    raise AnalyticsSendError(err.message, err.status) from err

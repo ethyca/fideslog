@@ -4,6 +4,8 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
+from fideslog.sdk.python.exceptions import InvalidEventError
+
 
 class AnalyticsEvent:
     """
@@ -40,50 +42,55 @@ class AnalyticsEvent:
         :param status_code: For events submitted as a result of making API server requests, the HTTP status code included in the response.
         """
 
-        assert event is not None, "An event name/type is required"
-        self.event = event
+        try:
+            assert len(event) > 0, "event (name or type) is required"
+            self.event = event
 
-        assert (
-            event_created_at is not None
-        ), "event_created_at is required, in UTC and ISO 8601 format"
-        assert (
-            event_created_at.tzinfo is not None
-            and event_created_at.tzinfo == timezone.utc
-        ), "event_created_at must include the UTC timezone"
-        assert event_created_at < datetime.now(
-            timezone.utc
-        ), "event_created_at must be in the past"
-        self.event_created_at = event_created_at
+            assert (
+                event_created_at.tzinfo is not None
+                and event_created_at.tzinfo == timezone.utc
+            ), "event_created_at must use the UTC timezone"
+            assert event_created_at < datetime.now(
+                timezone.utc
+            ), "event_created_at must be in the past"
+            self.event_created_at = event_created_at
 
-        self.resource_counts = None
-        if resource_counts is not None:
-            for key in ["datasets", "policies", "systems"]:
-                val = resource_counts.get(key)
-                assert val is not None, f'resource_counts must include a "{key}" key'
-                assert isinstance(
-                    val, int
-                ), f'The value of resource_counts["{key}"] must be an integer'
+            self.resource_counts = None
+            if resource_counts is not None:
+                for key in ["datasets", "policies", "systems"]:
+                    val = resource_counts.get(key)
+                    assert (
+                        val is not None
+                    ), f'resource_counts must include a "{key}" key'
+                    assert isinstance(
+                        val, int
+                    ), f'The value of resource_counts["{key}"] must be an integer'
 
-            self.resource_counts = resource_counts
+                self.resource_counts = resource_counts
 
-        self.endpoint = None
-        if endpoint is not None:
-            assert urlparse(endpoint).path != "", "endpoint must include a URL path"
-            self.endpoint = endpoint
+            self.endpoint = None
+            if endpoint is not None:
+                assert urlparse(endpoint).path != "", "endpoint must include a URL path"
+                self.endpoint = endpoint
 
-        self.command = command
-        self.docker = docker
-        self.error = error
-        self.extra_data = extra_data or {}
-        self.flags = flags
-        self.local_host = local_host
-        self.status_code = status_code
+            self.command = command
+            self.docker = docker
+            self.error = error
+            self.extra_data = extra_data or {}
+            self.flags = flags
+            self.local_host = local_host
+            self.status_code = status_code
 
-        if self.command is not None or self.endpoint is not None:
-            assert self.status_code is not None, "status_code must be provided"
+            if self.command is not None or self.endpoint is not None:
+                assert self.status_code is not None, "status_code must be provided"
 
-        if self.error is not None:
-            assert self.status_code is not None, "status_code must be provided"
-            assert self.status_code > 0 and (
-                self.status_code < 200 or self.status_code > 299
-            ), "An error was provided, but the provided status_code indicates success"
+            if self.error is not None:
+                assert (
+                    self.status_code is not None
+                ), "An error was provided, but status_code is empty"
+                assert self.status_code > 0 and (
+                    self.status_code < 200 or self.status_code > 299
+                ), "An error was provided, but the provided status_code indicates success"
+
+        except AssertionError as err:
+            raise InvalidEventError(err) from None

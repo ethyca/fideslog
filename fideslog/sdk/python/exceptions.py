@@ -1,23 +1,45 @@
-from typing import Optional
-
-
-class AnalyticsException(Exception):
+class AnalyticsError(Exception):
     """
-    To be raised wherever an exception is required in this package.
+    To be raised wherever an exception is required.
     """
 
-    def __init__(
-        self,
-        message: str,
-        *args: object,
-        status_code: Optional[int] = None,
-    ) -> None:
+
+class AnalyticsSendError(AnalyticsError):
+    """
+    To be raised when the fideslog API server responds with
+    a non-2XX status code.
+    """
+
+    def __init__(self, message: str, status_code: int) -> None:
         self.message = message
         self.status_code = status_code
-        super().__init__(self.message, *args)
+        super().__init__(self.message)
 
     def __str__(self) -> str:
-        if self.status_code is not None:
-            return f"{self.status_code} response from fideslog: {self.message}"
+        return f"The fideslog API responded with an error: {self.status_code} {self.message}"
 
-        return f"Failed to send analytics event: {self.message}"
+
+class InvalidClientError(AnalyticsError):
+    """
+    To be raised when an `AnalyticsClient` cannot be created.
+    """
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self) -> str:
+        return f"Failed to initialize AnalyticsClient: {self.message}"
+
+
+class InvalidEventError(AnalyticsError):
+    """
+    To be raised when an `AnalyticsEvent` cannot be created.
+    """
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self) -> str:
+        return f"Failed to initialize AnalyticsEvent: {self.message}"

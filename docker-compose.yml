@@ -3,10 +3,18 @@ services:
     image: ethyca/fideslog:local
     command: [ "python", "fideslog/api/main.py" ]
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
-      interval: 5s
-      timeout: 5s
+      test:
+        [
+          "CMD",
+          "curl",
+          "--fail",
+          '--header "X-Fideslog-Version: 1.0.0"',
+          "http://0.0.0.0:8080/health"
+        ]
+      interval: 1m30s
+      timeout: 10s
       retries: 5
+      start_period: 30s
     env_file:
       - fideslog.env
     environment:
@@ -16,8 +24,3 @@ services:
       - 8080
     ports:
       - "8080:8080"
-    volumes:
-      - type: bind
-        source: .
-        target: /fideslog
-        read_only: False

@@ -1,7 +1,8 @@
 from typing import Dict
 
 from fastapi import APIRouter, status
-from fideslog.api.endpoints import events
+
+from ..endpoints import events
 
 api_router = APIRouter()
 api_router.include_router(events.router)

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
-from fideslog.sdk.python.exceptions import InvalidEventError
+from .exceptions import InvalidEventError
 
 
 class AnalyticsEvent:
@@ -93,4 +93,4 @@ class AnalyticsEvent:
                 ), "An error was provided, but the provided status_code indicates success"
 
         except AssertionError as err:
-            raise InvalidEventError(err) from None
+            raise InvalidEventError(str(err)) from None

@@ -5,11 +5,11 @@ from typing import Dict, Optional
 
 from aiohttp import ClientResponseError, ClientSession, ClientTimeout
 
-import fideslog.sdk.python as fideslog
-from fideslog.sdk.python.event import AnalyticsEvent
-from fideslog.sdk.python.exceptions import AnalyticsSendError, InvalidClientError
+from . import __version__
+from .event import AnalyticsEvent
+from .exceptions import AnalyticsSendError, InvalidClientError
 
-REQUIRED_HEADERS = {"X-Fideslog-Version": fideslog.__version__}
+REQUIRED_HEADERS = {"X-Fideslog-Version": __version__}
 
 
 class AnalyticsClient:
@@ -46,7 +46,7 @@ class AnalyticsClient:
             assert product_name != "", "product_name must be provided"
             assert production_version != "", "production_version must be provided"
         except AssertionError as err:
-            raise InvalidClientError(err) from None
+            raise InvalidClientError(str(err)) from None
 
         self.client_id = client_id
         self.os = os

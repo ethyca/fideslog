@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, validator
 
-from fideslog.api.models.validation import check_in_the_past, check_not_an_email_address
+from validation import check_in_the_past, check_not_an_email_address
 
 
 class CLIAPIMapping(BaseModel):

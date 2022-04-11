@@ -1,7 +1,7 @@
 services:
   fideslog:
     image: ethyca/fideslog:local
-    command: uvicorn --host 0.0.0.0 --port 8080 --reload fideslog.api.main:app
+    command: [ "python", "fideslog/api/main.py" ]
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/health" ]
       interval: 5s
@@ -9,6 +9,9 @@ services:
       retries: 5
     env_file:
       - fideslog.env
+    environment:
+      FIDESLOG__SERVER_HOST: "fideslog"
+      FIDESLOG__SERVER_HOT_RELOAD: true
     expose:
       - 8080
     ports:

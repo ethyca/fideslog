@@ -5,8 +5,11 @@ from typing import Dict, Optional
 
 from aiohttp import ClientResponseError, ClientSession, ClientTimeout
 
+import fideslog.sdk.python as fideslog
 from fideslog.sdk.python.event import AnalyticsEvent
 from fideslog.sdk.python.exceptions import AnalyticsSendError, InvalidClientError
+
+REQUIRED_HEADERS = {"X-Fideslog-Version": fideslog.__version__}
 
 
 class AnalyticsClient:
@@ -101,6 +104,7 @@ class AnalyticsClient:
 
         async with ClientSession(
             self.server_url,
+            headers=REQUIRED_HEADERS,
             timeout=ClientTimeout(connect=3.05, total=120),
         ) as session:
             async with session.post(

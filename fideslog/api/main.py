@@ -21,13 +21,13 @@ app.include_router(api_router)
 async def require_version_header(request: Request, call_next: Callable) -> Response:
     """
     Enforce that the `X-Fideslog-Version` header was included on the request.
-    Does not apply to the `/docs` and `/openapi.json` endpoints, to ensure
-    that they remain publicly available.
+    Does not apply to the `/docs`, `/openapi.json`, and `/redoc` endpoints,
+    to ensure that they remain publicly available.
 
     This header is intentionally undocumented, for mildly increased security.
     """
 
-    excluded_endpoints = ["/docs", "/openapi.json"]
+    excluded_endpoints = ["/docs", "/openapi.json", "/redoc"]
     version = request.headers.get("x-fideslog-version", None)
 
     if version is None and request.url.path not in excluded_endpoints:

@@ -1,4 +1,4 @@
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := build-local
 
 ####################
 # CONSTANTS
@@ -19,7 +19,6 @@ ifeq "$(CI)" "true"
 endif
 
 # Run in Compose
-RUN = docker compose run --rm $(CI_ARGS) $(IMAGE_NAME)
 RUN_NO_DEPS = docker compose run --no-deps --rm $(CI_ARGS) $(IMAGE_NAME)
 
 ####################
@@ -49,14 +48,6 @@ api: build-local
 	@echo "Spinning up the webserver..."
 	@docker compose up $(IMAGE_NAME)
 	@make teardown
-
-.PHONY: cli
-cli: build-local
-	@echo "Setting up a local development shell... (press CTRL-D to exit)"
-	@docker compose up -d $(IMAGE_NAME)
-	@$(RUN) /bin/bash
-	@make teardown
-
 
 ####################
 # CI

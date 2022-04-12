@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 
-from fideslog.api.database.data_access import create_event
-from fideslog.api.database.database import get_db
-from fideslog.api.models.analytics_event import AnalyticsEvent
+from ..database.data_access import create_event
+from ..database.database import get_db
+from ..models.analytics_event import AnalyticsEvent
 
 log = getLogger(__name__)
 router = APIRouter(tags=["Events"], prefix="/events")

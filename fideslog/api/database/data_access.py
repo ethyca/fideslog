@@ -3,8 +3,8 @@ from logging import getLogger
 
 from sqlalchemy.orm import Session
 
-from fideslog.api.database.models import AnalyticsEvent as AnalyticsEventORM
-from fideslog.api.models.analytics_event import AnalyticsEvent
+from ..models.analytics_event import AnalyticsEvent
+from .models import AnalyticsEvent as AnalyticsEventORM
 
 log = getLogger(__name__)
 

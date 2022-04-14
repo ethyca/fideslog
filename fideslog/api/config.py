@@ -9,14 +9,13 @@ from pydantic.env_settings import SettingsSourceCallable
 from snowflake.sqlalchemy import URL
 from toml import load
 
+from .logger import LOG_ENTRY_FORMAT, get_fideslog_logger
+
 ENV_PREFIX = "FIDESLOG__"
 CONFIG_FILE_NAME = "fideslog.toml"
 CONFIG_PATH_VAR = f"{ENV_PREFIX}CONFIG_PATH"
 
-logging.basicConfig(
-    format="%(asctime)s [%(levelname)s]: %(message)s",
-    level=logging.INFO,
-)
+logging.basicConfig(format=LOG_ENTRY_FORMAT, level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
@@ -85,6 +84,58 @@ class DatabaseSettings(Settings):
         env_prefix = f"{ENV_PREFIX}DATABASE_"
 
 
+class LoggingSettings(Settings):
+    """Configuration options for API server logging."""
+
+    destination: str = Field("stdout", min_length=1)
+    level: str = Field(logging.getLevelName(logging.INFO), min_length=4, max_length=8)
+
+    destination_type: Optional[str] = Field(None, exclude=True)
+    logger: Optional[logging.Logger] = Field(None, exclude=True)
+
+    @validator("destination_type", always=True)
+    def get_destination_type(cls, _: Optional[str], values: dict[str, str]) -> str:
+        """
+        Determine if the `destination` is a valid file path, a valid directory, or `stdout`.
+        """
+
+        if values["destination"] == "stdout":
+            return "stdout"
+
+        if os.path.isdir(values["destination"]):
+            return "directory"
+
+        if os.path.isfile(values["destination"]):
+            return "file"
+
+        return "stdout"
+
+    @validator("logger", always=True)
+    def configure_logger(
+        cls,
+        value: Optional[logging.Logger],
+        values: dict[str, str],
+    ) -> logging.Logger:
+        """
+        Use the desired `logging.Logger`, or the default fideslog logger.
+        """
+
+        return (
+            value
+            if isinstance(value, logging.Logger)
+            else get_fideslog_logger(
+                values["level"],
+                values["destination"],
+                values["destination_type"],
+            )
+        )
+
+    class Config:
+        """Modifies pydantic behavior."""
+
+        env_prefix = f"{ENV_PREFIX}LOGGING_"
+
+
 class ServerSettings(Settings):
     """Configuration options for the API server."""
 
@@ -102,6 +153,7 @@ class FideslogSettings(Settings):
     """Configuration options for fideslog."""
 
     database: DatabaseSettings
+    logging: LoggingSettings
     server: ServerSettings
 
 

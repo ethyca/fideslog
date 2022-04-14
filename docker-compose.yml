@@ -18,6 +18,7 @@ services:
     env_file:
       - fideslog.env
     environment:
+      FIDESLOG__LOGGING_LEVEL: "DEBUG"
       FIDESLOG__SERVER_HOST: "fideslog"
       FIDESLOG__SERVER_HOT_RELOAD: true
     expose:

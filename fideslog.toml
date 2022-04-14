@@ -4,6 +4,9 @@ db_schema = "fides"
 role = "event_writer"
 warehouse = "fides_log"
 
+[logging]
+level = "INFO"
+
 [server]
 host = "localhost"
 port = 8080

@@ -5,14 +5,19 @@ from typing import Callable
 
 from fastapi import FastAPI, Request, Response, status
 from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
+from slowapi.extension import _rate_limit_exceeded_handler
 from uvicorn import run
 
 from fideslog.api.config import ServerSettings, config
+from fideslog.api.rate_limiter import rate_limiter
 from fideslog.api.routes.api import api_router
 
 log = logging.getLogger(__name__)
 
 app = FastAPI(title="fideslog")
+app.state.limiter = rate_limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.include_router(api_router)
 
 

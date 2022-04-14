@@ -1,4 +1,5 @@
 import logging
+from os import path
 from sys import stdout
 
 LOG_ENTRY_FORMAT = "%(asctime)s [%(levelname)s]: %(message)s"
@@ -46,7 +47,8 @@ def get_fideslog_logger(
 
     elif destination_type == "directory":
         logfile_path = f"{destination}/fideslog.log"
-        open(logfile_path, "x").close()
+        if not path.exists(logfile_path):
+            open(logfile_path, "x").close()
 
         handler = logging.FileHandler(logfile_path)
         handler.setFormatter(formatter)

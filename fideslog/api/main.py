@@ -10,7 +10,7 @@ from uvicorn import run
 from fideslog.api.config import ServerSettings, config
 from fideslog.api.routes.api import api_router
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("fideslog.main")
 
 app = FastAPI(title="fideslog")
 app.include_router(api_router)

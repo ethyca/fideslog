@@ -5,7 +5,7 @@ role = "event_writer"
 warehouse = "fides_log"
 
 [logging]
-level = "INFO"
+level = "info"
 
 [server]
 host = "localhost"

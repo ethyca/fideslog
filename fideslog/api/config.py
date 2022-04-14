@@ -93,6 +93,18 @@ class LoggingSettings(Settings):
     destination_type: Optional[str] = Field(None, exclude=True)
     logger: Optional[logging.Logger] = Field(None, exclude=True)
 
+    @validator("level")
+    def upcase_level_name(cls, value: str) -> str:
+        """
+        Ensure that the logging level is always all upper-case, as defined by the
+        [Python logging documentation](https://docs.python.org/3.9/howto/logging.html#logging-levels).
+
+        This enables the value in an ENV variable or config file to be
+        case-insensitive.
+        """
+
+        return value.upper()
+
     @validator("destination_type", always=True)
     def get_destination_type(cls, _: Optional[str], values: dict[str, str]) -> str:
         """

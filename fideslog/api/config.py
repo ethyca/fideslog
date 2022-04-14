@@ -139,7 +139,7 @@ class LoggingSettings(Settings):
 class ServerSettings(Settings):
     """Configuration options for the API server."""
 
-    host: str = "0.0.0.0"
+    host: str = "localhost"
     hot_reload: bool = False
     port: int = 8080
 
@@ -209,8 +209,14 @@ def get_config() -> FideslogSettings:
         log.debug("Successfully loaded configuration options from %s", CONFIG_FILE_NAME)
     except FileNotFoundError:
         log.warning("No %s file found", CONFIG_FILE_NAME)
-        log.info("Loading configuration from environment variables...")
-        settings = FideslogSettings()
+        log.info(
+            "Loading configuration from environment variables and default values..."
+        )
+        settings = FideslogSettings(
+            database=DatabaseSettings(),
+            logging=LoggingSettings(),
+            server=ServerSettings(),
+        )
 
     log.info("Configuration in use: %s", settings.json())
     return settings

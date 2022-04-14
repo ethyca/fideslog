@@ -15,7 +15,7 @@ ENV_PREFIX = "FIDESLOG__"
 CONFIG_FILE_NAME = "fideslog.toml"
 CONFIG_PATH_VAR = f"{ENV_PREFIX}CONFIG_PATH"
 
-logging.basicConfig(format=LOG_ENTRY_FORMAT, level=logging.INFO)
+logging.basicConfig(format=LOG_ENTRY_FORMAT, level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 

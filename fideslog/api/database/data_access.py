@@ -12,7 +12,8 @@ log = getLogger(__name__)
 def create_event(database: Session, event: AnalyticsEvent) -> None:
     """Create a new analytics event."""
 
-    log.debug("Creating resource")
+    logged_event = event.dict(exclude=set(("client_id", "extra_data", "os")))
+    log.debug("Creating event: %s", logged_event)
 
     extra_data = dumps(event.extra_data) if event.extra_data else None
     flags = ", ".join(event.flags) if event.flags else None
@@ -42,3 +43,4 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
     )
 
     database.commit()
+    log.debug("Event created: %s", logged_event)

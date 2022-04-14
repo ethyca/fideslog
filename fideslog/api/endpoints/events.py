@@ -30,6 +30,6 @@ async def create(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to create event",
-        ) from err
-    else:
-        return event
+        ) from None
+
+    return event

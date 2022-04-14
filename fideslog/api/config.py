@@ -111,9 +111,6 @@ class LoggingSettings(Settings):
         Determine if the `destination` is a valid file path, a valid directory, or `stdout`.
         """
 
-        if values["destination"] == "stdout":
-            return "stdout"
-
         if os.path.isdir(values["destination"]):
             return "directory"
 

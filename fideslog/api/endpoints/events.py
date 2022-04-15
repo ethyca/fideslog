@@ -1,12 +1,13 @@
 from logging import getLogger
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 
 from ..database.data_access import create_event
 from ..database.database import get_db
 from ..models.analytics_event import AnalyticsEvent
+from ..rate_limiter import rate_limiter
 
 log = getLogger(__name__)
 router = APIRouter(tags=["Events"], prefix="/events")
@@ -16,13 +17,28 @@ router = APIRouter(tags=["Events"], prefix="/events")
     "",
     response_description="The created event",
     response_model=AnalyticsEvent,
+    responses={
+        status.HTTP_429_TOO_MANY_REQUESTS: {
+            "content": {
+                "application/json": {
+                    "example": {"error": "Rate limit exceeded: 6 per minute"}
+                }
+            },
+            "description": "Rate limit exceeded",
+        }
+    },
     status_code=status.HTTP_201_CREATED,
 )
+@rate_limiter.limit("6/minute")
 async def create(
+    request: Request,  # pylint: disable=unused-argument
     event: AnalyticsEvent,
     database: Session = Depends(get_db),
 ) -> AnalyticsEvent:
-    """Create a new analytics event."""
+    """
+    Create a new analytics event.
+    """
+
     try:
         create_event(database=database, event=event)
     except DBAPIError as err:

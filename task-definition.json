@@ -21,6 +21,10 @@
                 {
                     "name": "FIDESLOG__DATABASE_PASSWORD",
                     "value": "<snowflake_db_password>"
+                },
+                {
+                    "name": "FIDESLOG__SERVER_HOST",
+                    "value": "0.0.0.0"
                 }
             ],
             "image": "ethyca/fideslog:latest",

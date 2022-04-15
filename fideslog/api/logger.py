@@ -26,8 +26,8 @@ def get_fideslog_logger(
     """
 
     root_logger = logging.getLogger()
-    for handler in root_logger.handlers:
-        root_logger.removeHandler(handler)
+    for root_handler in root_logger.handlers:
+        root_logger.removeHandler(root_handler)
 
     logger = logging.getLogger("fideslog")
     logger.setLevel(logging.getLevelName(level))
@@ -35,15 +35,9 @@ def get_fideslog_logger(
 
     formatter = logging.Formatter(LOG_ENTRY_FORMAT)
 
-    if destination_type == "stdout":
-        handler = logging.StreamHandler(stdout)
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-
-    elif destination_type == "file":
+    handler: logging.Handler
+    if destination_type == "file":
         handler = logging.FileHandler(destination)
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
 
     elif destination_type == "directory":
         logfile_path = f"{destination}/fideslog.log"
@@ -51,10 +45,11 @@ def get_fideslog_logger(
             open(logfile_path, "x").close()
 
         handler = logging.FileHandler(logfile_path)
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
 
     else:
-        raise ValueError('destination must be "", a valid file, or a valid directory')
+        handler = logging.StreamHandler(stdout)
+
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
 
     return logger

@@ -2,7 +2,7 @@
     "containerDefinitions": [
         {
             "command": [
-                "/bin/sh -c \"uvicorn --host 0.0.0.0 --port 8080 fideslog.api.main:app\""
+                "/bin/sh -c \"python fideslog/api/main.py\""
             ],
             "entryPoint": [
                 "sh",

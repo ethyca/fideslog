@@ -13,7 +13,7 @@ from fideslog.api.config import ServerSettings, config
 from fideslog.api.rate_limiter import rate_limiter
 from fideslog.api.routes.api import api_router
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("fideslog.api.main")
 
 app = FastAPI(title="fideslog")
 app.state.limiter = rate_limiter

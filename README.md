@@ -17,7 +17,7 @@ Fideslog is the [API server](./fideslog/api/), [developer SDK](./fideslog/sdk/),
 
 ## Using Fideslog
 
-Ethyca's mission is to build trustworthy software and Fideslog takes the opinionated stance that analytics data can only be collected after receiving explicit consent from the user. While the specific workflow to establish user consent will be unique to each application, the process must generally adhere to the following principles. Each SDK library exposes convenience functions, methods, and/or constants to assist with adherence to these guidelines:
+Ethyca's mission is to build trustworthy software. Fideslog requires that analytics data can only be collected after receiving explicit consent from the user. While the specific workflow to establish user consent will be unique to each application, the process must generally adhere to the following principles. Each SDK library exposes convenience functions, methods, and/or constants to assist with adherence to these guidelines:
 
 1. Notify the user of Ethyca's request for analytics data as soon as possible
 2. Describe the intended usage of the collected data clearly, completely, and concisely
@@ -37,7 +37,7 @@ The official fideslog SDK libraries are the recommended means by which to automa
 
 - **Python** ([README](./fideslog/sdk/python/README.md)): Available via [PyPI](https://pypi.org/project/fideslog/) and [Conda](https://anaconda.org/ethyca/fideslog).
 
-## Get Started
+## Getting Started
 
 ### Installation
 
@@ -47,34 +47,38 @@ The simplest way to run the API server locally is via [Docker](https://www.docke
 make api
 ```
 
-By default, this will start an instance of the fideslog API server on `localhost:8080`, and attach to the container. Log output will be written to `stdout` within the container instance. Once the logs begin to show repeated [successful] requests to the `/health` endpoint, the API server is running and healthy.
+By default, this will start an instance of the fideslog API server on `localhost:8080`, and attach to the container. Log output will be written to `stdout` within the container instance.
 
 | :memo: Note | The API server will error when using only the provided [`fideslog.toml` configuration file](./fideslog.toml) and no additional environment variables. See [Enabling Database Access for Local Development](#enabling-database-access-for-local-development) below for configuration changes necessary to ensure a successful connection to the supporting database. |
 |:-----------:|:---|
 
 ### Configuration
 
-The recommended way to configure the fideslog API server is with a `fideslog.toml` configuration file, but local environment variables may be used to override these values. The fideslog API server will look for a configuration file in the following locations (ordered by priority):
+The recommended way to configure the fideslog API server is with a `fideslog.toml` configuration file, but local environment variables may be used to override any values. The fideslog API server will look for a configuration file in the following locations (ordered by priority):
 
 1. A path defined by a `FIDESLOG__CONFIG_PATH` environment variable
 1. The current working directory
 1. The parent directory of the current working directory
 1. The user's `$HOME` directory
 
+If no configuration file is found in any of the above locations, the default configuration values (specified in the table below) will be used. If any environment variables are set, they will continue to override the defaults.
+
 #### Options
 
-|     Name     | Configuration File Section |   Environment Variable Name    |  Type   | Required |     Default      | Description |
-|:------------:|:--------------------------:|:------------------------------:|:-------:|:--------:|:----------------:|-------------|
-|   `account`  |        `[database]`        |  `FIDESLOG__DATABASE_ACCOUNT`  | String  |    Yes   |                  | The Snowflake account in which the fideslog database can be found. Ethyca employees may access this value internally. |
-|  `database`  |        `[database]`        |  `FIDESLOG__DATABASE_DATABASE` | String  |    No    |      `"raw"`     | The name of the Snowflake database in which analytics events should be stored. |
-|  `db_schema` |        `[database]`        | `FIDESLOG__DATABASE_DB_SCHEMA` | String  |    No    |     `"fides"`    | The Snowflake database schema to target. |
-|  `password`  |        `[database]`        |  `FIDESLOG__DATABASE_PASSWORD` | String  |    Yes   |                  | The password associated with the Snowflake account for `user`. Ethyca employees may access this value internally. |
-|    `role`    |        `[database]`        |    `FIDESLOG__DATABASE_ROLE`   | String  |    No    | `"event_writer"` | The permissions with which to access the specified Snowflake `database`.  |
-|    `user`    |        `[database]`        |    `FIDESLOG__DATABASE_USER`   | String  |    Yes   |                  | The ID of the user with which to authenticate to Snowflake. Ethyca employees may access this value internally. |
-|  `warehouse` |        `[database]`        | `FIDESLOG__DATABASE_WAREHOUSE` | String  |    No    |   `"fides_log"`  | The Snowflake data warehouse in which the fideslog database can be found. |
-|    `host`    |         `[server]`         |     `FIDESLOG__SERVER_HOST`    | String  |    No    |    `"0.0.0.0"`   | The hostname on which the API server should respond. |
-| `hot_reload` |         `[server]`         |  `FIDESLOG__SERVER_HOT_RELOAD` | Boolean |    No    |      `False`     | Whether or not to automatically apply code changes during local development. |
-|    `port`    |         `[server]`         |     `FIDESLOG__SERVER_PORT`    | Integer |    No    |      `8080`      | The port number on which the API server should listen. |
+|     Name      | Configuration File Section |   Environment Variable Name    |  Type   | Required |     Default      | Description |
+|:-------------:|:--------------------------:|:------------------------------:|:-------:|:--------:|:----------------:|-------------|
+|   `account`   |        `[database]`        |  `FIDESLOG__DATABASE_ACCOUNT`   | String  |    Yes   |                  | The Snowflake account in which the fideslog database can be found. Ethyca employees may access this value internally. |
+|   `database`  |        `[database]`        |  `FIDESLOG__DATABASE_DATABASE`  | String  |    No    |      `"raw"`     | The name of the Snowflake database in which analytics events should be stored. |
+|  `db_schema`  |        `[database]`        | `FIDESLOG__DATABASE_DB_SCHEMA`  | String  |    No    |     `"fides"`    | The Snowflake database schema to target. |
+|  `password`   |        `[database]`        |  `FIDESLOG__DATABASE_PASSWORD`  | String  |    Yes   |                  | The password associated with the Snowflake account for `user`. Ethyca employees may access this value internally. |
+|    `role`     |        `[database]`        |    `FIDESLOG__DATABASE_ROLE`    | String  |    No    | `"event_writer"` | The permissions with which to access the specified Snowflake `database`.  |
+|    `user`     |        `[database]`        |    `FIDESLOG__DATABASE_USER`    | String  |    Yes   |                  | The ID of the user with which to authenticate to Snowflake. Ethyca employees may access this value internally. |
+|  `warehouse`  |        `[database]`        | `FIDESLOG__DATABASE_WAREHOUSE`  | String  |    No    |   `"fides_log"`  | The Snowflake data warehouse in which the fideslog database can be found. |
+| `destination` |        `[logging]`         | `FIDESLOG__LOGGING_DESTINATION` | String  |    No    |    `"stdout"`    | The absolute path to a file or directory in which logs should be stored. If a directory is passed, a `fideslog.log` file will be created in that directory. |
+|    `level`    |        `[logging]`         |    `FIDESLOG__LOGGING_LEVEL`    | String  |    No    |     `"INFO"`     | The desired logging level. Accepts `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`. Case insensitive. |
+|    `host`     |         `[server]`         |     `FIDESLOG__SERVER_HOST`     | String  |    No    |    `"0.0.0.0"`   | The hostname on which the API server should respond. |
+| `hot_reload`  |         `[server]`         |  `FIDESLOG__SERVER_HOT_RELOAD`  | Boolean |    No    |      `False`     | Whether or not to automatically apply code changes during local development. |
+|    `port`     |         `[server]`         |     `FIDESLOG__SERVER_PORT`     | Integer |    No    |      `8080`      | The port number on which the API server should listen. |
 
 #### Example Configuration File
 
@@ -92,6 +96,9 @@ password = "--REDACTED--"
 role = "event_writer"
 user = "--REDACTED--"
 warehouse = "fides_log"
+
+[logging]
+level = "info"
 
 [server]
 host = "localhost"

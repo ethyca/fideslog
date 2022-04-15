@@ -1,8 +1,17 @@
+import logging
+
+from snowflake.sqlalchemy.snowdialect import SnowflakeDialect
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
 
 from ..config import config
+
+# Suppress a ton of log output
+logging.getLogger("sqlalchemy").setLevel(logging.WARNING)
+
+# See: https://github.com/snowflakedb/snowflake-sqlalchemy/issues/265#issuecomment-1026632843
+SnowflakeDialect.supports_statement_cache = False
 
 engine = create_engine(config.database.db_connection_uri, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

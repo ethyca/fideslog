@@ -32,7 +32,7 @@ async def require_version_header(request: Request, call_next: Callable) -> Respo
     This header is intentionally undocumented, for mildly increased security.
     """
 
-    excluded_endpoints = ["/docs", "/openapi.json", "/redoc"]
+    excluded_endpoints = ["/docs", "/health", "/openapi.json", "/redoc"]
     version = request.headers.get("x-fideslog-version", None)
 
     if version is None and request.url.path not in excluded_endpoints:

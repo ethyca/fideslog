@@ -1,6 +1,8 @@
 # pylint: disable=too-many-arguments
 
-from asyncio import run
+import asyncio
+import sys
+from asyncio import run, set_event_loop_policy
 from typing import Dict, Optional
 
 from aiohttp import ClientResponseError, ClientSession, ClientTimeout
@@ -59,6 +61,15 @@ class AnalyticsClient:
         """
         Record a new event.
         """
+
+        # There is a Python bug in the default Windows even loop for Python 3.8+. This works around
+        # the issue by changing the default event loop for Windows.
+        if (
+            sys.version_info[0] == 3
+            and sys.version_info[1] >= 8
+            and sys.platform.startswith("win")
+        ):
+            set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
         run(self.__send(event))
 

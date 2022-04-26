@@ -62,7 +62,7 @@ class AnalyticsClient:
         Record a new event.
         """
 
-        # There is a Python bug in the default Windows even loop for Python 3.8+. This works around
+        # There is a Python bug in the default Windows event loop for Python 3.8+. This works around
         # the issue by changing the default event loop for Windows.
         if (
             sys.version_info[0] == 3

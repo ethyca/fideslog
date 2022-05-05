@@ -132,9 +132,9 @@ class AnalyticsClient:
                     "/events",
                     json=self.__get_request_payload(event),
                 ) as resp:
-                    try:
-                        resp.raise_for_status()
-                    except ClientResponseError as err:
-                        raise AnalyticsSendError(err.message, err.status) from err
+                    resp.raise_for_status()
+
             except ClientConnectionError as err:
                 raise UnreachableServerError(err.__str__()) from err
+            except ClientResponseError as err:
+                raise AnalyticsSendError(err.message, err.status) from err

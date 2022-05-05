@@ -13,7 +13,12 @@ from aiohttp import (
 
 from . import __version__
 from .event import AnalyticsEvent
-from .exceptions import AnalyticsSendError, InvalidClientError, UnreachableServerError
+from .exceptions import (
+    AnalyticsSendError,
+    InvalidClientError,
+    UnknownError,
+    UnreachableServerError,
+)
 
 REQUIRED_HEADERS = {"X-Fideslog-Version": __version__}
 
@@ -66,8 +71,8 @@ class AnalyticsClient:
         Record a new event.
         """
 
-        # There is a Python bug in the default Windows event loop for Python 3.8+. This works around
-        # the issue by changing the default event loop for Windows.
+        # Works around a bug in the default Windows event loop for Python 3.8+
+        # by changing the default event loop in Windows processes.
         if (
             version_info[0] == 3
             and version_info[1] >= 8
@@ -138,3 +143,5 @@ class AnalyticsClient:
                 raise UnreachableServerError(err.__str__()) from err
             except ClientResponseError as err:
                 raise AnalyticsSendError(err.message, err.status) from err
+            except Exception as err:
+                raise UnknownError(err) from err

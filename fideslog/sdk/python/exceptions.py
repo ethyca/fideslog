@@ -45,6 +45,19 @@ class InvalidEventError(AnalyticsError):
         return f"Failed to initialize AnalyticsEvent: {self.message}"
 
 
+class UnknownError(AnalyticsError):
+    """
+    To be raised when an unforeseen error occurs.
+    """
+
+    def __init__(self, error: Exception) -> None:
+        self.message = error.__str__()
+        super().__init__(self.message)
+
+    def __str__(self) -> str:
+        return f"An unknown error occurred: {self.message}"
+
+
 class UnreachableServerError(AnalyticsError):
     """
     To be raised when a connection to the fideslog API server

@@ -43,3 +43,17 @@ class InvalidEventError(AnalyticsError):
 
     def __str__(self) -> str:
         return f"Failed to initialize AnalyticsEvent: {self.message}"
+
+
+class UnreachableServerError(AnalyticsError):
+    """
+    To be raised when a connection to the fideslog API server
+    cannot be made.
+    """
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self) -> str:
+        return f"Failed to connect to the fideslog API server: {self.message}"

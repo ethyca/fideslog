@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 from ..database.data_access import create_event
 from ..database.database import get_db
 from ..models.analytics_event import AnalyticsEvent
-from ..rate_limiter import rate_limiter
 
 log = getLogger(__name__)
 router = APIRouter(tags=["Events"], prefix="/events")
@@ -29,7 +28,6 @@ router = APIRouter(tags=["Events"], prefix="/events")
     },
     status_code=status.HTTP_201_CREATED,
 )
-@rate_limiter.limit("6/minute")
 async def create(
     request: Request,  # pylint: disable=unused-argument
     event: AnalyticsEvent,

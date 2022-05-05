@@ -4,11 +4,16 @@ from asyncio import run
 from sys import platform, version_info
 from typing import Dict, Optional
 
-from aiohttp import ClientResponseError, ClientSession, ClientTimeout
+from aiohttp import (
+    ClientConnectionError,
+    ClientResponseError,
+    ClientSession,
+    ClientTimeout,
+)
 
 from . import __version__
 from .event import AnalyticsEvent
-from .exceptions import AnalyticsSendError, InvalidClientError
+from .exceptions import AnalyticsSendError, InvalidClientError, UnreachableServerError
 
 REQUIRED_HEADERS = {"X-Fideslog-Version": __version__}
 
@@ -122,11 +127,14 @@ class AnalyticsClient:
             headers=REQUIRED_HEADERS,
             timeout=ClientTimeout(connect=3.05, total=120),
         ) as session:
-            async with session.post(
-                "/events",
-                json=self.__get_request_payload(event),
-            ) as resp:
-                try:
-                    resp.raise_for_status()
-                except ClientResponseError as err:
-                    raise AnalyticsSendError(err.message, err.status) from err
+            try:
+                async with session.post(
+                    "/events",
+                    json=self.__get_request_payload(event),
+                ) as resp:
+                    try:
+                        resp.raise_for_status()
+                    except ClientResponseError as err:
+                        raise AnalyticsSendError(err.message, err.status) from err
+            except ClientConnectionError as err:
+                raise UnreachableServerError(err.__str__()) from err

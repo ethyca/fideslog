@@ -17,7 +17,7 @@ from fideslog.api.routes.api import api_router
 log = logging.getLogger("fideslog.api.main")
 
 app = FastAPI(title="fideslog")
-app.state.limiter = Limiter(key_func=get_remote_address, default_limits=["6/minute"])
+app.state.limiter = Limiter(key_func=get_remote_address, default_limits=["20/minute"])
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
 app.include_router(api_router)

@@ -20,7 +20,7 @@ router = APIRouter(tags=["Events"], prefix="/events")
         status.HTTP_429_TOO_MANY_REQUESTS: {
             "content": {
                 "application/json": {
-                    "example": {"error": "Rate limit exceeded: 6 per minute"}
+                    "example": {"error": "Rate limit exceeded: 20 per 1 minute"}
                 }
             },
             "description": "Rate limit exceeded",

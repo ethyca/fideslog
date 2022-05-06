@@ -4,7 +4,6 @@ from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 
 from ..endpoints.events import router as event_router
-from ..rate_limiter import rate_limiter
 
 api_router = APIRouter()
 api_router.include_router(event_router)
@@ -20,7 +19,7 @@ api_router.include_router(event_router)
         status.HTTP_429_TOO_MANY_REQUESTS: {
             "content": {
                 "application/json": {
-                    "example": {"error": "Rate limit exceeded: 6 per minute"}
+                    "example": {"error": "Rate limit exceeded: 20 per 1 minute"}
                 }
             },
             "description": "Rate limit exceeded",
@@ -28,7 +27,6 @@ api_router.include_router(event_router)
     },
     tags=["Health"],
 )
-@rate_limiter.limit("6/minute")
 async def health(request: Request) -> JSONResponse:  # pylint: disable=unused-argument
     """Confirm that the API is running and healthy."""
 

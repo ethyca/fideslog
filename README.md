@@ -82,11 +82,11 @@ If no configuration file is found in any of the above locations, the default con
 
 #### Example Configuration File
 
-| :warning: WARNING | Never commit changes to the included [`fidesctl.toml` file](./fideslog.toml) to version control! |
+| :warning: WARNING | Never commit changes to the included [`fideslog.toml` file](./fideslog.toml) to version control! |
 |:-----------------:|:-------------------------------------------------------------------------------------------------|
 
 ```toml
-# fidesctl.toml
+# fideslog.toml
 
 [database]
 account = "--REDACTED--"

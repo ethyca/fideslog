@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field, validator
-
 from validation import check_in_the_past, check_not_an_email_address
 
 

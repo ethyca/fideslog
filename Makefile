@@ -53,11 +53,16 @@ api: build-local
 # CI
 ####################
 
-check-all: build-local black pylint mypy xenon pytest
+check-all: build-local isort black pylint mypy xenon pytest
 	@echo "Running formatter, linter, typechecker and tests..."
 
 black:
 	@$(RUN_NO_DEPS) black --check fideslog/
+
+isort:
+	@echo "Running isort checks..."
+	@docker-compose run $(IMAGE_NAME) \
+		isort fideslog tests --check-only
 
 mypy:
 	@$(RUN_NO_DEPS) mypy

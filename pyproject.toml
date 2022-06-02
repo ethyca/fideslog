@@ -42,6 +42,16 @@ exclude = '''
 )/
 '''
 
+#######
+# isort
+#######
+[tool.isort]
+known_first_party = ["versioneer"]
+line_length = 88
+profile = "black"
+src_paths = ["fideslog", "tests"]
+
+
 ########
 # Pylint
 ########

@@ -58,6 +58,25 @@ jobs:
       - name: Run formatter
         run: make black
 
+  iSort:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download fideslog container
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.CONTAINER }}
+          path: /tmp/
+
+      - name: Load fideslog image
+        run: docker load --input /tmp/${{ env.CONTAINER }}.tar
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run import formatter
+        run: make isort
+
   Pylint:
     needs: Build
     runs-on: ubuntu-latest

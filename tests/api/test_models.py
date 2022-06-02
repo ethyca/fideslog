@@ -1,6 +1,7 @@
 # pylint: disable=redefined-outer-name
 
 from typing import Generator
+
 import pytest
 
 from fideslog.api.models.analytics_event import AnalyticsEvent

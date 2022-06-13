@@ -30,7 +30,7 @@ class AnalyticsEvent(BaseModel):
     )
     endpoint: Optional[str] = Field(
         None,
-        description="For events submitted as a result of making API server requests, the API endpoint path that was requested.",
+        description="For events submitted as a result of making API server requests, the API endpoint method and path that was requested, delimited by a colon. E.g GET: /api/path. ",
     )
     error: Optional[str] = Field(
         None,
@@ -81,12 +81,15 @@ class AnalyticsEvent(BaseModel):
         return value
 
     @validator("endpoint")
-    def check_no_hostname(cls, value: str) -> str:
+    def validate_endpoint_format(cls, value: str) -> str:
         """
-        Ensure that endpoints contain only the URL path.
+        Ensure that endpoint contains method and path, and that path component contains only the URL path.
         """
-
-        return urlparse(value).path
+        endpoint_components: List[str] = value.split(":",1)
+        assert (
+                len(endpoint_components) > 1
+        ), "endpoint must contain both http method and path, delimited by a colon"
+        return f"{endpoint_components[0]}: {urlparse(endpoint_components[1]).path}"
 
     @validator("event_created_at")
     def check_in_the_past(cls, value: datetime) -> datetime:

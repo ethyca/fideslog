@@ -87,7 +87,7 @@ class AnalyticsEvent(BaseModel):
         """
         endpoint_components: List[str] = value.split(":",1)
         assert (
-                len(endpoint_components) > 1
+            len(endpoint_components) > 1
         ), "endpoint must contain both http method and path, delimited by a colon"
         return f"{endpoint_components[0]}: {urlparse(endpoint_components[1]).path}"
 

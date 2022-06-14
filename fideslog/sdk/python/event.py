@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
-from .exceptions import InvalidEventError
 from ...api.models.analytics_event import ALLOWED_HTTP_METHODS
+from .exceptions import InvalidEventError
 
 
 class AnalyticsEvent:
@@ -73,15 +73,15 @@ class AnalyticsEvent:
             if endpoint is not None:
                 endpoint_components = endpoint.split(":")
                 assert (
-                        len(endpoint_components) == 2
+                    len(endpoint_components) == 2
                 ), "endpoint must contain only the HTTP method and URL path, delimited by a colon"
                 endpoint_components[0] = endpoint_components[0].strip().upper()
                 assert (
-                        endpoint_components[0].strip() in ALLOWED_HTTP_METHODS
+                    endpoint_components[0].strip() in ALLOWED_HTTP_METHODS
                 ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
                 assert (
-                        endpoint_components[1].strip()
-                        == urlparse(endpoint_components[1].strip()).path
+                    endpoint_components[1].strip()
+                    == urlparse(endpoint_components[1].strip()).path
                 ), "endpoint must contain only the URL path"
                 endpoint_with_uppercase_method = ":".join(endpoint_components)
                 self.endpoint = endpoint_with_uppercase_method

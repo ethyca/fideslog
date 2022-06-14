@@ -8,7 +8,6 @@ from pydantic import BaseModel, Field, validator
 
 from .manifest_file_counts import ManifestFileCounts
 
-
 ALLOWED_HTTP_METHODS = [
     "CONNECT",
     "DELETE",
@@ -101,15 +100,15 @@ class AnalyticsEvent(BaseModel):
 
         endpoint_components = value.split(":")
         assert (
-                len(endpoint_components) == 2
+            len(endpoint_components) == 2
         ), "endpoint must contain only the HTTP method and URL path, delimited by a colon"
         endpoint_components[0] = endpoint_components[0].strip().upper()
         assert (
-                endpoint_components[0].strip() in ALLOWED_HTTP_METHODS
+            endpoint_components[0].strip() in ALLOWED_HTTP_METHODS
         ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
         assert (
-                endpoint_components[1].strip()
-                == urlparse(endpoint_components[1].strip()).path
+            endpoint_components[1].strip()
+            == urlparse(endpoint_components[1].strip()).path
         ), "endpoint must contain only the URL path"
         value_with_uppercase_method = ":".join(endpoint_components)
         return value_with_uppercase_method

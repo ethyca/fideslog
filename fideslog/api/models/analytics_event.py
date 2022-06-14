@@ -9,7 +9,17 @@ from pydantic import BaseModel, Field, validator
 from .manifest_file_counts import ManifestFileCounts
 
 
-ALLOWED_HTTP_METHODS = ["CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE", ]
+ALLOWED_HTTP_METHODS = [
+    "CONNECT",
+    "DELETE",
+    "GET",
+    "HEAD",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+    "TRACE",
+]
 
 
 class AnalyticsEvent(BaseModel):

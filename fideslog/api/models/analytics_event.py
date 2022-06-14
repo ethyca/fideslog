@@ -9,6 +9,9 @@ from pydantic import BaseModel, Field, validator
 from .manifest_file_counts import ManifestFileCounts
 
 
+ALLOWED_HTTP_METHODS = ["CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE", ]
+
+
 class AnalyticsEvent(BaseModel):
     """The model for analytics events."""
 
@@ -30,7 +33,7 @@ class AnalyticsEvent(BaseModel):
     )
     endpoint: Optional[str] = Field(
         None,
-        description="For events submitted as a result of making API server requests, the API endpoint method and path that was requested, delimited by a colon. E.g GET: /api/path. ",
+        description="For events submitted as a result of making API server requests, the HTTP method and API endpoint path included on the request, delimited by a colon. Ex: `GET: /api/path`.",
     )
     error: Optional[str] = Field(
         None,
@@ -85,11 +88,20 @@ class AnalyticsEvent(BaseModel):
         """
         Ensure that endpoint contains method and path, and that path component contains only the URL path.
         """
-        endpoint_components: List[str] = value.split(":",1)
+
+        endpoint_components = value.split(":")
         assert (
-            len(endpoint_components) > 1
-        ), "endpoint must contain both http method and path, delimited by a colon"
-        return f"{endpoint_components[0]}: {urlparse(endpoint_components[1]).path}"
+                len(endpoint_components) == 2
+        ), "endpoint must contain only the HTTP method and URL path, delimited by a colon"
+        assert (
+                endpoint_components[0].strip() in ALLOWED_HTTP_METHODS
+        ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
+        assert (
+                endpoint_components[1].strip()
+                == urlparse(endpoint_components[1].strip()).path
+        ), "endpoint must contain only the URL path"
+
+        return value
 
     @validator("event_created_at")
     def check_in_the_past(cls, value: datetime) -> datetime:

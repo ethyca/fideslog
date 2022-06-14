@@ -5,6 +5,7 @@ from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
 from .exceptions import InvalidEventError
+from ...api.models.analytics_event import ALLOWED_HTTP_METHODS
 
 
 class AnalyticsEvent:
@@ -33,7 +34,7 @@ class AnalyticsEvent:
         :param event_created_at: The UTC timestamp when the event occurred, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. Must include the UTC timezone, and represent a datetime in the past.
         :param command: For events submitted as a result of running CLI commands, the name of the command that was submitted. May include the subcommand name(s).
         :param docker: `True` if the command was submitted within a Docker container. Default: `False`.
-        :param endpoint: For events submitted as a result of making API server requests, the API endpoint path that was requested. If a fully-qualified URL is provided, only the URL path will be persisted.
+        :param endpoint: For events submitted as a result of making API server requests, the HTTP method and API endpoint path included on the request, delimited by a colon. Ex: `GET: /api/path`.
         :param error: For events submitted as a result of running CLI commands that exit with a non-0 status code, or events submitted as a result of API server requests that respond with a non-2xx status code, the error type, without specific error details.
         :param extra_data: Any additional key/value pairs that should be associated with this event.
         :param flags: For events submitted as a result of running CLI commands, the flags in use when the command was submitted. Omits flag values (when they exist) by persisting only the portion of each string in this list that come before `=` or `space` characters.
@@ -70,7 +71,17 @@ class AnalyticsEvent:
 
             self.endpoint = None
             if endpoint is not None:
-                assert urlparse(endpoint).path != "", "endpoint must include a URL path"
+                endpoint_components = endpoint.split(":")
+                assert (
+                        len(endpoint_components) == 2
+                ), "endpoint must contain only the HTTP method and URL path, delimited by a colon"
+                assert (
+                        endpoint_components[0].strip() in ALLOWED_HTTP_METHODS
+                ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
+                assert (
+                        endpoint_components[1].strip()
+                        == urlparse(endpoint_components[1].strip()).path
+                ), "endpoint must contain only the URL path"
                 self.endpoint = endpoint
 
             self.command = command

@@ -93,6 +93,7 @@ class AnalyticsEvent(BaseModel):
         assert (
                 len(endpoint_components) == 2
         ), "endpoint must contain only the HTTP method and URL path, delimited by a colon"
+        endpoint_components[0] = endpoint_components[0].strip().upper()
         assert (
                 endpoint_components[0].strip() in ALLOWED_HTTP_METHODS
         ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
@@ -100,8 +101,8 @@ class AnalyticsEvent(BaseModel):
                 endpoint_components[1].strip()
                 == urlparse(endpoint_components[1].strip()).path
         ), "endpoint must contain only the URL path"
-
-        return value
+        value_with_uppercase_method = ":".join(endpoint_components)
+        return value_with_uppercase_method
 
     @validator("event_created_at")
     def check_in_the_past(cls, value: datetime) -> datetime:

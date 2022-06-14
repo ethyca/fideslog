@@ -14,6 +14,7 @@ class AnalyticsEvent:
     """
 
     def __init__(
+        # pylint:disable=too-many-locals
         self,
         event: str,
         event_created_at: datetime,

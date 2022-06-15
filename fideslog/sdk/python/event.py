@@ -78,11 +78,10 @@ class AnalyticsEvent:
                 http_method = endpoint_components[0].strip().upper()
                 path = endpoint_components[1].strip()
                 assert (
-                        http_method in ALLOWED_HTTP_METHODS
+                    http_method in ALLOWED_HTTP_METHODS
                 ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
                 assert (
-                        path
-                        == urlparse(path).path
+                    path == urlparse(path).path
                 ), "endpoint must contain only the URL path"
                 self.endpoint = f"{http_method}: {path}"
 

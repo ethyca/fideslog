@@ -107,10 +107,7 @@ class AnalyticsEvent(BaseModel):
         assert (
             http_method in ALLOWED_HTTP_METHODS
         ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
-        assert (
-            path
-            == urlparse(path).path
-        ), "endpoint must contain only the URL path"
+        assert path == urlparse(path).path, "endpoint must contain only the URL path"
         return f"{http_method}: {path}"
 
     @validator("event_created_at")

@@ -1,4 +1,4 @@
-# pylint: disable= too-many-arguments, too-many-instance-attributes
+# pylint: disable= too-many-arguments, too-many-instance-attributes, too-many-locals
 
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
@@ -14,7 +14,6 @@ class AnalyticsEvent:
     """
 
     def __init__(
-        # pylint:disable=too-many-locals
         self,
         event: str,
         event_created_at: datetime,
@@ -76,16 +75,16 @@ class AnalyticsEvent:
                 assert (
                     len(endpoint_components) == 2
                 ), "endpoint must contain only the HTTP method and URL path, delimited by a colon"
-                endpoint_components[0] = endpoint_components[0].strip().upper()
+                http_method = endpoint_components[0].strip().upper()
+                path = endpoint_components[1].strip()
                 assert (
-                    endpoint_components[0].strip() in ALLOWED_HTTP_METHODS
+                        http_method in ALLOWED_HTTP_METHODS
                 ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
                 assert (
-                    endpoint_components[1].strip()
-                    == urlparse(endpoint_components[1].strip()).path
+                        path
+                        == urlparse(path).path
                 ), "endpoint must contain only the URL path"
-                endpoint_with_uppercase_method = ":".join(endpoint_components)
-                self.endpoint = endpoint_with_uppercase_method
+                self.endpoint = f"{http_method}: {path}"
 
             self.command = command
             self.docker = docker

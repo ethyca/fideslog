@@ -68,7 +68,7 @@ mypy:
 	@$(RUN_NO_DEPS) mypy
 
 pylint:
-	@$(RUN_NO_DEPS) pylint --ignore-patterns="sdk/python/_version\.py" fideslog/
+	@$(RUN_NO_DEPS) pylint fideslog/
 
 pytest:
 	@docker compose up -d $(IMAGE_NAME)

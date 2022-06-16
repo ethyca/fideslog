@@ -2,11 +2,23 @@
 
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field, validator
+from validators import url as is_valid_url
 
 from .manifest_file_counts import ManifestFileCounts
+
+ALLOWED_HTTP_METHODS = [
+    "CONNECT",
+    "DELETE",
+    "GET",
+    "HEAD",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+    "TRACE",
+]
 
 
 class AnalyticsEvent(BaseModel):
@@ -30,7 +42,7 @@ class AnalyticsEvent(BaseModel):
     )
     endpoint: Optional[str] = Field(
         None,
-        description="For events submitted as a result of making API server requests, the API endpoint path that was requested.",
+        description="For events submitted as a result of making API server requests, the HTTP method and full API endpoint URL included on the request, delimited by a colon. Ex: `GET: https://www.example.com/api/path`. The URL will be truncated, and only the URL path will be stored.",
     )
     error: Optional[str] = Field(
         None,
@@ -81,12 +93,28 @@ class AnalyticsEvent(BaseModel):
         return value
 
     @validator("endpoint")
-    def check_no_hostname(cls, value: str) -> str:
+    def validate_endpoint_format(cls, value: Optional[str]) -> Optional[str]:
         """
-        Ensure that endpoints contain only the URL path.
+        Ensure that `endpoint` contains the request's HTTP method and URL.
         """
 
-        return urlparse(value).path
+        if value is None:
+            return None
+
+        endpoint_components = value.split(":", maxsplit=1)
+        assert (
+            len(endpoint_components) == 2
+        ), "endpoint must contain only the HTTP method and URL, delimited by a colon"
+
+        http_method = endpoint_components[0].strip().upper()
+        assert (
+            http_method in ALLOWED_HTTP_METHODS
+        ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
+
+        url = endpoint_components[1].strip()
+        assert is_valid_url(url), "endpoint URL must be a valid URL"
+
+        return f"{http_method}: {url}"
 
     @validator("event_created_at")
     def check_in_the_past(cls, value: datetime) -> datetime:

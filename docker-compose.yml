@@ -13,7 +13,7 @@ services:
     environment:
       FIDESLOG__LOGGING_LEVEL: "debug"
       FIDESLOG__SERVER_HOST: "fideslog"
-      FIDESLOG__SERVER_HOT_RELOAD: true
+      FIDESLOG__SERVER_HOT_RELOAD: "true"
     expose:
       - 8080
     ports:

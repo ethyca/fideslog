@@ -21,7 +21,7 @@ def test_full_payload() -> Generator:
         "product_name": "test_product",
         "production_version": "1.2.3",
         "status_code": 200,
-        "endpoint": "https://www.example.com/path/string",
+        "endpoint": "GET: https://www.example.com/path/string",
         "flags": ["-f", "-y", "--test"],
         "command": "apply",
         "error": "Internal Server Error",
@@ -29,6 +29,7 @@ def test_full_payload() -> Generator:
         "extra_data": {"extra_value": "extra_value"},
         "docker": True,
         "resource_counts": {"datasets": 1, "policies": 1, "systems": 27},
+        "developer": True,
     }
 
 

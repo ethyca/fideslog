@@ -102,6 +102,9 @@ class AnalyticsEvent(BaseModel):
             return None
 
         endpoint_components = value.split(":", maxsplit=1)
+        assert (
+            len(endpoint_components) == 2
+        ), "endpoint must contain only the HTTP method and URL, delimited by a colon"
 
         http_method = endpoint_components[0].strip().upper()
         assert (

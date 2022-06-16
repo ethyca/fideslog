@@ -2,7 +2,6 @@
 
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from urllib.parse import urlparse
 
 from validators import url as is_valid_url
 
@@ -84,10 +83,7 @@ class AnalyticsEvent:
 
             self.endpoint = None
             if endpoint is not None:
-                endpoint_components = endpoint.split(":")
-                assert (
-                    len(endpoint_components) == 2
-                ), "endpoint must contain only the HTTP method and URL path, delimited by a colon"
+                endpoint_components = endpoint.split(":", maxsplit=1)
 
                 http_method = endpoint_components[0].strip().upper()
                 assert (
@@ -97,7 +93,7 @@ class AnalyticsEvent:
                 url = endpoint_components[1].strip()
                 assert is_valid_url(url), "endpoint URL must be a valid URL"
 
-                self.endpoint = f"{http_method}: {urlparse(url).path}"
+                self.endpoint = f"{http_method}: {url}"
 
             self.command = command
             self.docker = docker

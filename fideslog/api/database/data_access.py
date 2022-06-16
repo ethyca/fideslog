@@ -1,10 +1,15 @@
 from json import dumps
 from logging import getLogger
+from typing import Optional
+from urllib.parse import urlparse
 
 from sqlalchemy.orm import Session
 
 from ..models.analytics_event import AnalyticsEvent
 from .models import AnalyticsEvent as AnalyticsEventORM
+
+EXCLUDED_ATTRIBUTES = set(("client_id", "endpoint", "extra_data", "os"))
+
 
 log = getLogger(__name__)
 
@@ -12,14 +17,18 @@ log = getLogger(__name__)
 def create_event(database: Session, event: AnalyticsEvent) -> None:
     """Create a new analytics event."""
 
-    logged_event = event.dict(exclude=set(("client_id", "extra_data", "os")))
-    log.debug("Creating event: %s", logged_event)
+    logged_event = event.dict(exclude=EXCLUDED_ATTRIBUTES)
+    log.debug("Creating event from: %s", logged_event)
+    log.debug(
+        "The following attributes have been excluded as PII: %s", EXCLUDED_ATTRIBUTES
+    )
 
     extra_data = dumps(event.extra_data) if event.extra_data else None
     flags = ", ".join(event.flags) if event.flags else None
     resource_counts = (
         dumps(event.resource_counts.dict()) if event.resource_counts else None
     )
+    endpoint = truncate_endpoint_url(event.endpoint)
 
     database.add(
         AnalyticsEventORM(
@@ -27,7 +36,7 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
             command=event.command,
             developer=event.developer,
             docker=event.docker,
-            endpoint=event.endpoint,
+            endpoint=endpoint,
             error=event.error,
             event=event.event,
             event_created_at=event.event_created_at,
@@ -44,3 +53,17 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
 
     database.commit()
     log.debug("Event created: %s", logged_event)
+
+
+def truncate_endpoint_url(endpoint: Optional[str]) -> Optional[str]:
+    """
+    Guarantee that only the endpoint path is stored in the database.
+    """
+
+    if endpoint is None:
+        return None
+
+    endpoint_components = endpoint.split(":", maxsplit=1)
+    http_method = endpoint_components[0].strip().upper()
+    url = endpoint_components[1].strip()
+    return f"{http_method}: {urlparse(url).path}"

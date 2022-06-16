@@ -2,7 +2,6 @@
 
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field, validator
 from validators import url as is_valid_url
@@ -94,16 +93,15 @@ class AnalyticsEvent(BaseModel):
         return value
 
     @validator("endpoint")
-    def validate_endpoint_format(cls, value: str) -> str:
+    def validate_endpoint_format(cls, value: Optional[str]) -> Optional[str]:
         """
-        Ensure that endpoint contains the request's HTTP method and URL,
-        and truncate the URL such that only the path is stored.
+        Ensure that `endpoint` contains the request's HTTP method and URL.
         """
 
-        endpoint_components = value.split(":")
-        assert (
-            len(endpoint_components) == 2
-        ), "endpoint must contain only the HTTP method and URL path, delimited by a colon"
+        if value is None:
+            return None
+
+        endpoint_components = value.split(":", maxsplit=1)
 
         http_method = endpoint_components[0].strip().upper()
         assert (
@@ -113,7 +111,7 @@ class AnalyticsEvent(BaseModel):
         url = endpoint_components[1].strip()
         assert is_valid_url(url), "endpoint URL must be a valid URL"
 
-        return f"{http_method}: {urlparse(url).path}"
+        return f"{http_method}: {url}"
 
     @validator("event_created_at")
     def check_in_the_past(cls, value: datetime) -> datetime:

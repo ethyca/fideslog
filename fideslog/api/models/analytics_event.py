@@ -5,6 +5,7 @@ from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
 from pydantic import BaseModel, Field, validator
+from validators import url as is_valid_url
 
 from .manifest_file_counts import ManifestFileCounts
 
@@ -42,7 +43,7 @@ class AnalyticsEvent(BaseModel):
     )
     endpoint: Optional[str] = Field(
         None,
-        description="For events submitted as a result of making API server requests, the HTTP method and API endpoint path included on the request, delimited by a colon. Ex: `GET: /api/path`.",
+        description="For events submitted as a result of making API server requests, the HTTP method and full API endpoint URL included on the request, delimited by a colon. Ex: `GET: https://www.example.com/api/path`. The URL will be truncated, and only the URL path will be stored.",
     )
     error: Optional[str] = Field(
         None,
@@ -95,20 +96,24 @@ class AnalyticsEvent(BaseModel):
     @validator("endpoint")
     def validate_endpoint_format(cls, value: str) -> str:
         """
-        Ensure that endpoint contains method and path, and that path component contains only the URL path.
+        Ensure that endpoint contains the request's HTTP method and URL,
+        and truncate the URL such that only the path is stored.
         """
 
         endpoint_components = value.split(":")
         assert (
             len(endpoint_components) == 2
         ), "endpoint must contain only the HTTP method and URL path, delimited by a colon"
+
         http_method = endpoint_components[0].strip().upper()
-        path = endpoint_components[1].strip()
         assert (
             http_method in ALLOWED_HTTP_METHODS
         ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
-        assert path == urlparse(path).path, "endpoint must contain only the URL path"
-        return f"{http_method}: {path}"
+
+        url = endpoint_components[1].strip()
+        assert is_valid_url(url), "endpoint URL must be a valid URL"
+
+        return f"{http_method}: {urlparse(url).path}"
 
     @validator("event_created_at")
     def check_in_the_past(cls, value: datetime) -> datetime:

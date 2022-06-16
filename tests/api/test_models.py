@@ -21,7 +21,7 @@ def test_full_payload() -> Generator:
         "product_name": "test_product",
         "production_version": "1.2.3",
         "status_code": 200,
-        "endpoint": "GET: /path/string",
+        "endpoint": "GET: https://www.example.com/path/string",
         "flags": ["-f", "-y", "--test"],
         "command": "apply",
         "error": "Internal Server Error",

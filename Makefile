@@ -60,9 +60,7 @@ black:
 	@$(RUN_NO_DEPS) black --check --exclude="sdk/python/_version\.py" fideslog/
 
 isort:
-	@echo "Running isort checks..."
-	@docker-compose run $(IMAGE_NAME) \
-		isort fideslog tests --check-only
+	$(RUN_NO_DEPS) isort --check fideslog/ tests/
 
 mypy:
 	@$(RUN_NO_DEPS) mypy

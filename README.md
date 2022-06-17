@@ -35,7 +35,7 @@ The fideslog API server exposes the endpoints that handle interactions with anal
 
 The official fideslog SDK libraries are the recommended means by which to automate the submission of analytics data to the fideslog API server from any application. For language-specific documentation, best practice recommendations, and code examples, see the dedicated README for each library:
 
-- **Python** ([README](./fideslog/sdk/python/README.md)): Available via [PyPI](https://pypi.org/project/fideslog/) and [Conda](https://anaconda.org/ethyca/fideslog).
+- **Python** ([README](./fideslog/sdk/python/README.md)): Available via [PyPI](https://pypi.org/project/fideslog/).
 
 ## Getting Started
 

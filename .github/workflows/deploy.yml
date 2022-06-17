@@ -23,27 +23,6 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
-  Conda:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Install Anaconda
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          auto-activate-base: true
-          activate-environment: ""
-
-      - name: Conda Upload
-        shell: bash -l {0}
-        run: |
-          conda install conda-build
-          conda install anaconda-client
-          conda install conda-verify
-          conda build --output-folder ./conda-out/ ./conda/ -c conda-forge
-          anaconda -t "${{ secrets.CONDA_TOKEN }}" upload -u ethyca ./conda-out/noarch/fideslog*.bz2
-
   Docker:
     runs-on: ubuntu-latest
     env:

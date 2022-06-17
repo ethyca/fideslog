@@ -96,6 +96,10 @@ class AnalyticsEvent(BaseModel):
     def validate_endpoint_format(cls, value: Optional[str]) -> Optional[str]:
         """
         Ensure that `endpoint` contains the request's HTTP method and URL.
+
+        If the URL contains the host `0.0.0.0` this validation would fail,
+        so it's replaced with `localhost` to ensure the URL can be legitimately
+        validated. The host is never stored in the databse, so it doesn't matter.
         """
 
         if value is None:
@@ -112,7 +116,9 @@ class AnalyticsEvent(BaseModel):
         ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
 
         url = endpoint_components[1].strip()
-        assert is_valid_url(url), "endpoint URL must be a valid URL"
+        assert is_valid_url(
+            url.replace("://0.0.0.0", "://localhost", 1)
+        ), "endpoint URL must be a valid URL"
 
         return f"{http_method}: {url}"
 

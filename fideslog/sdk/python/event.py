@@ -94,7 +94,9 @@ class AnalyticsEvent:
                 ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
 
                 url = endpoint_components[1].strip()
-                assert is_valid_url(url), "endpoint URL must be a valid URL"
+                assert is_valid_url(
+                    url.replace("://0.0.0.0", "://localhost", 1)
+                ), "endpoint URL must be a valid URL"
 
                 self.endpoint = f"{http_method}: {url}"
 

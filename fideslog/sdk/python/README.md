@@ -17,12 +17,10 @@ This library is the recommended means by which to automate the submission of ana
 
 ## Installation
 
-Install the fideslog Python SDK using a package manager. It is available via [PyPI](https://pypi.org/project/fideslog/) and [Conda](https://anaconda.org/ethyca/fideslog). For a complete list of available release versions and their associated release notes, see [the Releases tab](https://github.com/ethyca/fideslog/releases) in the repository.
+Install the fideslog Python SDK using a package manager. It is available via [PyPI](https://pypi.org/project/fideslog/). For a complete list of available release versions and their associated release notes, see [the Releases tab](https://github.com/ethyca/fideslog/releases) in the repository.
 
 ```sh
 pip install fideslog
-#  or...
-conda install fideslog
 ```
 
 ## Usage

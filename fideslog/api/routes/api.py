@@ -3,6 +3,7 @@ from typing import Dict
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 
+from ..config import config
 from ..endpoints.events import router as event_router
 
 api_router = APIRouter()
@@ -19,7 +20,9 @@ api_router.include_router(event_router)
         status.HTTP_429_TOO_MANY_REQUESTS: {
             "content": {
                 "application/json": {
-                    "example": {"error": "Rate limit exceeded: 20 per 1 minute"}
+                    "example": {
+                        "error": f"Rate limit exceeded: {config.server.request_rate_limit}"
+                    }
                 }
             },
             "description": "Rate limit exceeded",

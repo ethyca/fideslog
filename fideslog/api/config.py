@@ -157,6 +157,7 @@ class ServerSettings(Settings):
     host: str = "localhost"
     hot_reload: bool = False
     port: int = 8080
+    request_rate_limit: str = "100/minute"
 
     class Config:
         """Modifies pydantic behavior."""

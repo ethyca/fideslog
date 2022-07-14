@@ -65,20 +65,21 @@ If no configuration file is found in any of the above locations, the default con
 
 #### Options
 
-|     Name      | Configuration File Section |   Environment Variable Name    |  Type   | Required |     Default      | Description |
-|:-------------:|:--------------------------:|:------------------------------:|:-------:|:--------:|:----------------:|-------------|
-|   `account`   |        `[database]`        |  `FIDESLOG__DATABASE_ACCOUNT`   | String  |    Yes   |                  | The Snowflake account in which the fideslog database can be found. Ethyca employees may access this value internally. |
-|   `database`  |        `[database]`        |  `FIDESLOG__DATABASE_DATABASE`  | String  |    No    |      `"raw"`     | The name of the Snowflake database in which analytics events should be stored. |
-|  `db_schema`  |        `[database]`        | `FIDESLOG__DATABASE_DB_SCHEMA`  | String  |    No    |     `"fides"`    | The Snowflake database schema to target. |
-|  `password`   |        `[database]`        |  `FIDESLOG__DATABASE_PASSWORD`  | String  |    Yes   |                  | The password associated with the Snowflake account for `user`. Ethyca employees may access this value internally. |
-|    `role`     |        `[database]`        |    `FIDESLOG__DATABASE_ROLE`    | String  |    No    | `"event_writer"` | The permissions with which to access the specified Snowflake `database`.  |
-|    `user`     |        `[database]`        |    `FIDESLOG__DATABASE_USER`    | String  |    Yes   |                  | The ID of the user with which to authenticate to Snowflake. Ethyca employees may access this value internally. |
-|  `warehouse`  |        `[database]`        | `FIDESLOG__DATABASE_WAREHOUSE`  | String  |    No    |   `"fides_log"`  | The Snowflake data warehouse in which the fideslog database can be found. |
-| `destination` |        `[logging]`         | `FIDESLOG__LOGGING_DESTINATION` | String  |    No    |    `"stdout"`    | The absolute path to a file or directory in which logs should be stored. If a directory is passed, a `fideslog.log` file will be created in that directory. |
-|    `level`    |        `[logging]`         |    `FIDESLOG__LOGGING_LEVEL`    | String  |    No    |     `"INFO"`     | The desired logging level. Accepts `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`. Case insensitive. |
-|    `host`     |         `[server]`         |     `FIDESLOG__SERVER_HOST`     | String  |    No    |    `"0.0.0.0"`   | The hostname on which the API server should respond. |
-| `hot_reload`  |         `[server]`         |  `FIDESLOG__SERVER_HOT_RELOAD`  | Boolean |    No    |      `False`     | Whether or not to automatically apply code changes during local development. |
-|    `port`     |         `[server]`         |     `FIDESLOG__SERVER_PORT`     | Integer |    No    |      `8080`      | The port number on which the API server should listen. |
+|        Name          | Configuration File Section |      Environment Variable Name        |  Type   | Required |     Default      | Description |
+|:--------------------:|:--------------------------:|:-------------------------------------:|:-------:|:--------:|:----------------:|-------------|
+|      `account`       |        `[database]`        |    `FIDESLOG__DATABASE_ACCOUNT`       | String  |    Yes   |                  | The Snowflake account in which the fideslog database can be found. Ethyca employees may access this value internally. |
+|      `database`      |        `[database]`        |    `FIDESLOG__DATABASE_DATABASE`      | String  |    No    |      `"raw"`     | The name of the Snowflake database in which analytics events should be stored. |
+|     `db_schema`      |        `[database]`        |   `FIDESLOG__DATABASE_DB_SCHEMA`      | String  |    No    |     `"fides"`    | The Snowflake database schema to target. |
+|     `password`       |        `[database]`        |    `FIDESLOG__DATABASE_PASSWORD`      | String  |    Yes   |                  | The password associated with the Snowflake account for `user`. Ethyca employees may access this value internally. |
+|       `role`         |        `[database]`        |      `FIDESLOG__DATABASE_ROLE`        | String  |    No    | `"event_writer"` | The permissions with which to access the specified Snowflake `database`.  |
+|       `user`         |        `[database]`        |      `FIDESLOG__DATABASE_USER`        | String  |    Yes   |                  | The ID of the user with which to authenticate to Snowflake. Ethyca employees may access this value internally. |
+|     `warehouse`      |        `[database]`        |   `FIDESLOG__DATABASE_WAREHOUSE`      | String  |    No    |   `"fides_log"`  | The Snowflake data warehouse in which the fideslog database can be found. |
+|    `destination`     |        `[logging]`         |   `FIDESLOG__LOGGING_DESTINATION`     | String  |    No    |    `"stdout"`    | The absolute path to a file or directory in which logs should be stored. If a directory is passed, a `fideslog.log` file will be created in that directory. |
+|       `level`        |        `[logging]`         |      `FIDESLOG__LOGGING_LEVEL`        | String  |    No    |     `"INFO"`     | The desired logging level. Accepts `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`. Case insensitive. |
+|       `host `        |         `[server]`         |       `FIDESLOG__SERVER_HOST`         | String  |    No    |    `"0.0.0.0"`   | The hostname on which the API server should respond. |
+|    `hot_reload`      |         `[server]`         |     `FIDESLOG__SERVER_HOT_RELOAD`     | Boolean |    No    |      `False`     | Whether or not to automatically apply code changes during local development. |
+|       `port`         |         `[server]`         |        `FIDESLOG__SERVER_PORT`        | Integer |    No    |      `8080`      | The port number on which the API server should listen. |
+| `request_rate_limit` |         `[server]`         | `FIDESLOG__SERVER_REQUEST_RATE_LIMIT` | String  |    No    |  `"100/minute"`  | The amount of requests allowed per IP address per unit time. |
 
 #### Example Configuration File
 

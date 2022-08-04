@@ -35,7 +35,7 @@ class AnalyticsEvent:
         error: Optional[str] = None,
         extra_data: Optional[Dict] = None,
         flags: Optional[List[str]] = None,
-        local_host: bool = False,
+        local_host: Optional[bool] = None,
         resource_counts: Optional[Dict[str, int]] = None,
         status_code: Optional[int] = None,
     ) -> None:
@@ -50,7 +50,7 @@ class AnalyticsEvent:
         :param error: For events submitted as a result of running CLI commands that exit with a non-0 status code, or events submitted as a result of API server requests that respond with a non-2xx status code, the error type, without specific error details.
         :param extra_data: Any additional key/value pairs that should be associated with this event.
         :param flags: For events submitted as a result of running CLI commands, the flags in use when the command was submitted. Omits flag values (when they exist) by persisting only the portion of each string in this list that come before `=` or `space` characters.
-        :param local_host: For events submitted as a result of making API server requests, `True` if the API server is running on the user's local host. Default: `False`.
+        :param local_host: For events submitted as a result of making API server requests, `True` if the API server is running on the user's local host, otherwise `False`. Default: `None` (acceptable only when `endpoint` is also `None`).
         :param resource_counts: Should contain the counts of dataset, policy, and system manifests in use when this event was submitted. Include all three keys, even if one or more of their values are `0`. Ex: `{ "datasets": 7, "policies": 26, "systems": 9 }`.
         :param status_code: For events submitted as a result of making API server requests, the HTTP status code included in the response.
         """
@@ -81,8 +81,11 @@ class AnalyticsEvent:
 
                 self.resource_counts = resource_counts
 
+            self.local_host = local_host
             self.endpoint = None
             if endpoint is not None:
+                assert self.local_host is not None, "local_host must be provided"
+
                 endpoint_components = endpoint.split(":", maxsplit=1)
                 assert (
                     len(endpoint_components) == 2
@@ -105,7 +108,6 @@ class AnalyticsEvent:
             self.error = error
             self.extra_data = extra_data or {}
             self.flags = flags
-            self.local_host = local_host
             self.status_code = status_code
 
             if self.command is not None or self.endpoint is not None:

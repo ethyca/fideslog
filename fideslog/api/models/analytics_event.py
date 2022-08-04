@@ -61,8 +61,8 @@ class AnalyticsEvent(BaseModel):
         None,
         description="For events submitted as a result of running CLI commands, the flags in use when the command was submitted. Omits flag values when they exist.",
     )
-    local_host: bool = Field(
-        False,
+    local_host: Optional[bool] = Field(
+        None,
         description="For events submitted as a result of making API server requests, `true` if the API server is running on the user's local host, otherwise `false`.",
     )
     os: str = Field(
@@ -145,6 +145,22 @@ class AnalyticsEvent(BaseModel):
         includes_value_chars = ["=", " "]
         for char in includes_value_chars:
             value = value.split(char)[0]
+
+        return value
+
+    @validator("local_host")
+    def ensure_local_host_if_endpoint(
+        cls,
+        value: Optional[bool],
+        values: Dict[str, str],
+    ) -> Optional[bool]:
+        """
+        Ensure that the value of `local_host` is not `None` when the `endpoint`
+        field is populated.
+        """
+
+        if values.get("endpoint"):
+            assert value is not None, "local_host must be provided"
 
         return value
 

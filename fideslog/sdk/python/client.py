@@ -85,7 +85,7 @@ class AnalyticsClient:
 
             set_event_loop_policy(WindowsSelectorEventLoopPolicy())
 
-        run(self.__send(event))
+        run(self.async_send(event))
 
     def __get_request_payload(self, event: AnalyticsEvent) -> Dict:
         """
@@ -122,7 +122,7 @@ class AnalyticsClient:
 
         return payload
 
-    async def __send(self, event: AnalyticsEvent) -> None:
+    async def async_send(self, event: AnalyticsEvent) -> None:
         """
         Asynchronously record a new `AnalyticsEvent`.
         """

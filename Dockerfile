@@ -13,7 +13,8 @@ RUN pip install -r dev-requirements.txt
 COPY fideslog/api/requirements.txt api-requirements.txt
 RUN pip install -r api-requirements.txt
 
-# Copy in the application files and install it locally
-COPY . /fideslog
-WORKDIR /fideslog
-RUN pip install -e .
+COPY /api /api/
+COPY fideslog.toml /api
+COPY fideslog.env /api
+WORKDIR /api/
+RUN pip install -e /api/

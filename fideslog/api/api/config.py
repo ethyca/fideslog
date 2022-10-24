@@ -4,11 +4,12 @@ import logging
 import os
 from typing import Optional, Tuple, Union
 
-from logger import LOG_ENTRY_FORMAT, get_fideslog_logger
 from pydantic import BaseSettings, Field, validator
 from pydantic.env_settings import SettingsSourceCallable
 from snowflake.sqlalchemy import URL
 from toml import load
+
+from logger import LOG_ENTRY_FORMAT, get_fideslog_logger
 
 ENV_PREFIX = "FIDESLOG__"
 CONFIG_FILE_NAME = "fideslog.toml"

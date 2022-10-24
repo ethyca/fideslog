@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
-import sys
-sys.path.append(".")
+
 from api.config import config
 from api.endpoints.events import router as event_router
 

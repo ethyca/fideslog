@@ -2,6 +2,8 @@ import logging
 from datetime import datetime
 from http import HTTPStatus
 from typing import Callable
+import sys
+sys.path.append(".")
 
 from fastapi import FastAPI, Request, Response, status
 from fastapi.responses import JSONResponse
@@ -11,8 +13,8 @@ from slowapi.middleware import SlowAPIMiddleware
 from slowapi.util import get_remote_address
 from uvicorn import run
 
-from fideslog.api.config import ServerSettings, config
-from fideslog.api.routes.api import api_router
+from config import ServerSettings, config
+from routes.api import api_router
 
 log = logging.getLogger("fideslog.api.main")
 

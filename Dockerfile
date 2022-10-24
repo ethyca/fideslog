@@ -13,8 +13,8 @@ RUN pip install -r dev-requirements.txt
 COPY fideslog/api/requirements.txt api-requirements.txt
 RUN pip install -r api-requirements.txt
 
-COPY /api /api/
-COPY fideslog.toml /api
-COPY fideslog.env /api
-WORKDIR /api/
-RUN pip install -e /api/
+COPY /fideslog/api/ /fideslog
+COPY fideslog.toml /fideslog
+COPY fideslog.env /fideslog
+WORKDIR /fideslog/
+RUN pip install -e /fideslog

@@ -119,13 +119,13 @@ jobs:
     needs: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Download fidescls container
+      - name: Download fideslog container
         uses: actions/download-artifact@v2
         with:
           name: ${{ env.CONTAINER }}
           path: /tmp/
 
-      - name: Load fidescls image
+      - name: Load fideslog image
         run: docker load --input /tmp/${{ env.CONTAINER }}.tar
 
       - name: Checkout
@@ -142,13 +142,13 @@ jobs:
       SNOWFLAKE_DB_PASSWORD: ${{ secrets.SNOWFLAKE_DB_PASSWORD }}
       SNOWFLAKE_DB_USER: ${{ secrets.SNOWFLAKE_DB_USER }}
     steps:
-      - name: Download fidescls container
+      - name: Download fideslog container
         uses: actions/download-artifact@v2
         with:
           name: ${{ env.CONTAINER }}
           path: /tmp/
 
-      - name: Load fidescls image
+      - name: Load fideslog image
         run: docker load --input /tmp/${{ env.CONTAINER }}.tar
 
       - name: Checkout

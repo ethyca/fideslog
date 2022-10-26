@@ -5,6 +5,7 @@ from fideslog.api.config import config
 
 health_router = APIRouter()
 
+
 @health_router.get(
     "/health",
     responses={

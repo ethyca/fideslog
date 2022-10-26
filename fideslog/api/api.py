@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from fideslog.api.endpoints.events import event_router
 from fideslog.api.endpoints.health import health_router
 

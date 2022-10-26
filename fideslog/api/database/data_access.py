@@ -5,8 +5,8 @@ from urllib.parse import urlparse
 
 from sqlalchemy.orm import Session
 
+from ..models.models import AnalyticsEvent as AnalyticsEventORM
 from ..schemas.analytics_event import AnalyticsEvent
-from ..models import AnalyticsEvent as AnalyticsEventORM
 
 EXCLUDED_ATTRIBUTES = set(("client_id", "endpoint", "extra_data", "os"))
 

@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from ..config import config
 from ..database.data_access import create_event
 from ..database.database import get_db
-from ..models.analytics_event import AnalyticsEvent
+from ..schemas.analytics_event import AnalyticsEvent
 
 log = getLogger(__name__)
 router = APIRouter(tags=["Events"], prefix="/events")

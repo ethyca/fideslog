@@ -12,7 +12,7 @@ from slowapi.util import get_remote_address
 from uvicorn import run
 
 from fideslog.api.config import ServerSettings, config
-from fideslog.api.routes.api import api_router
+from fideslog.api.api import api_router
 
 log = logging.getLogger("fideslog.api.main")
 

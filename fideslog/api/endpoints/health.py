@@ -1,14 +1,11 @@
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 
-from ..config import config
-from ..endpoints.events import router as event_router
+from fideslog.api.config import config
 
-api_router = APIRouter()
-api_router.include_router(event_router)
+health_router = APIRouter()
 
-
-@api_router.get(
+@health_router.get(
     "/health",
     responses={
         status.HTTP_200_OK: {

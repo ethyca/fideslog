@@ -1,8 +1,12 @@
 FROM python:3.9-slim-bullseye
 
 # Required tools
-RUN apt-get update
-RUN apt-get install -y curl g++ gcc
+RUN : \
+    && apt-get update \
+    && apt-get install -y \
+    curl \
+    g++ \
+    gcc
 
 # Update pip and install requirements
 RUN pip install -U pip

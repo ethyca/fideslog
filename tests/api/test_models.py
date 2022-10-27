@@ -4,7 +4,7 @@ from typing import Generator
 
 import pytest
 
-from fideslog.api.models.analytics_event import AnalyticsEvent
+from fideslog.api.schemas.analytics_event import AnalyticsEvent
 
 
 @pytest.fixture()

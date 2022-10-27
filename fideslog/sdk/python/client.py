@@ -2,7 +2,7 @@
 
 from asyncio import run
 from sys import platform, version_info
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from aiohttp import (
     ClientConnectionError,
@@ -12,7 +12,7 @@ from aiohttp import (
 )
 
 from . import __version__
-from .event import AnalyticsEvent
+from .event import AnalyticsEvent, UserRegistrationEvent
 from .exceptions import (
     AnalyticsSendError,
     InvalidClientError,
@@ -66,7 +66,7 @@ class AnalyticsClient:
         self.developer_mode = developer_mode
         self.extra_data = extra_data or {}
 
-    def send(self, event: AnalyticsEvent) -> None:
+    def send(self, event: Union[AnalyticsEvent, UserRegistrationEvent]) -> None:
         """
         Record a new event.
         """
@@ -87,46 +87,60 @@ class AnalyticsClient:
 
         run(self.__send(event))
 
-    def __get_request_payload(self, event: AnalyticsEvent) -> Dict:
+    def __get_request_payload(
+        self, event: Union[AnalyticsEvent, UserRegistrationEvent]
+    ) -> Dict:
         """
         Construct the `POST` body required for a new `AnalyticsEvent` to
         be recorded via the API server.
         """
+        payload = {}
+        if type(event) == AnalyticsEvent:
+            payload = {
+                "client_id": self.client_id,
+                "developer": self.developer_mode,
+                "docker": event.docker,
+                "event": event.event,
+                "event_created_at": event.event_created_at.isoformat(),
+                "extra_data": {**self.extra_data, **event.extra_data},
+                "local_host": event.local_host,
+                "os": self.os,
+                "product_name": self.product_name,
+                "production_version": self.production_version,
+            }
 
-        payload = {
-            "client_id": self.client_id,
-            "developer": self.developer_mode,
-            "docker": event.docker,
-            "event": event.event,
-            "event_created_at": event.event_created_at.isoformat(),
-            "extra_data": {**self.extra_data, **event.extra_data},
-            "local_host": event.local_host,
-            "os": self.os,
-            "product_name": self.product_name,
-            "production_version": self.production_version,
-        }
+            payload_extras = [
+                "command",
+                "endpoint",
+                "error",
+                "flags",
+                "resource_counts",
+                "status_code",
+            ]
 
-        payload_extras = [
-            "command",
-            "endpoint",
-            "error",
-            "flags",
-            "resource_counts",
-            "status_code",
-        ]
+            event_dict = vars(event)
+            for extra in payload_extras:
+                if event_dict[extra]:
+                    payload[extra] = event_dict[extra]
 
-        event_dict = vars(event)
-        for extra in payload_extras:
-            if event_dict[extra]:
-                payload[extra] = event_dict[extra]
+        if type(event) == UserRegistrationEvent:
+            payload = {
+                "analytics_id": self.client_id,
+                "email": event.email,
+                "organization": event.organization,
+                "registered_at": event.registered_at.isoformat(),
+            }
 
         return payload
 
-    async def __send(self, event: AnalyticsEvent) -> None:
+    async def __send(self, event: Union[AnalyticsEvent, UserRegistrationEvent]) -> None:
         """
         Asynchronously record a new `AnalyticsEvent`.
         """
-
+        url = (
+            "/events" if type(event) == AnalyticsEvent else "/events/user-registration"
+        )
+        print(self.server_url + url)
         async with ClientSession(
             self.server_url,
             headers=REQUIRED_HEADERS,
@@ -134,7 +148,7 @@ class AnalyticsClient:
         ) as session:
             try:
                 async with session.post(
-                    "/events",
+                    url,
                     json=self.__get_request_payload(event),
                 ) as resp:
                     resp.raise_for_status()

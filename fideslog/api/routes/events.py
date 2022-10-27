@@ -35,33 +35,6 @@ async def create(
     try:
         create_event(database=database, event=event)
     except DBAPIError as err:
-        raise InternalServerError(...) from err  # type: ignore
-
-    return event
-
-
-@event_router.post(
-    "/user_registration",
-    response_description="The created event",
-    response_model=AnalyticsEvent,
-    responses={
-        status.HTTP_429_TOO_MANY_REQUESTS: TooManyRequestsError.doc(),
-        status.HTTP_500_INTERNAL_SERVER_ERROR: InternalServerError.doc(),
-    },
-    status_code=status.HTTP_201_CREATED,
-)
-async def create_user_registration_event(
-    _: Request,
-    event: AnalyticsEvent,
-    database: Session = Depends(get_db),
-) -> AnalyticsEvent:
-    """
-    Create a new analytics event.
-    """
-
-    try:
-        create_event(database=database, event=event)
-    except DBAPIError as err:
-        raise InternalServerError(...) from err  # type: ignore
+        raise InternalServerError(err) from err
 
     return event

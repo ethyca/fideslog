@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, validator
 
 
 class UserRegistrationEvent(BaseModel):
-    """The model for analytics events."""
+    """The model for user registration events."""
 
     analytics_id: str = Field(
         ...,

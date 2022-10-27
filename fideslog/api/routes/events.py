@@ -57,7 +57,7 @@ async def create_user_registration_event_route(
     database: Session = Depends(get_db),
 ) -> UserRegistrationEvent:
     """
-    Create a new analytics event.
+    Create a new user registration event.
     """
 
     try:

@@ -60,7 +60,7 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
 def create_user_registration_event(
     database: Session, event: UserRegistrationEvent
 ) -> None:
-    """Create a new analytics event."""
+    """Create a new yser registration event."""
 
     logged_event = event.dict(exclude=EXCLUDED_ATTRIBUTES)
     log.debug("Creating user registration from: %s", logged_event)

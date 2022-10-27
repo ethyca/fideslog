@@ -95,7 +95,7 @@ class AnalyticsClient:
         be recorded via the API server.
         """
         payload = {}
-        if type(event) == AnalyticsEvent:
+        if isinstance(event, AnalyticsEvent):
             payload = {
                 "client_id": self.client_id,
                 "developer": self.developer_mode,
@@ -123,7 +123,7 @@ class AnalyticsClient:
                 if event_dict[extra]:
                     payload[extra] = event_dict[extra]
 
-        if type(event) == UserRegistrationEvent:
+        if isinstance(event, UserRegistrationEvent):
             payload = {
                 "analytics_id": self.client_id,
                 "email": event.email,
@@ -138,7 +138,9 @@ class AnalyticsClient:
         Asynchronously record a new `AnalyticsEvent`.
         """
         url = (
-            "/events" if type(event) == AnalyticsEvent else "/events/user-registration"
+            "/events"
+            if isinstance(event, AnalyticsEvent)
+            else "/events/user-registration"
         )
         print(self.server_url + url)
         async with ClientSession(

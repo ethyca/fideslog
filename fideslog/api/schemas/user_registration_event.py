@@ -52,10 +52,8 @@ class UserRegistrationEvent(BaseModel):
 
         assert (
             value.tzinfo == timezone.utc
-        ), "event_created_at must be an explicit UTC timestamp"
-        assert value < datetime.now(
-            timezone.utc
-        ), "event_created_at must be in the past"
+        ), "registered_at must be an explicit UTC timestamp"
+        assert value < datetime.now(timezone.utc), "registered_at must be in the past"
         return value
 
     class Config:

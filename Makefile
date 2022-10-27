@@ -57,7 +57,7 @@ check-all: build-local isort black pylint mypy xenon pytest
 	@echo "Running formatter, linter, typechecker and tests..."
 
 black:
-	@$(RUN_NO_DEPS) black --check --exclude="sdk/python/_version\.py" fideslog/
+	@$(RUN_NO_DEPS) black --check --exclude="sdk/python/_version\.py" fideslog/ tests/
 
 isort:
 	$(RUN_NO_DEPS) isort --check fideslog/ tests/

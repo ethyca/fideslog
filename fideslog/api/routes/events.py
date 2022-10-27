@@ -4,10 +4,11 @@ from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 
-from ..database.data_access import create_event
+from ..database.data_access import create_event, create_user_registration_event
 from ..database.database import get_db
 from ..errors import InternalServerError, TooManyRequestsError
 from ..schemas.analytics_event import AnalyticsEvent
+from ..schemas.user_registration_event import UserRegistrationEvent
 
 log = getLogger(__name__)
 event_router = APIRouter(tags=["Events"], prefix="/events")
@@ -41,27 +42,27 @@ async def create(
 
 
 @event_router.post(
-    "/user_registration",
+    "/user-registration",
     response_description="The created event",
-    response_model=AnalyticsEvent,
+    response_model=UserRegistrationEvent,
     responses={
         status.HTTP_429_TOO_MANY_REQUESTS: TooManyRequestsError.doc(),
         status.HTTP_500_INTERNAL_SERVER_ERROR: InternalServerError.doc(),
     },
     status_code=status.HTTP_201_CREATED,
 )
-async def create_user_registration_event(
+async def create_user_registration_event_route(
     _: Request,
-    event: AnalyticsEvent,
+    user_registration_event: UserRegistrationEvent,
     database: Session = Depends(get_db),
-) -> AnalyticsEvent:
+) -> UserRegistrationEvent:
     """
     Create a new analytics event.
     """
 
     try:
-        create_event(database=database, event=event)
+        create_user_registration_event(database=database, event=user_registration_event)
     except DBAPIError as err:
         raise InternalServerError(...) from err  # type: ignore
 
-    return event
+    return user_registration_event

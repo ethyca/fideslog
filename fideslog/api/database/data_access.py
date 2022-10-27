@@ -6,9 +6,11 @@ from urllib.parse import urlparse
 from sqlalchemy.orm import Session
 
 from ..models.models import AnalyticsEvent as AnalyticsEventORM
+from ..models.models import UserRegistrationEvent as UserRegistrationEventORM
 from ..schemas.analytics_event import AnalyticsEvent
+from ..schemas.user_registration_event import UserRegistrationEvent
 
-EXCLUDED_ATTRIBUTES = set(("client_id", "endpoint", "extra_data", "os"))
+EXCLUDED_ATTRIBUTES = set(("client_id", "endpoint", "extra_data", "os", "analytics_id"))
 
 
 log = getLogger(__name__)
@@ -53,6 +55,29 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
 
     database.commit()
     log.debug("Event created: %s", logged_event)
+
+
+def create_user_registration_event(
+    database: Session, event: UserRegistrationEvent
+) -> None:
+    """Create a new analytics event."""
+
+    logged_event = event.dict(exclude=EXCLUDED_ATTRIBUTES)
+    log.debug("Creating user registration from: %s", logged_event)
+    log.debug(
+        "The following attributes have been excluded as PII: %s", EXCLUDED_ATTRIBUTES
+    )
+    database.add(
+        UserRegistrationEventORM(
+            analytics_id=event.analytics_id,
+            email=event.email,
+            organization=event.organization,
+            registered_at=event.registered_at,
+        )
+    )
+
+    database.commit()
+    log.debug("User registration event created: %s", logged_event)
 
 
 def truncate_endpoint_url(endpoint: Optional[str]) -> Optional[str]:

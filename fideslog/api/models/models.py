@@ -53,6 +53,24 @@ class AnalyticsEvent(Base):
     )
 
 
+class UserRegistrationEvent(Base):
+    """
+    The persisted details about a user registration event.
+    """
+
+    __tablename__ = "USER_REGISTRATION_EVENTS"
+
+    id = Column(
+        "USER_REGISTRATION_ID", Integer, Sequence("event_id_seq"), primary_key=True
+    )
+    analytics_id = Column("ANALYTICS_ID", String, default=None, nullable=True)
+    email = Column("EMAIL", String, default=None, nullable=True)
+    organization = Column("ORGANIZATION", String, default=None, nullable=True)
+    registered_at = Column(
+        "REGISTERED_AT", DateTime(timezone=True), server_default=UtcNow()
+    )
+
+
 class CLIAPIMapping(Base):
     """
     The persisted details mapping a CLI instance to an API instance.

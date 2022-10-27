@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 
 from fideslog.api.config import config
 
-health_router = APIRouter()
+health_router = APIRouter( tags=["Health"])
 
 
 @health_router.get(
@@ -53,7 +53,6 @@ health_router = APIRouter()
             },
         },
     },
-    tags=["Health"],
 )
 async def health(request: Request) -> JSONResponse:  # pylint: disable=unused-argument
     """Confirm that the API is running and healthy."""

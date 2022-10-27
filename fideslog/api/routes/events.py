@@ -36,7 +36,7 @@ async def create(
     try:
         create_event(database=database, event=event)
     except DBAPIError as err:
-        raise InternalServerError(...) from err  # type: ignore
+        raise InternalServerError(err) from err
 
     return event
 
@@ -63,6 +63,6 @@ async def create_user_registration_event_route(
     try:
         create_user_registration_event(database=database, event=user_registration_event)
     except DBAPIError as err:
-        raise InternalServerError(...) from err  # type: ignore
+        raise InternalServerError(err) from err
 
     return user_registration_event

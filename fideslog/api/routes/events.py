@@ -54,7 +54,7 @@ event_router = APIRouter(tags=["Events"], prefix="/events")
     status_code=status.HTTP_201_CREATED,
 )
 async def create(
-    request: Request,  # pylint: disable=unused-argument
+    _: Request,
     event: AnalyticsEvent,
     database: Session = Depends(get_db),
 ) -> AnalyticsEvent:

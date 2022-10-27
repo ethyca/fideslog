@@ -1,60 +1,19 @@
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 
-from fideslog.api.config import config
+from ..errors import TooManyRequestsError
 
-health_router = APIRouter( tags=["Health"])
+health_router = APIRouter(tags=["Health"])
 
 
 @health_router.get(
     "/health",
     responses={
-        status.HTTP_200_OK: {
-            "content": {
-                "application/json": {
-                    "example": {"status": "healthy"},
-                    "schema": {
-                        "type": "object",
-                        "properties": {"status": {"type": "string"}},
-                    },
-                }
-            }
-        },
-        status.HTTP_429_TOO_MANY_REQUESTS: {
-            "content": {
-                "application/json": {
-                    "example": {
-                        "error": f"Rate limit exceeded: {config.server.request_rate_limit}"
-                    },
-                    "schema": {
-                        "type": "object",
-                        "properties": {"error": {"type": "string"}},
-                    },
-                }
-            },
-            "description": "Rate limit exceeded",
-            "headers": {
-                "Retry-After": {
-                    "description": "The datetime after which to retry the request.",
-                    "schema": {"type": "http-date"},
-                },
-                "X-RateLimit-Limit": {
-                    "description": "The number of allowed requests in the current period.",
-                    "schema": {"type": "integer"},
-                },
-                "X-RateLimit-Remaining": {
-                    "description": "The number of remaining requests in the current period.",
-                    "schema": {"type": "integer"},
-                },
-                "X-RateLimit-Reset": {
-                    "description": "The number of seconds left in the current period.",
-                    "schema": {"type": "integer"},
-                },
-            },
-        },
+        status.HTTP_429_TOO_MANY_REQUESTS: TooManyRequestsError.doc(),
     },
+    status_code=status.HTTP_200_OK,
 )
-async def health(request: Request) -> JSONResponse:  # pylint: disable=unused-argument
+async def health(_: Request) -> JSONResponse:
     """Confirm that the API is running and healthy."""
 
     return JSONResponse({"status": "healthy"})

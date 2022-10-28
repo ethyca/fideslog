@@ -53,17 +53,17 @@ class AnalyticsEvent(Base):
     )
 
 
-class UserRegistrationEvent(Base):
+class Registration(Base):
     """
-    The persisted details about a user registration event.
+    The persisted details about a registration.
     """
 
-    __tablename__ = "USER_REGISTRATION_EVENTS"
+    __tablename__ = "REGISTRATIONS"
 
     id = Column(
-        "USER_REGISTRATION_ID", Integer, Sequence("event_id_seq"), primary_key=True
+        "REGISTRATION_ID", Integer, Sequence("registration_id_seq"), primary_key=True
     )
-    analytics_id = Column("ANALYTICS_ID", String, default=None, nullable=True)
+    client_id = Column("CLIENT_ID", String, default=None, nullable=True)
     email = Column("EMAIL", String, default=None, nullable=True)
     organization = Column("ORGANIZATION", String, default=None, nullable=True)
     registered_at = Column(

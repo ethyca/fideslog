@@ -12,16 +12,31 @@ from aiohttp import (
 )
 
 from . import __version__
-from .events.analytics_event import AnalyticsEvent
-from .events.user_registration_event import UserRegistrationEvent
+from .analytics_event import AnalyticsEvent
 from .exceptions import (
     AnalyticsSendError,
     InvalidClientError,
     UnknownError,
     UnreachableServerError,
 )
+from .registration import Registration
 
 REQUIRED_HEADERS = {"X-Fideslog-Version": __version__}
+
+
+def set_event_loop() -> None:
+    """Configures the correct eventloop if running on Windows"""
+    if (
+        version_info[0] == 3
+        and version_info[1] >= 8
+        and platform.lower().startswith("win")
+    ):
+        from asyncio import (  # type: ignore
+            WindowsSelectorEventLoopPolicy,
+            set_event_loop_policy,
+        )
+
+        set_event_loop_policy(WindowsSelectorEventLoopPolicy())
 
 
 class AnalyticsClient:
@@ -67,30 +82,21 @@ class AnalyticsClient:
         self.developer_mode = developer_mode
         self.extra_data = extra_data or {}
 
-    def send(self, event: Union[AnalyticsEvent, UserRegistrationEvent]) -> None:
+    def register(self, registration: Registration) -> None:
+        """
+        Register a new user.
+        """
+        set_event_loop()
+        run(self.__send(registration))
+
+    def send(self, event: AnalyticsEvent) -> None:
         """
         Record a new event.
         """
-
-        # Works around a bug in the default Windows event loop for Python 3.8+
-        # by changing the default event loop in Windows processes.
-        if (
-            version_info[0] == 3
-            and version_info[1] >= 8
-            and platform.lower().startswith("win")
-        ):
-            from asyncio import (  # type: ignore
-                WindowsSelectorEventLoopPolicy,
-                set_event_loop_policy,
-            )
-
-            set_event_loop_policy(WindowsSelectorEventLoopPolicy())
-
+        set_event_loop()
         run(self.__send(event))
 
-    def __get_request_payload(
-        self, event: Union[AnalyticsEvent, UserRegistrationEvent]
-    ) -> Dict:
+    def __get_request_payload(self, event: Union[AnalyticsEvent, Registration]) -> Dict:
         """
         Construct the `POST` body required for a new `AnalyticsEvent` to
         be recorded via the API server.
@@ -101,12 +107,12 @@ class AnalyticsClient:
 
         return self.__get_user_registration_payload(event)
 
-    def __get_user_registration_payload(self, event: UserRegistrationEvent) -> Dict:
+    def __get_user_registration_payload(self, event: Registration) -> Dict:
         return {
-            "analytics_id": self.client_id,
+            "client_id": self.client_id,
             "email": event.email,
             "organization": event.organization,
-            "registered_at": event.registered_at.isoformat(),
+            "created_at": event.created_at.isoformat(),
         }
 
     def __get_analytics_payload(self, event: AnalyticsEvent) -> Dict:
@@ -139,7 +145,7 @@ class AnalyticsClient:
 
         return payload
 
-    async def __send(self, event: Union[AnalyticsEvent, UserRegistrationEvent]) -> None:
+    async def __send(self, event: Union[AnalyticsEvent, Registration]) -> None:
         """
         Asynchronously record a new `AnalyticsEvent`.
         """
@@ -164,9 +170,5 @@ class AnalyticsClient:
                 raise UnknownError(err) from err
 
     @staticmethod
-    def __get_request_url(event: Union[AnalyticsEvent, UserRegistrationEvent]) -> str:
-        return (
-            "/events"
-            if isinstance(event, AnalyticsEvent)
-            else "/events/user-registration"
-        )
+    def __get_request_url(event: Union[AnalyticsEvent, Registration]) -> str:
+        return "/events" if isinstance(event, AnalyticsEvent) else "/registrations"

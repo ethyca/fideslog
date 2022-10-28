@@ -1,7 +1,7 @@
 # pylint: disable= too-many-arguments, too-many-instance-attributes, too-many-locals
 
 from datetime import datetime, timezone
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from validators import url as is_valid_url
 
@@ -59,50 +59,12 @@ class AnalyticsEvent:
             assert len(event) > 0, "event (name or type) is required"
             self.event = event
 
-            assert (
-                event_created_at.tzinfo is not None
-                and event_created_at.tzinfo == timezone.utc
-            ), "event_created_at must use the UTC timezone"
-            assert event_created_at < datetime.now(
-                timezone.utc
-            ), "event_created_at must be in the past"
-            self.event_created_at = event_created_at
-
-            self.resource_counts = None
-            if resource_counts is not None:
-                for key in ["datasets", "policies", "systems"]:
-                    val = resource_counts.get(key)
-                    assert (
-                        val is not None
-                    ), f'resource_counts must include a "{key}" key'
-                    assert isinstance(
-                        val, int
-                    ), f'The value of resource_counts["{key}"] must be an integer'
-
-                self.resource_counts = resource_counts
-
-            self.local_host = local_host
-            self.endpoint = None
-            if endpoint is not None:
-                assert self.local_host is not None, "local_host must be provided"
-
-                endpoint_components = endpoint.split(":", maxsplit=1)
-                assert (
-                    len(endpoint_components) == 2
-                ), "endpoint must contain only the HTTP method and URL, delimited by a colon"
-
-                http_method = endpoint_components[0].strip().upper()
-                assert (
-                    http_method in ALLOWED_HTTP_METHODS
-                ), f"HTTP method must be one of {', '.join(ALLOWED_HTTP_METHODS)}"
-
-                url = endpoint_components[1].strip()
-                assert is_valid_url(
-                    url.replace("://0.0.0.0", "://localhost", 1)
-                ), "endpoint URL must be a valid URL"
-
-                self.endpoint = f"{http_method}: {url}"
-
+            self.event_created_at = self.validate_created_at(event_created_at)
+            self.resource_counts = self.validate_resource_counts(resource_counts)
+            self.endpoint, self.local_host = self.validate_endpoint_and_local_host(
+                endpoint,
+                local_host,
+            )
             self.command = command
             self.docker = docker
             self.error = error
@@ -123,3 +85,67 @@ class AnalyticsEvent:
 
         except AssertionError as err:
             raise InvalidEventError(str(err)) from None
+
+    @staticmethod
+    def validate_created_at(date: datetime) -> datetime:
+        """
+        Asserts that `date` is an explicit UTC timestamp in the past.
+        """
+
+        assert date.tzinfo is not None, "event_created_at must include a UTC timezone"
+        assert date.tzinfo == timezone.utc, "event_created_at must use the UTC timezone"
+        assert date < datetime.now(timezone.utc), "event_created_at must be in the past"
+        return date
+
+    @staticmethod
+    def validate_resource_counts(
+        resource_counts: Optional[Dict[str, int]]
+    ) -> Optional[Dict[str, int]]:
+        """
+        Asserts that `resource_counts` conforms to the expected type.
+        """
+
+        if resource_counts is None:
+            return None
+
+        for key in ["datasets", "policies", "systems"]:
+            val = resource_counts.get(key)
+            assert val is not None, f'resource_counts must include a "{key}" key'
+            assert isinstance(
+                val,
+                int,
+            ), f'The value of resource_counts["{key}"] must be an integer'
+
+        return resource_counts
+
+    @staticmethod
+    def validate_endpoint_and_local_host(
+        endpoint: Optional[str],
+        local_host: Optional[bool],
+    ) -> Tuple[Optional[str], Optional[bool]]:
+        """
+        Asserts that if `endpoint` is provided, then `local_host` is also provided,
+        and that `endpoint` conforms to the expected format.
+        """
+
+        if endpoint is None:
+            return (None, local_host)
+
+        assert local_host is not None, "local_host must be provided"
+
+        endpoint_components = endpoint.split(":", maxsplit=1)
+        assert (
+            len(endpoint_components) == 2
+        ), "endpoint must contain only the HTTP method and URL, delimited by a colon"
+
+        http_method = endpoint_components[0].strip().upper()
+        assert (
+            http_method in ALLOWED_HTTP_METHODS
+        ), f"HTTP method must be one of: {', '.join(ALLOWED_HTTP_METHODS)}"
+
+        url = endpoint_components[1].strip()
+        assert is_valid_url(
+            url.replace("://0.0.0.0", "://localhost", 1)
+        ), "endpoint URL must be a valid URL"
+
+        return (f"{http_method}: {url}", local_host)

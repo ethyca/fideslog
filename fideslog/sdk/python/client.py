@@ -12,7 +12,8 @@ from aiohttp import (
 )
 
 from . import __version__
-from .event import AnalyticsEvent, UserRegistrationEvent
+from .events.analytics_event import AnalyticsEvent
+from .events.user_registration_event import UserRegistrationEvent
 from .exceptions import (
     AnalyticsSendError,
     InvalidClientError,
@@ -142,7 +143,7 @@ class AnalyticsClient:
             if isinstance(event, AnalyticsEvent)
             else "/events/user-registration"
         )
-        print(self.server_url + url)
+
         async with ClientSession(
             self.server_url,
             headers=REQUIRED_HEADERS,

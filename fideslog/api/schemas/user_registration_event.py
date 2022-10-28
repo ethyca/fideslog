@@ -23,7 +23,7 @@ class UserRegistrationEvent(BaseModel):
     registered_at: datetime = Field(
         ...,
         description="The UTC timestamp when the user registration event occurred, in ISO 8601 format. Must include "
-                    "the UTC timezone, and represent a datetime in the past.",
+        "the UTC timezone, and represent a datetime in the past.",
     )
 
     @validator("analytics_id")

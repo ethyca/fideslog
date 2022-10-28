@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from logging import getLogger
 
 from sqlalchemy.exc import NoResultFound
@@ -20,7 +21,8 @@ def create(database: Session, registration: Registration) -> None:
             client_id=registration.client_id,
             email=registration.email,
             organization=registration.organization,
-            registered_at=registration.created_at,
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
         )
     )
 
@@ -50,6 +52,7 @@ def update(
 
     record.email = registration.email
     record.organization = registration.organization
+    record.updated_at = datetime.now(timezone.utc)
 
     database.commit()
     log.debug("Updated registration for client with ID: %s", registration.client_id)

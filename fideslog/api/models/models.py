@@ -66,9 +66,8 @@ class Registration(Base):
     client_id = Column("CLIENT_ID", String, default=None, nullable=True)
     email = Column("EMAIL", String, default=None, nullable=True)
     organization = Column("ORGANIZATION", String, default=None, nullable=True)
-    registered_at = Column(
-        "REGISTERED_AT", DateTime(timezone=True), server_default=UtcNow()
-    )
+    created_at = Column("CREATED_AT", DateTime(timezone=True), server_default=UtcNow())
+    updated_at = Column("UPDATED_AT", DateTime(timezone=True), server_default=UtcNow())
 
 
 class CLIAPIMapping(Base):

@@ -8,14 +8,12 @@ class Registration:
     Represents a user registering their information.
     """
 
-    def __init__(self, email: str, organization: str, created_at: datetime) -> None:
+    def __init__(self, email: str, organization: str) -> None:
         """
         Define a new user registration.
 
         :param email: The user's email address.
         :param organization: The user's organization.
-        :param created_at: The UTC timestamp when the user registered, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. Must include the UTC timezone, and represent a datetime in the past.
-
         """
 
         try:
@@ -25,18 +23,8 @@ class Registration:
             assert len(organization) > 0, "organization must be provided"
             self.organization = organization
 
-            self.created_at = self.validate_created_at(created_at)
+            self.created_at = datetime.now(timezone.utc)
+            self.updated_at = datetime.now(timezone.utc)
 
         except AssertionError as err:
             raise InvalidEventError(str(err)) from None
-
-    @staticmethod
-    def validate_created_at(date: datetime) -> datetime:
-        """
-        Asserts that `date` is an explicit UTC timestamp in the past.
-        """
-
-        assert date.tzinfo is not None, "created_at must include a UTC timezone"
-        assert date.tzinfo == timezone.utc, "created_at must use the UTC timezone"
-        assert date < datetime.now(timezone.utc), "created_at must be in the past"
-        return date

@@ -4,7 +4,7 @@ from sqlalchemy import Boolean, Column, DateTime, Integer, Sequence, String
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql import expression
 
-from ..database.database import Base
+from ..database import Base
 
 
 class UtcNow(expression.FunctionElement):  # pylint: disable=too-many-ancestors

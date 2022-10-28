@@ -5,7 +5,7 @@ from sqlalchemy.exc import DBAPIError, NoResultFound
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
-from ..database.database import get_db
+from ..database import get_db
 from ..database.registrations import create, delete, update
 from ..errors import InternalServerError, NotFoundError, TooManyRequestsError
 from ..schemas.registration import Registration

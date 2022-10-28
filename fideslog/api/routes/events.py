@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 
-from ..database.database import get_db
+from ..database import get_db
 from ..database.events import create
 from ..errors import InternalServerError, TooManyRequestsError
 from ..schemas.analytics_event import AnalyticsEvent

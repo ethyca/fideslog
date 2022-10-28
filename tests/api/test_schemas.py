@@ -7,7 +7,7 @@ import pytest
 from pydantic import ValidationError
 
 from fideslog.api.schemas.analytics_event import AnalyticsEvent
-from fideslog.api.schemas.user_registration_event import UserRegistrationEvent
+from fideslog.api.schemas.registration import Registration
 
 
 class TestAnalyticsEventSchema:
@@ -65,14 +65,12 @@ class TestUserRegistrationEventSchema:
         Test that pydantic validations succeed for a valid payload.
         """
 
-        assert (
-            UserRegistrationEvent.parse_obj(user_registration_event_payload) is not None
-        )
+        assert Registration.parse_obj(user_registration_event_payload) is not None
 
     def test_catch_invalid_email(self, user_registration_event_payload: dict):
         user_registration_event_payload["email"] = "invalid_email"
         with pytest.raises(ValidationError) as exe:
-            UserRegistrationEvent.parse_obj(user_registration_event_payload)
+            Registration.parse_obj(user_registration_event_payload)
 
         print(exe.value.errors())
         assert len(exe.value.errors()) == 1
@@ -81,7 +79,7 @@ class TestUserRegistrationEventSchema:
     def test_catch_invalid_analytics_id(self, user_registration_event_payload: dict):
         user_registration_event_payload["analytics_id"] = "@_invalid_analytics_id"
         with pytest.raises(ValidationError) as exe:
-            UserRegistrationEvent.parse_obj(user_registration_event_payload)
+            Registration.parse_obj(user_registration_event_payload)
 
         assert len(exe.value.errors()) == 1
         assert exe.value.errors()[0]["msg"] == "analytics_id must not be identifiable"
@@ -91,7 +89,7 @@ class TestUserRegistrationEventSchema:
             days=7
         )
         with pytest.raises(ValidationError) as exe:
-            UserRegistrationEvent.parse_obj(user_registration_event_payload)
+            Registration.parse_obj(user_registration_event_payload)
 
         assert len(exe.value.errors()) == 1
         assert (
@@ -103,7 +101,7 @@ class TestUserRegistrationEventSchema:
             timezone.utc
         ) + timedelta(days=7)
         with pytest.raises(ValidationError) as exe:
-            UserRegistrationEvent.parse_obj(user_registration_event_payload)
+            Registration.parse_obj(user_registration_event_payload)
 
         assert len(exe.value.errors()) == 1
         assert exe.value.errors()[0]["msg"] == "registered_at must be in the past"

@@ -7,7 +7,7 @@ from ..exceptions import InvalidEventError
 
 class UserRegistrationEvent:
     """
-    A discrete event, representing a user action within a fides tool.
+    A discrete event, representing a user registering their information.
     """
 
     def __init__(

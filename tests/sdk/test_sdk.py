@@ -5,8 +5,8 @@ from typing import Generator
 
 import pytest
 
-from fideslog.sdk.python.analytics_event import AnalyticsEvent
 from fideslog.sdk.python.client import AnalyticsClient
+from fideslog.sdk.python.event import AnalyticsEvent
 
 
 @pytest.fixture()

@@ -12,7 +12,7 @@ from aiohttp import (
 )
 
 from . import __version__
-from .analytics_event import AnalyticsEvent
+from .event import AnalyticsEvent
 from .exceptions import (
     AnalyticsSendError,
     InvalidClientError,

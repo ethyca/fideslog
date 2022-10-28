@@ -5,12 +5,8 @@ from sqlalchemy.exc import DBAPIError, NoResultFound
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
-from ..database.data_access import (
-    create_registration,
-    delete_registration,
-    update_registration,
-)
 from ..database.database import get_db
+from ..database.registrations import create, delete, update
 from ..errors import InternalServerError, NotFoundError, TooManyRequestsError
 from ..schemas.registration import Registration
 
@@ -38,7 +34,7 @@ async def add_registration(
     """
 
     try:
-        create_registration(database, registration)
+        create(database, registration)
     except DBAPIError as err:
         raise InternalServerError(err) from err
 
@@ -66,7 +62,7 @@ async def modify_registration(
     """
 
     try:
-        updated = update_registration(database, registration)
+        updated = update(database, registration)
     except NoResultFound as err:
         raise NotFoundError(err) from err
     except Exception as err:
@@ -98,7 +94,7 @@ def remove_registration(
     """
 
     try:
-        delete_registration(database, client_id)
+        delete(database, client_id)
     except UnmappedInstanceError as err:
         raise NotFoundError(err) from err
     except Exception as err:

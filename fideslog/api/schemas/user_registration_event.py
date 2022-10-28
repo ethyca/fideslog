@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, EmailStr, Field, validator
 
 
 class UserRegistrationEvent(BaseModel):
@@ -12,7 +12,7 @@ class UserRegistrationEvent(BaseModel):
         ...,
         description="The fully anonymized, globally unique identifier for the event sender.",
     )
-    email: str = Field(
+    email: EmailStr = Field(
         ...,
         description="The user's email address.",
     )
@@ -33,15 +33,6 @@ class UserRegistrationEvent(BaseModel):
         """
 
         assert value.find("@") == -1, "analytics_id must not be identifiable"
-        return value
-
-    @validator("email")
-    def check_email(cls, value: str) -> str:
-        """
-        Validate that email is an email.
-        """
-
-        assert value.find("@") != -1, "email must contain a valid email address"
         return value
 
     @validator("registered_at")

@@ -76,9 +76,7 @@ class TestUserRegistrationEventSchema:
 
         print(exe.value.errors())
         assert len(exe.value.errors()) == 1
-        assert (
-            exe.value.errors()[0]["msg"] == "email must contain a valid email address"
-        )
+        assert exe.value.errors()[0]["msg"] == "value is not a valid email address"
 
     def test_catch_invalid_analytics_id(self, user_registration_event_payload: dict):
         user_registration_event_payload["analytics_id"] = "@_invalid_analytics_id"

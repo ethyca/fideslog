@@ -64,13 +64,17 @@ async def modify_registration(
     """Update existing registration"""
 
     try:
-        update_registration(database, registration)
+        updated = update_registration(database, registration)
     except NoResultFound as err:
         raise NotFoundError(err) from err
     except Exception as err:
         raise InternalServerError(err) from err
 
-    return registration
+    return Registration(
+        client_id=updated.client_id,
+        email=updated.email,
+        organization=updated.organization,
+    )
 
 
 @registration_router.delete(

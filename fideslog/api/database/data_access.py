@@ -80,7 +80,7 @@ def create_registration(
 def update_registration(
     database: Session,
     registration: Registration,
-) -> None:
+) -> RegistrationORM:
     """Modify an existing registration"""
     log.debug("Updating registration: %s", registration.client_id)
     record = (
@@ -96,6 +96,8 @@ def update_registration(
 
     database.commit()
     log.debug("Updated registration: %s", registration.client_id)
+
+    return record
 
 
 def delete_registration(database: Session, client_id: str) -> None:

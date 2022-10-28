@@ -1,12 +1,13 @@
 # pylint: disable= no-self-argument, no-self-use
 
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field, validator
 from validators import url as is_valid_url
 
 from .manifest_file_counts import ManifestFileCounts
+from .validation import check_in_the_past, check_not_an_email_address
 
 ALLOWED_HTTP_METHODS = [
     "CONNECT",
@@ -22,7 +23,7 @@ ALLOWED_HTTP_METHODS = [
 
 
 class AnalyticsEvent(BaseModel):
-    """The model for analytics events."""
+    """The schema for analytics events."""
 
     client_id: str = Field(
         ...,
@@ -83,14 +84,15 @@ class AnalyticsEvent(BaseModel):
         description="For events submitted as a result of making API server requests, the HTTP status code included in the response.",
     )
 
-    @validator("client_id")
-    def check_not_an_email_address(cls, value: str) -> str:
-        """
-        Validate that client_id does not contain an email address literal.
-        """
+    _check_not_an_email_address: classmethod = validator(
+        "client_id",
+        allow_reuse=True,
+    )(check_not_an_email_address)
 
-        assert value.find("@") == -1, "client_id must not be identifiable"
-        return value
+    _check_in_the_past: classmethod = validator(
+        "event_created_at",
+        allow_reuse=True,
+    )(check_in_the_past)
 
     @validator("endpoint")
     def validate_endpoint_format(cls, value: Optional[str]) -> Optional[str]:
@@ -121,20 +123,6 @@ class AnalyticsEvent(BaseModel):
         ), "endpoint URL must be a valid URL"
 
         return f"{http_method}: {url}"
-
-    @validator("event_created_at")
-    def check_in_the_past(cls, value: datetime) -> datetime:
-        """
-        Validate that the event creation timestamp is in the past.
-        """
-
-        assert (
-            value.tzinfo == timezone.utc
-        ), "event_created_at must be an explicit UTC timestamp"
-        assert value < datetime.now(
-            timezone.utc
-        ), "event_created_at must be in the past"
-        return value
 
     @validator("flags", each_item=True)
     def check_no_values(cls, value: str) -> str:

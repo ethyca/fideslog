@@ -54,8 +54,8 @@ class TestUserRegistrationEventSchema:
         yield {
             "email": "johndoe@example.com",
             "organization": "ACME",
-            "analytics_id": "totally_unique_id",
-            "registered_at": "2022-10-26T19:07:41Z",
+            "client_id": "totally_unique_id",
+            "created_at": "2022-10-26T19:07:41Z",
         }
 
     def test_user_registration_event_schema(
@@ -76,32 +76,29 @@ class TestUserRegistrationEventSchema:
         assert len(exe.value.errors()) == 1
         assert exe.value.errors()[0]["msg"] == "value is not a valid email address"
 
-    def test_catch_invalid_analytics_id(self, user_registration_event_payload: dict):
-        user_registration_event_payload["analytics_id"] = "@_invalid_analytics_id"
+    def test_catch_invalid_client_id(self, user_registration_event_payload: dict):
+        user_registration_event_payload["client_id"] = "@_invalid_client_id"
         with pytest.raises(ValidationError) as exe:
             Registration.parse_obj(user_registration_event_payload)
 
         assert len(exe.value.errors()) == 1
-        assert exe.value.errors()[0]["msg"] == "analytics_id must not be identifiable"
+        assert exe.value.errors()[0]["msg"] == "client_id must not be identifiable"
 
-    def test_catch_invalid_registered_at(self, user_registration_event_payload: dict):
-        user_registration_event_payload["registered_at"] = datetime.now() + timedelta(
+    def test_catch_invalid_created_at(self, user_registration_event_payload: dict):
+        user_registration_event_payload["created_at"] = datetime.now() + timedelta(
             days=7
         )
         with pytest.raises(ValidationError) as exe:
             Registration.parse_obj(user_registration_event_payload)
 
         assert len(exe.value.errors()) == 1
-        assert (
-            exe.value.errors()[0]["msg"]
-            == "registered_at must be an explicit UTC timestamp"
-        )
+        assert exe.value.errors()[0]["msg"] == "date must be an explicit UTC timestamp"
 
-        user_registration_event_payload["registered_at"] = datetime.now(
+        user_registration_event_payload["created_at"] = datetime.now(
             timezone.utc
         ) + timedelta(days=7)
         with pytest.raises(ValidationError) as exe:
             Registration.parse_obj(user_registration_event_payload)
 
         assert len(exe.value.errors()) == 1
-        assert exe.value.errors()[0]["msg"] == "registered_at must be in the past"
+        assert exe.value.errors()[0]["msg"] == "date must be in the past"

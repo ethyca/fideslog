@@ -95,42 +95,47 @@ class AnalyticsClient:
         Construct the `POST` body required for a new `AnalyticsEvent` to
         be recorded via the API server.
         """
-        payload = {}
+
         if isinstance(event, AnalyticsEvent):
-            payload = {
-                "client_id": self.client_id,
-                "developer": self.developer_mode,
-                "docker": event.docker,
-                "event": event.event,
-                "event_created_at": event.event_created_at.isoformat(),
-                "extra_data": {**self.extra_data, **event.extra_data},
-                "local_host": event.local_host,
-                "os": self.os,
-                "product_name": self.product_name,
-                "production_version": self.production_version,
-            }
+            return self.__get_analytics_payload(event)
 
-            payload_extras = [
-                "command",
-                "endpoint",
-                "error",
-                "flags",
-                "resource_counts",
-                "status_code",
-            ]
+        return self.__get_user_registration_payload(event)
 
-            event_dict = vars(event)
-            for extra in payload_extras:
-                if event_dict[extra]:
-                    payload[extra] = event_dict[extra]
+    def __get_user_registration_payload(self, event: UserRegistrationEvent) -> Dict:
+        return {
+            "analytics_id": self.client_id,
+            "email": event.email,
+            "organization": event.organization,
+            "registered_at": event.registered_at.isoformat(),
+        }
 
-        if isinstance(event, UserRegistrationEvent):
-            payload = {
-                "analytics_id": self.client_id,
-                "email": event.email,
-                "organization": event.organization,
-                "registered_at": event.registered_at.isoformat(),
-            }
+    def __get_analytics_payload(self, event: AnalyticsEvent) -> Dict:
+        payload = {
+            "client_id": self.client_id,
+            "developer": self.developer_mode,
+            "docker": event.docker,
+            "event": event.event,
+            "event_created_at": event.event_created_at.isoformat(),
+            "extra_data": {**self.extra_data, **event.extra_data},
+            "local_host": event.local_host,
+            "os": self.os,
+            "product_name": self.product_name,
+            "production_version": self.production_version,
+        }
+
+        payload_extras = [
+            "command",
+            "endpoint",
+            "error",
+            "flags",
+            "resource_counts",
+            "status_code",
+        ]
+
+        event_dict = vars(event)
+        for extra in payload_extras:
+            if event_dict[extra]:
+                payload[extra] = event_dict[extra]
 
         return payload
 
@@ -138,11 +143,6 @@ class AnalyticsClient:
         """
         Asynchronously record a new `AnalyticsEvent`.
         """
-        url = (
-            "/events"
-            if isinstance(event, AnalyticsEvent)
-            else "/events/user-registration"
-        )
 
         async with ClientSession(
             self.server_url,
@@ -151,7 +151,7 @@ class AnalyticsClient:
         ) as session:
             try:
                 async with session.post(
-                    url,
+                    self.__get_request_url(event),
                     json=self.__get_request_payload(event),
                 ) as resp:
                     resp.raise_for_status()
@@ -162,3 +162,11 @@ class AnalyticsClient:
                 raise AnalyticsSendError(err.message, err.status) from err
             except Exception as err:
                 raise UnknownError(err) from err
+
+    @staticmethod
+    def __get_request_url(event: Union[AnalyticsEvent, UserRegistrationEvent]) -> str:
+        return (
+            "/events"
+            if isinstance(event, AnalyticsEvent)
+            else "/events/user-registration"
+        )

@@ -8,6 +8,37 @@ from .config import config
 log = getLogger(__name__)
 
 
+class NotFoundError(HTTPException):
+    """
+    To be raised when a request is made for an object that does not exist.
+    """
+
+    MESSAGE = "Not found"
+
+    def __init__(self, error: Exception):
+        log.error("%s: %s", self.MESSAGE, error, exc_info=error)
+        super().__init__(status.HTTP_404_NOT_FOUND, self.MESSAGE)
+
+    @classmethod
+    def doc(cls) -> Dict[str, Dict]:
+        """
+        Returns the documentation for a 404 Not Found Error response,
+        in the OpenAPI spec format.
+        """
+
+        return {
+            "content": {
+                "application/json": {
+                    "example": {"detail": cls.MESSAGE},
+                    "schema": {
+                        "properties": {"detail": {"type": "string"}},
+                        "type": "object",
+                    },
+                }
+            }
+        }
+
+
 class InternalServerError(HTTPException):
     """
     To be raised when a request results in an error that cannot

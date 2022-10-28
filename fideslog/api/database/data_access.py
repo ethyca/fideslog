@@ -58,31 +58,37 @@ def create_event(database: Session, event: AnalyticsEvent) -> None:
     log.debug("Event created: %s", logged_event)
 
 
-def create_registration(
-    database: Session,
-    event: Registration,
-) -> None:
-    """Create a new registration."""
-    log.debug("Creating registration")
+def create_registration(database: Session, registration: Registration) -> None:
+    """
+    Create a new registration.
+    """
+
+    log.debug("Creating registration for client with ID: %s", registration.client_id)
     database.add(
         RegistrationORM(
-            client_id=event.client_id,
-            email=event.email,
-            organization=event.organization,
-            registered_at=event.created_at,
+            client_id=registration.client_id,
+            email=registration.email,
+            organization=registration.organization,
+            registered_at=registration.created_at,
         )
     )
 
     database.commit()
-    log.debug("Registration created")
+    log.debug(
+        "Successfully created registration for client with ID: %s",
+        registration.client_id,
+    )
 
 
 def update_registration(
     database: Session,
     registration: Registration,
 ) -> RegistrationORM:
-    """Modify an existing registration"""
-    log.debug("Updating registration: %s", registration.client_id)
+    """
+    Modify an existing registration.
+    """
+
+    log.debug("Updating registration for client with ID: %s", registration.client_id)
     record = (
         database.query(RegistrationORM)
         .filter_by(client_id=registration.client_id)
@@ -95,20 +101,23 @@ def update_registration(
     record.organization = registration.organization
 
     database.commit()
-    log.debug("Updated registration: %s", registration.client_id)
+    log.debug("Updated registration for client with ID: %s", registration.client_id)
 
     return record
 
 
 def delete_registration(database: Session, client_id: str) -> None:
-    """Delete an existing registration"""
-    log.debug("Deleting registration: %s", client_id)
+    """
+    Delete an existing registration.
+    """
+
+    log.debug("Deleting registration for client with ID: %s", client_id)
 
     record = database.query(RegistrationORM).filter_by(client_id=client_id).first()
     database.delete(record)
     database.commit()
 
-    log.debug("Deleted registration: %s", client_id)
+    log.debug("Deleted registration for client with ID: %s", client_id)
 
 
 def truncate_endpoint_url(endpoint: Optional[str]) -> Optional[str]:

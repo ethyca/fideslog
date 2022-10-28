@@ -24,14 +24,18 @@ from .registration import Registration
 REQUIRED_HEADERS = {"X-Fideslog-Version": __version__}
 
 
-def set_event_loop() -> None:
-    """Configures the correct eventloop if running on Windows"""
+def __set_event_loop() -> None:
+    """
+    Helps to work around a bug in the default Windows event loop for Python 3.8+
+    by changing the default event loop in Windows processes.
+    """
+
     if (
         version_info[0] == 3
         and version_info[1] >= 8
         and platform.lower().startswith("win")
     ):
-        from asyncio import (  # type: ignore
+        from asyncio import (  # type: ignore[attr-defined]
             WindowsSelectorEventLoopPolicy,
             set_event_loop_policy,
         )
@@ -86,33 +90,38 @@ class AnalyticsClient:
         """
         Register a new user.
         """
-        set_event_loop()
+
+        __set_event_loop()
         run(self.__send(registration))
 
     def send(self, event: AnalyticsEvent) -> None:
         """
-        Record a new event.
+        Record a new analytics event.
         """
-        set_event_loop()
+
+        __set_event_loop()
         run(self.__send(event))
 
-    def __get_request_payload(self, event: Union[AnalyticsEvent, Registration]) -> Dict:
+    def __get_request_payload(
+        self,
+        event_or_registration: Union[AnalyticsEvent, Registration],
+    ) -> Dict:
         """
-        Construct the `POST` body required for a new `AnalyticsEvent` to
-        be recorded via the API server.
+        Construct the `POST` body required for a new `AnalyticsEvent` or
+        `Registration` to be recorded via the API server.
         """
 
-        if isinstance(event, AnalyticsEvent):
-            return self.__get_analytics_payload(event)
+        return (
+            self.__get_analytics_payload(event_or_registration)
+            if isinstance(event_or_registration, AnalyticsEvent)
+            else self.__get_registration_payload(event_or_registration)
+        )
 
-        return self.__get_user_registration_payload(event)
-
-    def __get_user_registration_payload(self, event: Registration) -> Dict:
+    def __get_registration_payload(self, registration: Registration) -> Dict:
         return {
             "client_id": self.client_id,
-            "email": event.email,
-            "organization": event.organization,
-            "created_at": event.created_at.isoformat(),
+            "email": registration.email,
+            "organization": registration.organization,
         }
 
     def __get_analytics_payload(self, event: AnalyticsEvent) -> Dict:
@@ -145,9 +154,12 @@ class AnalyticsClient:
 
         return payload
 
-    async def __send(self, event: Union[AnalyticsEvent, Registration]) -> None:
+    async def __send(
+        self,
+        event_or_registration: Union[AnalyticsEvent, Registration],
+    ) -> None:
         """
-        Asynchronously record a new `AnalyticsEvent`.
+        Asynchronously record a new `AnalyticsEvent` or `Registration`.
         """
 
         async with ClientSession(
@@ -157,8 +169,12 @@ class AnalyticsClient:
         ) as session:
             try:
                 async with session.post(
-                    self.__get_request_url(event),
-                    json=self.__get_request_payload(event),
+                    url=(
+                        "/events"
+                        if isinstance(event_or_registration, AnalyticsEvent)
+                        else "/registrations"
+                    ),
+                    json=self.__get_request_payload(event_or_registration),
                 ) as resp:
                     resp.raise_for_status()
 
@@ -168,7 +184,3 @@ class AnalyticsClient:
                 raise AnalyticsSendError(err.message, err.status) from err
             except Exception as err:
                 raise UnknownError(err) from err
-
-    @staticmethod
-    def __get_request_url(event: Union[AnalyticsEvent, Registration]) -> str:
-        return "/events" if isinstance(event, AnalyticsEvent) else "/registrations"

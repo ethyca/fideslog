@@ -38,7 +38,7 @@ async def add_registration(
     """
 
     try:
-        create_registration(database=database, event=registration)
+        create_registration(database, registration)
     except DBAPIError as err:
         raise InternalServerError(err) from err
 
@@ -61,7 +61,9 @@ async def modify_registration(
     registration: Registration,
     database: Session = Depends(get_db),
 ) -> Registration:
-    """Update existing registration"""
+    """
+    Update an existing registration.
+    """
 
     try:
         updated = update_registration(database, registration)
@@ -91,7 +93,9 @@ def remove_registration(
     client_id: str,
     database: Session = Depends(get_db),
 ) -> Response:
-    """Delete a registration"""
+    """
+    Delete a registration.
+    """
 
     try:
         delete_registration(database, client_id)

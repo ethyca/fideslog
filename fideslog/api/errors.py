@@ -22,7 +22,7 @@ class NotFoundError(HTTPException):
     @classmethod
     def doc(cls) -> Dict[str, Dict]:
         """
-        Returns the documentation for a 404 Not Found Error response,
+        Returns the documentation for a 404 Not Found response,
         in the OpenAPI spec format.
         """
 

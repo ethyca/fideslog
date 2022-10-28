@@ -26,10 +26,12 @@ class UserRegistrationEvent:
         """
 
         try:
-            assert email is not None and email.find("@") != -1
+            assert (
+                email is not None and email.find("@") != -1
+            ), "A valid email must be provided"
             self.email = email
 
-            assert organization is not None
+            assert organization is not None, "An organization must be provided"
             self.organization = organization
 
             assert (

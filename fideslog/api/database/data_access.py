@@ -61,12 +61,7 @@ def create_user_registration_event(
     database: Session, event: UserRegistrationEvent
 ) -> None:
     """Create a new user registration event."""
-
-    logged_event = event.dict(exclude=EXCLUDED_ATTRIBUTES)
-    log.debug("Creating user registration from: %s", logged_event)
-    log.debug(
-        "The following attributes have been excluded as PII: %s", EXCLUDED_ATTRIBUTES
-    )
+    log.debug("Creating user registration")
     database.add(
         UserRegistrationEventORM(
             analytics_id=event.analytics_id,
@@ -77,7 +72,7 @@ def create_user_registration_event(
     )
 
     database.commit()
-    log.debug("User registration event created: %s", logged_event)
+    log.debug("User registration event created")
 
 
 def truncate_endpoint_url(endpoint: Optional[str]) -> Optional[str]:

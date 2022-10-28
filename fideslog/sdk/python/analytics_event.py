@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 
 from validators import url as is_valid_url
 
-from ..exceptions import InvalidEventError
+from .exceptions import InvalidEventError
 
 ALLOWED_HTTP_METHODS = [
     "CONNECT",

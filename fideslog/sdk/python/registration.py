@@ -2,10 +2,10 @@
 
 from datetime import datetime, timezone
 
-from ..exceptions import InvalidEventError
+from .exceptions import InvalidEventError
 
 
-class UserRegistrationEvent:
+class Registration:
     """
     A discrete event, representing a user registering their information.
     """
@@ -14,14 +14,14 @@ class UserRegistrationEvent:
         self,
         email: str,
         organization: str,
-        registered_at: datetime,
+        created_at: datetime,
     ) -> None:
         """
         Define a new user registration event to send to the fideslog server.
 
         :param email: User email
         :param organization: User organization
-        :param registered_at: The UTC timestamp when the event occurred, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. Must include the UTC timezone, and represent a datetime in the past.
+        :param created_at: The UTC timestamp when the event occurred, in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format. Must include the UTC timezone, and represent a datetime in the past.
 
         """
 
@@ -35,13 +35,12 @@ class UserRegistrationEvent:
             self.organization = organization
 
             assert (
-                registered_at.tzinfo is not None
-                and registered_at.tzinfo == timezone.utc
-            ), "event_created_at must use the UTC timezone"
-            assert registered_at < datetime.now(
+                created_at.tzinfo is not None and created_at.tzinfo == timezone.utc
+            ), "created_at must use the UTC timezone"
+            assert created_at < datetime.now(
                 timezone.utc
-            ), "event_created_at must be in the past"
-            self.registered_at = registered_at
+            ), "created_at must be in the past"
+            self.created_at = created_at
 
         except AssertionError as err:
             raise InvalidEventError(str(err)) from None

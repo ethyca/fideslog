@@ -14,16 +14,16 @@ class UserRegistrationEvent(BaseModel):
     )
     email: str = Field(
         ...,
-        description="User registration event email",
+        description="The user's email address.",
     )
     organization: str = Field(
         ...,
-        description="TUser registration event organization",
+        description="The organization in which the user is registered.",
     )
     registered_at: datetime = Field(
         ...,
         description="The UTC timestamp when the user registration event occurred, in ISO 8601 format. Must include "
-        "the UTC timezone, and represent a datetime in the past.",
+                    "the UTC timezone, and represent a datetime in the past.",
     )
 
     @validator("analytics_id")

@@ -152,6 +152,17 @@ class LoggingSettings(Settings):
         env_prefix = f"{ENV_PREFIX}LOGGING_"
 
 
+class SecuritySettings(Settings):
+    """Configuration to secure API endpoints."""
+
+    access_token: str = Field("fides", exclude=True, min_length=1)
+
+    class Config:
+        """Modifides pydantic behavior."""
+
+        env_prefix = f"{ENV_PREFIX}SECURITY__"
+
+
 class ServerSettings(Settings):
     """Configuration options for the API server."""
 
@@ -171,6 +182,7 @@ class FideslogSettings(Settings):
 
     database: DatabaseSettings
     logging: LoggingSettings
+    security: SecuritySettings = SecuritySettings()
     server: ServerSettings
 
 

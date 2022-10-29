@@ -1,7 +1,7 @@
 from logging import getLogger
-from typing import List
+from typing import List, Optional
 
-from fastapi import APIRouter, Depends, Request, Response, status
+from fastapi import APIRouter, Depends, Query, Request, Response, status
 from sqlalchemy.exc import DBAPIError, NoResultFound
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError
@@ -27,6 +27,16 @@ registration_router = APIRouter(tags=["Registrations"], prefix="/registrations")
 )
 async def list_registrations(
     _: Request,
+    count: Optional[int] = Query(
+        default=None,
+        description="The amount of registrations to return.",
+        gt=0,
+    ),
+    offset: Optional[int] = Query(
+        default=None,
+        description="The amount of registrations to skip before returning.",
+        gt=0,
+    ),
     database: Session = Depends(get_db),
 ) -> List[Registration]:
     """
@@ -34,7 +44,7 @@ async def list_registrations(
     """
 
     try:
-        registrations = get(database)
+        registrations = get(database, count, offset)
     except DBAPIError as err:
         raise InternalServerError(err) from err
 

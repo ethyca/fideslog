@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from logging import getLogger
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
@@ -11,12 +11,19 @@ from ..schemas.registration import Registration
 log = getLogger(__name__)
 
 
-def get(database: Session) -> List[RegistrationORM]:
+def get(
+    database: Session,
+    count: Optional[int],
+    offset: Optional[int],
+) -> List[RegistrationORM]:
     """
     Return existing registrations.
     """
 
     log.debug("Fetching registrations")
+    if count is not None:
+        return database.query(RegistrationORM).limit(count).offset(offset or 0).all()
+
     return database.query(RegistrationORM).all()
 
 

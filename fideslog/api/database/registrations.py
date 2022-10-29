@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 from logging import getLogger
+from typing import List
 
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
@@ -8,6 +9,15 @@ from ..models.models import Registration as RegistrationORM
 from ..schemas.registration import Registration
 
 log = getLogger(__name__)
+
+
+def get(database: Session) -> List[RegistrationORM]:
+    """
+    Return existing registrations.
+    """
+
+    log.debug("Fetching registrations")
+    return database.query(RegistrationORM).all()
 
 
 def create(database: Session, registration: Registration) -> None:

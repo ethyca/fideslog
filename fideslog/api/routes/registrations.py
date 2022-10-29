@@ -1,4 +1,5 @@
 from logging import getLogger
+from typing import List
 
 from fastapi import APIRouter, Depends, Request, Response, status
 from sqlalchemy.exc import DBAPIError, NoResultFound
@@ -6,12 +7,47 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
 from ..database import get_db
-from ..database.registrations import create, delete, update
+from ..database.registrations import create, delete, get, update
 from ..errors import InternalServerError, NotFoundError, TooManyRequestsError
 from ..schemas.registration import Registration
 
 log = getLogger(__name__)
 registration_router = APIRouter(tags=["Registrations"], prefix="/registrations")
+
+
+@registration_router.get(
+    "",
+    response_description="A list of registrations",
+    response_model=List[Registration],
+    responses={
+        status.HTTP_429_TOO_MANY_REQUESTS: TooManyRequestsError.doc(),
+        status.HTTP_500_INTERNAL_SERVER_ERROR: InternalServerError.doc(),
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def list_registrations(
+    _: Request,
+    database: Session = Depends(get_db),
+) -> List[Registration]:
+    """
+    List existing registrations.
+    """
+
+    try:
+        registrations = get(database)
+    except DBAPIError as err:
+        raise InternalServerError(err) from err
+
+    return [
+        Registration(
+            client_id=registration.client_id,
+            email=registration.email,
+            organization=registration.organization,
+            created_at=registration.created_at,
+            updated_at=registration.updated_at,
+        )
+        for registration in registrations
+    ]
 
 
 @registration_router.post(

@@ -11,7 +11,7 @@
 
 ## Overview
 
-Fideslog is the [API server](../../api/), [developer SDK](../../sdk/), and [supporting infrastructure](../../../.github/workflows/deploy.yml) intended to provide Ethyca with an understanding of user interactions with fides tooling. Analytics are always fully anonymized, and are only used either as a factor in Ethyca's internal product roadmap determination process, or as insight into product adoption. Information collected by fideslog is received via HTTPs request, stored in a secure database, and never shared with third parties for any reason unless required by law.
+Fideslog is the [API server](../../api/), [developer SDK](../../sdk/), and [supporting infrastructure](../../../.github/workflows/deploy.yml) intended to provide Ethyca with an understanding of user interactions with fides tooling. Analytics are only used either as a factor in Ethyca's internal product roadmap determination process, or as insight into product adoption. Information collected by fideslog is received via HTTPs request, stored in a secure database, and never shared with third parties for any reason unless required by law.
 
 This library is the recommended means by which to automate the submission of analytics data to the fideslog API server from a Python application.
 

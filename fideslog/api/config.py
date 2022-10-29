@@ -47,6 +47,7 @@ class DatabaseSettings(Settings):
     account: str = Field(..., exclude=True)
     database: str = "raw"
     db_schema: str = "fides"
+    encryption_key: str = Field("fides", exclude=True)
     password: str = Field(..., exclude=True)
     role: str = "event_writer"
     user: str = Field(..., exclude=True)

@@ -63,9 +63,7 @@ class Registration(Base):
 
     __tablename__ = "REGISTRATIONS"
 
-    id = Column(
-        "REGISTRATION_ID", Integer, Sequence("registration_id_seq"), primary_key=True
-    )
+    id = Column("ID", Integer, Sequence("registration_id_seq"), primary_key=True)
     client_id = Column("CLIENT_ID", String, default=None, nullable=True)
     email = Column(
         "EMAIL",

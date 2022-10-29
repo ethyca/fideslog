@@ -23,6 +23,10 @@
                     "value": "<snowflake_db_password>"
                 },
                 {
+                    "name": "FIDESLOG__SECURITY__ACCESS_TOKEN",
+                    "value": "<fideslog_security_access_token>"
+                },
+                {
                     "name": "FIDESLOG__SERVER_HOST",
                     "value": "0.0.0.0"
                 }

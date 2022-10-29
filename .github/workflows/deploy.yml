@@ -60,14 +60,16 @@ jobs:
           sed -i "s%<snowflake_account>%$SNOWFLAKE_ACCOUNT%g" task-definition.json
           sed -i "s%<snowflake_db_user>%$SNOWFLAKE_DB_USER%g" task-definition.json
           sed -i "s%<snowflake_db_password>%$SNOWFLAKE_DB_PASSWORD%g" task-definition.json
+          sed -i "s%<fideslog_security_access_token>%$FIDESLOG__SECURITY__ACCESS_TOKEN%g" task-definition.json
           sed -i "s%<cluster_name>%$ECS_CLUSTER_NAME%g" task-definition.json
           sed -i "s%<role_arn>%$ROLE_ARN%g" task-definition.json
         env:
-          SNOWFLAKE_ACCOUNT: ${{secrets.SNOWFLAKE_ACCOUNT}}
-          SNOWFLAKE_DB_USER: ${{secrets.SNOWFLAKE_DB_USER}}
-          SNOWFLAKE_DB_PASSWORD: ${{secrets.SNOWFLAKE_DB_PASSWORD}}
           ECS_CLUSTER_NAME: ${{ secrets.ECS_CLUSTER_NAME }}
+          FIDESLOG__SECURITY__ACCESS_TOKEN: ${{secrets.FIDESLOG__SECURITY__ACCESS_TOKEN}}
           ROLE_ARN: ${{ secrets.ROLE_ARN }}
+          SNOWFLAKE_ACCOUNT: ${{secrets.SNOWFLAKE_ACCOUNT}}
+          SNOWFLAKE_DB_PASSWORD: ${{secrets.SNOWFLAKE_DB_PASSWORD}}
+          SNOWFLAKE_DB_USER: ${{secrets.SNOWFLAKE_DB_USER}}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

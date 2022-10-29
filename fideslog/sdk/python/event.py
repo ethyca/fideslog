@@ -93,7 +93,9 @@ class AnalyticsEvent:
         """
 
         assert date.tzinfo is not None, "event_created_at must include a UTC timezone"
-        assert date.tzinfo == timezone.utc, "event_created_at must use the UTC timezone"
+        assert date.tzname() == str(
+            timezone.utc
+        ), "event_created_at must use the UTC timezone"
         assert date < datetime.now(timezone.utc), "event_created_at must be in the past"
         return date
 

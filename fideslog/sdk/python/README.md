@@ -11,7 +11,7 @@
 
 ## Overview
 
-Fideslog is the [API server](./fideslog/api/), [developer SDK](./fideslog/sdk/), and [supporting infrastructure](./.github/workflows/deploy.yml) intended to provide Ethyca with an understanding of user interactions with fides tooling. Analytics are always fully anonymized, and are only used either as a factor in Ethyca's internal product roadmap determination process, or as insight into product adoption. Information collected by fideslog is received via HTTPs request, stored in a secure database, and never shared with third parties for any reason unless required by law.
+Fideslog is the [API server](../../api/), [developer SDK](../../sdk/), and [supporting infrastructure](../../../.github/workflows/deploy.yml) intended to provide Ethyca with an understanding of user interactions with fides tooling. Analytics are always fully anonymized, and are only used either as a factor in Ethyca's internal product roadmap determination process, or as insight into product adoption. Information collected by fideslog is received via HTTPs request, stored in a secure database, and never shared with third parties for any reason unless required by law.
 
 This library is the recommended means by which to automate the submission of analytics data to the fideslog API server from a Python application.
 
@@ -221,6 +221,51 @@ except AnalyticsError as err:   # It is not recommended to raise this exception,
     print(err)                  # to prevent interrupting the application workflow.
 else:
     print("Analytics event sent")
+```
+
+### Registering Users
+
+The SDK exposes a `Registration` class from [the `registration.py` file](./registration.py). Create a new instance of `Registration` for every user that should be registered. Then, use the `AnalyticsClient.register()` method to make a request to the fideslog API server and register the user.
+
+#### Example
+
+Building on the example from a previous section:
+
+```python
+from platform import system
+
+from fideslog.sdk.python.client import AnalyticsClient
+from fideslog.sdk.python.registration import Registration
+from fideslog.sdk.python.utils import generate_client_id
+
+CLIENT_ID: str = generate_client_id(b"a_fides_tool")  # utils.py exposes some helpful bytestrings
+
+
+def get_version() -> str:
+    return "1.0.0"
+
+def in_developer_mode() -> bool:
+    return False
+
+client = AnalyticsClient(
+    client_id=CLIENT_ID,
+    developer_mode=in_developer_mode(),
+    extra_data={
+        "this data": "will be included with every event sent by this client",
+        "include": "any context that every event requires",
+        "never include": "identifying information of any kind",
+    },
+    os=system(),
+    product_name="a_fides_tool",
+    production_version=get_version(),
+)
+
+user_registration = Registration(
+    email="user@example.com",
+    organization="Example Organization, LLC",
+)
+
+client.register(user_registration)
 ```
 
 ## Contributing

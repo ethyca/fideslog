@@ -118,6 +118,8 @@ async def modify_registration(
         client_id=updated.client_id,
         email=updated.email,
         organization=updated.organization,
+        created_at=updated.created_at,
+        updated_at=updated.updated_at,
     )
 
 

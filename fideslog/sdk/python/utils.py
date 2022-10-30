@@ -20,8 +20,8 @@ You can learn more, and manage your privacy settings any time by visiting:
 OPT_OUT_PROMPT = (
     "To opt out of all, press 'n'. To opt-in and continue, press any other key."
 )
-EMAIL_PROMPT = "Email address (press ENTER to skip)"
-ORGANIZATION_PROMPT = "Organization name (press ENTER to skip)"
+EMAIL_PROMPT = "Email address: "
+ORGANIZATION_PROMPT = "Organization name: "
 CONFIRMATION_COPY = """
 Thank you! To disable analytics at any time, set 'analytics_opt_out = false' in your configuration. For more information, our analytics collection code is fully open source:
     https://github.com/ethyca/fideslog

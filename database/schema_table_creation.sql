@@ -40,7 +40,18 @@ create table if not exists cli_api_mapping (
   cli_id varchar,
   created_at timestamp_tz,
   updated_at timestamp_tz,
-  constraint unique_api_cli_map unique (api_id, cli_id) not enforced 
+  constraint unique_api_cli_map unique (api_id, cli_id) not enforced
+);
+
+create sequence if not exists registration_id_seq start = 1 increment = 1;
+
+create table if not exists registrations (
+  id integer,
+  client_id varchar,
+  email varchar,
+  organization varchar,
+  created_at timestamp_tz,
+  updated_at timestamp_tz
 );
 
 

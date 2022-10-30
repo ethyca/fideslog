@@ -3,18 +3,29 @@ from uuid import uuid1
 
 from bcrypt import gensalt
 
+FIDES = b"fides"
 FIDESCTL_API = b"fidesctl-api"
 FIDESCTL_CLI = b"fidesctl-cli"
 FIDESOPS = b"fidesops"
+
 OPT_OUT_COPY = """
-Fides needs your permission to send Ethyca a limited set of anonymous usage statistics.
-Ethyca will only use this anonymous usage data to improve the product experience, and will never collect sensitive or personal data.
+Ethyca exists to make privacy a default feature of any tech stack, and we need your consent to use some of your data to achieve this mission:
 
-Don't believe us? Check out the open-source code here:
-    https://github.com/ethyca/fideslog
+    - Usage statistics, including a unique identifier, for product improvement
+    - Your email address and organization name, for our sales team (we will never share this data)
 
+You can learn more, and manage your privacy settings any time by visiting:
+    https://fid.es/privacy
 """
-OPT_OUT_PROMPT = 'To opt out of all telemetry, press "n". To continue with telemetry, press any other key.'
+OPT_OUT_PROMPT = (
+    "To opt out of all, press 'n'. To opt-in and continue, press any other key."
+)
+EMAIL_PROMPT = "Email address: "
+ORGANIZATION_PROMPT = "Organization name: "
+CONFIRMATION_COPY = """
+Thank you! To disable analytics at any time, set 'analytics_opt_out = false' in your configuration. For more information, our analytics collection code is fully open source:
+    https://github.com/ethyca/fideslog
+"""
 
 
 def generate_client_id(application: bytes) -> str:

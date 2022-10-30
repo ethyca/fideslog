@@ -3,8 +3,11 @@ from typing import Dict
 from sqlalchemy import Boolean, Column, DateTime, Integer, Sequence, String
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql import expression
+from sqlalchemy_utils import StringEncryptedType
+from sqlalchemy_utils.types.encrypted.encrypted_type import AesGcmEngine
 
-from ..database.database import Base
+from ..config import config
+from ..database import Base
 
 
 class UtcNow(expression.FunctionElement):  # pylint: disable=too-many-ancestors
@@ -51,6 +54,26 @@ class AnalyticsEvent(Base):
     event_loaded_at = Column(
         "EVENT_LOADED_AT", DateTime(timezone=True), server_default=UtcNow()
     )
+
+
+class Registration(Base):
+    """
+    The persisted details about a registration.
+    """
+
+    __tablename__ = "REGISTRATIONS"
+
+    id = Column("ID", Integer, Sequence("registration_id_seq"), primary_key=True)
+    client_id = Column("CLIENT_ID", String, default=None, nullable=True)
+    email = Column(
+        "EMAIL",
+        StringEncryptedType(String, config.database.encryption_key, AesGcmEngine),
+        default=None,
+        nullable=True,
+    )
+    organization = Column("ORGANIZATION", String, default=None, nullable=True)
+    created_at = Column("CREATED_AT", DateTime(timezone=True), server_default=UtcNow())
+    updated_at = Column("UPDATED_AT", DateTime(timezone=True), server_default=UtcNow())
 
 
 class CLIAPIMapping(Base):

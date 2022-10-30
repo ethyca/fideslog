@@ -14,7 +14,7 @@ EXCLUDED_ATTRIBUTES = set(("client_id", "endpoint", "extra_data", "os"))
 log = getLogger(__name__)
 
 
-def create_event(database: Session, event: AnalyticsEvent) -> None:
+def create(database: Session, event: AnalyticsEvent) -> None:
     """Create a new analytics event."""
 
     logged_event = event.dict(exclude=EXCLUDED_ATTRIBUTES)

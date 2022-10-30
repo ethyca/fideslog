@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 
-from ..database.data_access import create_event
-from ..database.database import get_db
+from ..database import get_db
+from ..database.events import create
 from ..errors import InternalServerError, TooManyRequestsError
 from ..schemas.analytics_event import AnalyticsEvent
 
@@ -23,7 +23,7 @@ event_router = APIRouter(tags=["Events"], prefix="/events")
     },
     status_code=status.HTTP_201_CREATED,
 )
-async def create(
+async def add_event(
     _: Request,
     event: AnalyticsEvent,
     database: Session = Depends(get_db),
@@ -33,7 +33,7 @@ async def create(
     """
 
     try:
-        create_event(database=database, event=event)
+        create(database=database, event=event)
     except DBAPIError as err:
         raise InternalServerError(err) from err
 

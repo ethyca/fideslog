@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from hmac import compare_digest
 from http import HTTPStatus
 from typing import Callable
 
@@ -26,6 +27,31 @@ app.state.limiter = Limiter(
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
 app.include_router(api_router)
+
+
+# Defined before `log_request` and `require_version_header` to ensure that each are always executed.
+@app.middleware("http")
+async def require_access_token(request: Request, call_next: Callable) -> Response:
+    """
+    Require an `Authorization: Token {value}` header to serve a response.
+    """
+
+    secured_endpoints = [
+        ("GET", "/registrations"),
+    ]
+    token = request.headers.get("Authorization", "").lstrip("Token ")
+
+    if (request.method, request.url.path) not in secured_endpoints or compare_digest(
+        token,
+        config.security.access_token,
+    ):
+        return await call_next(request)
+
+    return JSONResponse(
+        {"error": "Unauthorized"},
+        status.HTTP_401_UNAUTHORIZED,
+        {"WWW-Authenticate": "Token <value>"},
+    )
 
 
 # Defined before `log_request` to ensure that both are always executed.

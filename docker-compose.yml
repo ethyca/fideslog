@@ -18,3 +18,8 @@ services:
       - 8080
     ports:
       - "8080:8080"
+    volumes:
+      - type: bind
+        source: .
+        target: /fideslog
+        read_only: False

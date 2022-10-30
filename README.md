@@ -13,18 +13,16 @@ _A part of the [greater Fides ecosystem](https://github.com/ethyca/fides)._
 
 ## Overview
 
-Fideslog is the [API server](./fideslog/api/), [developer SDK](./fideslog/sdk/), and [supporting infrastructure](./.github/workflows/deploy.yml) intended to provide Ethyca with an understanding of user interactions with fides tooling. Analytics are always fully anonymized, and are only used either as a factor in Ethyca's internal product roadmap determination process, or as insight into product adoption. Information collected by fideslog is received via HTTPs request, stored in a secure database, and never shared with third parties for any reason unless required by law.
+Fideslog is the [API server](./fideslog/api/), [developer SDK](./fideslog/sdk/), and [supporting infrastructure](./.github/workflows/deploy.yml) intended to provide Ethyca with an understanding of user interactions with fides tooling. Analytics are only used either as a factor in Ethyca's internal product roadmap determination process, or as insight into product adoption. Information collected by fideslog is received via HTTPs request, stored in a secure database, and never shared with third parties for any reason unless required by law.
 
 ## Using Fideslog
 
 Ethyca's mission is to build trustworthy software. Fideslog requires that analytics data can only be collected after receiving explicit consent from the user. While the specific workflow to establish user consent will be unique to each application, the process must generally adhere to the following principles. Each SDK library exposes convenience functions, methods, and/or constants to assist with adherence to these guidelines:
 
 1. Notify the user of Ethyca's request for analytics data as soon as possible
-2. Describe the intended usage of the collected data clearly, completely, and concisely
-3. Guarantee that all analytics data is always fully anonymized
-4. Provide a simple and accessible mechanism for a user to opt-out of data collection
-5. Do not repeatedly ask for consent; store the user's decision as state within the application or its configuration
-
+1. Describe the intended usage of the collected data clearly, completely, and concisely
+1. Provide a simple and accessible mechanism for a user to opt-out of data collection
+1. Do not repeatedly ask for consent; store the user's decision as state within the application or its configuration
 
 ### The Fideslog API
 
@@ -70,6 +68,7 @@ If no configuration file is found in any of the above locations, the default con
 |      `account`       |        `[database]`        |    `FIDESLOG__DATABASE_ACCOUNT`       | String  |    Yes   |                  | The Snowflake account in which the fideslog database can be found. Ethyca employees may access this value internally. |
 |      `database`      |        `[database]`        |    `FIDESLOG__DATABASE_DATABASE`      | String  |    No    |      `"raw"`     | The name of the Snowflake database in which analytics events should be stored. |
 |     `db_schema`      |        `[database]`        |   `FIDESLOG__DATABASE_DB_SCHEMA`      | String  |    No    |     `"fides"`    | The Snowflake database schema to target. |
+|   `encryption_key`   |        `[database]`        |  `FIDESLOG__DATABASE_ENCRYPTION_KEY`  | String  |    No    |     `"fides"`    | The AES encryption key to use when encrypting user email addresses at rest. |
 |     `password`       |        `[database]`        |    `FIDESLOG__DATABASE_PASSWORD`      | String  |    Yes   |                  | The password associated with the Snowflake account for `user`. Ethyca employees may access this value internally. |
 |       `role`         |        `[database]`        |      `FIDESLOG__DATABASE_ROLE`        | String  |    No    | `"event_writer"` | The permissions with which to access the specified Snowflake `database`.  |
 |       `user`         |        `[database]`        |      `FIDESLOG__DATABASE_USER`        | String  |    Yes   |                  | The ID of the user with which to authenticate to Snowflake. Ethyca employees may access this value internally. |

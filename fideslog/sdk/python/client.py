@@ -2,7 +2,7 @@
 
 from asyncio import run
 from sys import platform, version_info
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from aiohttp import (
     ClientConnectionError,
@@ -19,8 +19,28 @@ from .exceptions import (
     UnknownError,
     UnreachableServerError,
 )
+from .registration import Registration
 
 REQUIRED_HEADERS = {"X-Fideslog-Version": __version__}
+
+
+def __set_event_loop() -> None:
+    """
+    Helps to work around a bug in the default Windows event loop for Python 3.8+
+    by changing the default event loop in Windows processes.
+    """
+
+    if (
+        version_info[0] == 3
+        and version_info[1] >= 8
+        and platform.lower().startswith("win")
+    ):
+        from asyncio import (  # type: ignore[attr-defined]
+            WindowsSelectorEventLoopPolicy,
+            set_event_loop_policy,
+        )
+
+        set_event_loop_policy(WindowsSelectorEventLoopPolicy())
 
 
 class AnalyticsClient:
@@ -66,33 +86,45 @@ class AnalyticsClient:
         self.developer_mode = developer_mode
         self.extra_data = extra_data or {}
 
+    def register(self, registration: Registration) -> None:
+        """
+        Register a new user.
+        """
+
+        __set_event_loop()
+        run(self.__send(registration))
+
     def send(self, event: AnalyticsEvent) -> None:
         """
-        Record a new event.
+        Record a new analytics event.
         """
 
-        # Works around a bug in the default Windows event loop for Python 3.8+
-        # by changing the default event loop in Windows processes.
-        if (
-            version_info[0] == 3
-            and version_info[1] >= 8
-            and platform.lower().startswith("win")
-        ):
-            from asyncio import (  # type: ignore
-                WindowsSelectorEventLoopPolicy,
-                set_event_loop_policy,
-            )
-
-            set_event_loop_policy(WindowsSelectorEventLoopPolicy())
-
+        __set_event_loop()
         run(self.__send(event))
 
-    def __get_request_payload(self, event: AnalyticsEvent) -> Dict:
+    def __get_request_payload(
+        self,
+        event_or_registration: Union[AnalyticsEvent, Registration],
+    ) -> Dict:
         """
-        Construct the `POST` body required for a new `AnalyticsEvent` to
-        be recorded via the API server.
+        Construct the `POST` body required for a new `AnalyticsEvent` or
+        `Registration` to be recorded via the API server.
         """
 
+        return (
+            self.__get_analytics_payload(event_or_registration)
+            if isinstance(event_or_registration, AnalyticsEvent)
+            else self.__get_registration_payload(event_or_registration)
+        )
+
+    def __get_registration_payload(self, registration: Registration) -> Dict:
+        return {
+            "client_id": self.client_id,
+            "email": registration.email,
+            "organization": registration.organization,
+        }
+
+    def __get_analytics_payload(self, event: AnalyticsEvent) -> Dict:
         payload = {
             "client_id": self.client_id,
             "developer": self.developer_mode,
@@ -122,9 +154,12 @@ class AnalyticsClient:
 
         return payload
 
-    async def __send(self, event: AnalyticsEvent) -> None:
+    async def __send(
+        self,
+        event_or_registration: Union[AnalyticsEvent, Registration],
+    ) -> None:
         """
-        Asynchronously record a new `AnalyticsEvent`.
+        Asynchronously record a new `AnalyticsEvent` or `Registration`.
         """
 
         async with ClientSession(
@@ -134,8 +169,12 @@ class AnalyticsClient:
         ) as session:
             try:
                 async with session.post(
-                    "/events",
-                    json=self.__get_request_payload(event),
+                    url=(
+                        "/events"
+                        if isinstance(event_or_registration, AnalyticsEvent)
+                        else "/registrations"
+                    ),
+                    json=self.__get_request_payload(event_or_registration),
                 ) as resp:
                     resp.raise_for_status()
 

@@ -24,25 +24,6 @@ from .registration import Registration
 REQUIRED_HEADERS = {"X-Fideslog-Version": __version__}
 
 
-def __set_event_loop() -> None:
-    """
-    Helps to work around a bug in the default Windows event loop for Python 3.8+
-    by changing the default event loop in Windows processes.
-    """
-
-    if (
-        version_info[0] == 3
-        and version_info[1] >= 8
-        and platform.lower().startswith("win")
-    ):
-        from asyncio import (  # type: ignore[attr-defined]
-            WindowsSelectorEventLoopPolicy,
-            set_event_loop_policy,
-        )
-
-        set_event_loop_policy(WindowsSelectorEventLoopPolicy())
-
-
 class AnalyticsClient:
     """
     An instance of a fides tool that wishes to send
@@ -50,6 +31,7 @@ class AnalyticsClient:
     """
 
     server_url = "https://fideslog.ethyca.com"
+    event_loop_set = False
 
     def __init__(
         self,
@@ -91,7 +73,7 @@ class AnalyticsClient:
         Register a new user.
         """
 
-        __set_event_loop()
+        self.__set_event_loop()
         run(self.__send(registration))
 
     def send(self, event: AnalyticsEvent) -> None:
@@ -99,8 +81,33 @@ class AnalyticsClient:
         Record a new analytics event.
         """
 
-        __set_event_loop()
+        self.__set_event_loop()
         run(self.__send(event))
+
+    def __set_event_loop(self) -> None:
+        """
+        Helps to work around a bug in the default Windows event loop for Python 3.8+
+        by changing the default event loop in Windows processes.
+        """
+
+        if self.event_loop_set:
+            # Exit early if this has already run to avoid setting the event loop
+            # multiple times.
+            return
+
+        if (
+            version_info[0] == 3
+            and version_info[1] >= 8
+            and platform.lower().startswith("win")
+        ):
+            from asyncio import (  # type: ignore[attr-defined]
+                WindowsSelectorEventLoopPolicy,
+                set_event_loop_policy,
+            )
+
+            set_event_loop_policy(WindowsSelectorEventLoopPolicy())
+
+        self.event_loop_set = True
 
     def __get_request_payload(
         self,

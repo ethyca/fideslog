@@ -1,7 +1,9 @@
 from logging import getLogger
-from typing import List, Optional
+from typing import List
 
-from fastapi import APIRouter, Depends, Query, Request, Response, status
+from fastapi import APIRouter, Depends, Request, Response, status
+from fastapi_pagination import Params
+from fastapi_pagination.bases import AbstractPage
 from sqlalchemy.exc import DBAPIError, NoResultFound
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import UnmappedInstanceError
@@ -9,6 +11,7 @@ from sqlalchemy.orm.exc import UnmappedInstanceError
 from ..database import get_db
 from ..database.registrations import create, delete, get, update
 from ..errors import InternalServerError, NotFoundError, TooManyRequestsError
+from ..models.models import Registration as RegistrationORM
 from ..schemas.registration import Registration
 
 log = getLogger(__name__)
@@ -27,37 +30,19 @@ registration_router = APIRouter(tags=["Registrations"], prefix="/registrations")
 )
 async def list_registrations(
     _: Request,
-    count: Optional[int] = Query(
-        default=None,
-        description="The amount of registrations to return.",
-        gt=0,
-    ),
-    offset: int = Query(
-        default=0,
-        description="The amount of registrations to skip before returning.",
-        gt=0,
-    ),
+    params: Params = Depends(),
     database: Session = Depends(get_db),
-) -> List[Registration]:
+) -> AbstractPage[RegistrationORM]:
     """
     List existing registrations.
     """
 
     try:
-        registrations = get(database, count, offset)
+        registrations = get(database, params)
     except DBAPIError as err:
         raise InternalServerError(err) from err
 
-    return [
-        Registration(
-            client_id=registration.client_id,
-            email=registration.email,
-            organization=registration.organization,
-            created_at=registration.created_at,
-            updated_at=registration.updated_at,
-        )
-        for registration in registrations
-    ]
+    return registrations.items  # type: ignore[attr-defined]
 
 
 @registration_router.post(
@@ -102,7 +87,7 @@ async def modify_registration(
     _: Request,
     registration: Registration,
     database: Session = Depends(get_db),
-) -> Registration:
+) -> RegistrationORM:
     """
     Update an existing registration.
     """
@@ -114,13 +99,7 @@ async def modify_registration(
     except Exception as err:
         raise InternalServerError(err) from err
 
-    return Registration(
-        client_id=updated.client_id,
-        email=updated.email,
-        organization=updated.organization,
-        created_at=updated.created_at,
-        updated_at=updated.updated_at,
-    )
+    return updated
 
 
 @registration_router.delete(

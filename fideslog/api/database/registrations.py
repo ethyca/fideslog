@@ -1,7 +1,8 @@
 from datetime import datetime, timezone
 from logging import getLogger
-from typing import List, Optional
 
+from fastapi_pagination.bases import AbstractPage, AbstractParams
+from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
@@ -13,18 +14,17 @@ log = getLogger(__name__)
 
 def get(
     database: Session,
-    count: Optional[int],
-    offset: Optional[int],
-) -> List[RegistrationORM]:
+    pagination_params: AbstractParams,
+) -> AbstractPage[RegistrationORM]:
     """
     Return existing registrations.
     """
 
     log.debug("Fetching registrations")
-    if count is not None:
-        return database.query(RegistrationORM).limit(count).offset(offset or 0).all()
-
-    return database.query(RegistrationORM).all()
+    return paginate(
+        database.query(RegistrationORM).order_by(RegistrationORM.created_at.desc()),
+        params=pagination_params,
+    )
 
 
 def create(database: Session, registration: Registration) -> None:

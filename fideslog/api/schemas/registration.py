@@ -1,6 +1,6 @@
 # pylint: disable= no-self-argument, no-self-use
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from pydantic import BaseModel, EmailStr, Field, validator
 
@@ -23,11 +23,11 @@ class Registration(BaseModel):
         description="The organization in which the user is registered.",
     )
     created_at: datetime = Field(
-        None,
+        datetime.now(tz=timezone.utc),
         description="The UTC timestamp when the registration occurred, in ISO 8601 format. Must include the UTC timezone, and represent a datetime in the past.",
     )
     updated_at: datetime = Field(
-        None,
+        datetime.now(tz=timezone.utc),
         description="The UTC timestamp when the registration was last updated, in ISO 8601 format. Must include the UTC timezone, and represent a datetime in the past.",
     )
 

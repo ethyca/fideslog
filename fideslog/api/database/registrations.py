@@ -38,8 +38,8 @@ def create(database: Session, registration: Registration) -> None:
             client_id=registration.client_id,
             email=registration.email,
             organization=registration.organization,
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc),
+            created_at=registration.created_at,
+            updated_at=registration.updated_at,
         )
     )
 

@@ -92,7 +92,14 @@ class AnalyticsClient:
         """
 
         __set_event_loop()
-        run(self.__send(registration))
+        run(self.send_async(registration))
+
+    async def register_async(self, registration: Registration) -> None:
+        """
+        Asynchronously record a new `Registration`.
+        """
+
+        await self.send_async(registration)
 
     def send(self, event: AnalyticsEvent) -> None:
         """
@@ -100,7 +107,38 @@ class AnalyticsClient:
         """
 
         __set_event_loop()
-        run(self.__send(event))
+        run(self.send_async(event))
+
+    async def send_async(
+        self,
+        event_or_registration: Union[AnalyticsEvent, Registration],
+    ) -> None:
+        """
+        Asynchronously record a new `AnalyticsEvent` or `Registration`.
+        """
+
+        async with ClientSession(
+            self.server_url,
+            headers=REQUIRED_HEADERS,
+            timeout=ClientTimeout(connect=3.05, total=120),
+        ) as session:
+            try:
+                async with session.post(
+                    url=(
+                        "/events"
+                        if isinstance(event_or_registration, AnalyticsEvent)
+                        else "/registrations"
+                    ),
+                    json=self.__get_request_payload(event_or_registration),
+                ) as resp:
+                    resp.raise_for_status()
+
+            except ClientConnectionError as err:
+                raise UnreachableServerError(err.__str__()) from err
+            except ClientResponseError as err:
+                raise AnalyticsSendError(err.message, err.status) from err
+            except Exception as err:
+                raise UnknownError(err) from err
 
     def __get_request_payload(
         self,
@@ -153,34 +191,3 @@ class AnalyticsClient:
                 payload[extra] = event_dict[extra]
 
         return payload
-
-    async def __send(
-        self,
-        event_or_registration: Union[AnalyticsEvent, Registration],
-    ) -> None:
-        """
-        Asynchronously record a new `AnalyticsEvent` or `Registration`.
-        """
-
-        async with ClientSession(
-            self.server_url,
-            headers=REQUIRED_HEADERS,
-            timeout=ClientTimeout(connect=3.05, total=120),
-        ) as session:
-            try:
-                async with session.post(
-                    url=(
-                        "/events"
-                        if isinstance(event_or_registration, AnalyticsEvent)
-                        else "/registrations"
-                    ),
-                    json=self.__get_request_payload(event_or_registration),
-                ) as resp:
-                    resp.raise_for_status()
-
-            except ClientConnectionError as err:
-                raise UnreachableServerError(err.__str__()) from err
-            except ClientResponseError as err:
-                raise AnalyticsSendError(err.message, err.status) from err
-            except Exception as err:
-                raise UnknownError(err) from err

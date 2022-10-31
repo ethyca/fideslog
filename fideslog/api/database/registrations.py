@@ -14,7 +14,7 @@ log = getLogger(__name__)
 def get(
     database: Session,
     count: Optional[int],
-    offset: Optional[int],
+    offset: int = 0,
 ) -> List[RegistrationORM]:
     """
     Return existing registrations.
@@ -22,7 +22,7 @@ def get(
 
     log.debug("Fetching registrations")
     if count is not None:
-        return database.query(RegistrationORM).limit(count).offset(offset or 0).all()
+        return database.query(RegistrationORM).limit(count).offset(offset).all()
 
     return database.query(RegistrationORM).all()
 

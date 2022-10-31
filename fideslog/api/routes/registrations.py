@@ -32,8 +32,8 @@ async def list_registrations(
         description="The amount of registrations to return.",
         gt=0,
     ),
-    offset: Optional[int] = Query(
-        default=None,
+    offset: int = Query(
+        default=0,
         description="The amount of registrations to skip before returning.",
         gt=0,
     ),

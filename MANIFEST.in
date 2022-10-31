@@ -2,3 +2,4 @@ graft fideslog/sdk/python
 include dev-requirements.txt
 include versioneer.py
 prune fideslog/api
+include fideslog/api/requirements.txt

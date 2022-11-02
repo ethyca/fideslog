@@ -1,6 +1,7 @@
 # pylint: disable=import-outside-toplevel, too-many-arguments
 
 from asyncio import run
+from sys import platform, version_info
 from typing import Dict, Optional, Union
 
 from aiohttp import (
@@ -21,6 +22,25 @@ from .exceptions import (
 from .registration import Registration
 
 REQUIRED_HEADERS = {"X-Fideslog-Version": __version__}
+
+
+def __set_event_loop() -> None:
+    """
+    Helps to work around a bug in the default Windows event loop for Python 3.8+
+    by changing the default event loop in Windows processes.
+    """
+
+    if (
+        version_info[0] == 3
+        and version_info[1] >= 8
+        and platform.lower().startswith("win")
+    ):
+        from asyncio import (  # type: ignore[attr-defined]
+            WindowsSelectorEventLoopPolicy,
+            set_event_loop_policy,
+        )
+
+        set_event_loop_policy(WindowsSelectorEventLoopPolicy())
 
 
 class AnalyticsClient:
@@ -71,6 +91,7 @@ class AnalyticsClient:
         Register a new user.
         """
 
+        __set_event_loop()
         run(self.send_async(registration))
 
     async def register_async(self, registration: Registration) -> None:
@@ -85,6 +106,7 @@ class AnalyticsClient:
         Record a new analytics event.
         """
 
+        __set_event_loop()
         run(self.send_async(event))
 
     async def send_async(

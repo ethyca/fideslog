@@ -1,13 +1,16 @@
 from logging import getLogger
 
+from boto3 import Session
+from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends, Request, status
-from sqlalchemy.exc import DBAPIError
-from sqlalchemy.orm import Session
 
-from ..database import get_db
+from ..database import get_storage
 from ..database.events import create
 from ..errors import InternalServerError, TooManyRequestsError
 from ..schemas.analytics_event import AnalyticsEvent
+
+LOG_BUCKET = "fideslog-test"
+# TODO - replace with an env var and load via config
 
 log = getLogger(__name__)
 event_router = APIRouter(tags=["Events"], prefix="/events")
@@ -26,15 +29,15 @@ event_router = APIRouter(tags=["Events"], prefix="/events")
 async def add_event(
     _: Request,
     event: AnalyticsEvent,
-    database: Session = Depends(get_db),
+    session: Session = Depends(get_storage),
 ) -> AnalyticsEvent:
     """
     Create a new analytics event.
     """
 
     try:
-        create(database=database, event=event)
-    except DBAPIError as err:
+        create(session=session, bucket=LOG_BUCKET, event=event)
+    except ClientError as err:
         raise InternalServerError(err) from err
 
     return event

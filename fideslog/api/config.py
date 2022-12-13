@@ -41,6 +41,22 @@ class Settings(BaseSettings):
             return env_settings, init_settings, file_secret_settings
 
 
+class StorageSettings(Settings):
+    """
+    Connection config for AWS S3
+    """
+
+    region_name: Optional[str] = Field(None, exclude=True)
+    aws_secret_access_key: Optional[str] = Field(None, exclude=True)
+    aws_access_key_id: Optional[str] = Field(None, exclude=True)
+    bucket_name: str = Field(..., exclude=True)
+
+    class Config:
+        """Modifies pydantic behavior."""
+
+        env_prefix = f"{ENV_PREFIX}STORAGE_"
+
+
 class DatabaseSettings(Settings):
     """Configuration options for Snowflake."""
 
@@ -184,6 +200,7 @@ class FideslogSettings(Settings):
     logging: LoggingSettings
     security: SecuritySettings = SecuritySettings()
     server: ServerSettings
+    storage: StorageSettings = StorageSettings()
 
 
 def load_file(filename: str) -> dict[str, Union[str, int, bool]]:
@@ -245,6 +262,7 @@ def get_config() -> FideslogSettings:
             database=DatabaseSettings(),
             logging=LoggingSettings(),
             server=ServerSettings(),
+            storage=StorageSettings(),
         )
 
     log.info("Configuration in use: %s", settings.json())

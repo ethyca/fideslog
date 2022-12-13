@@ -63,22 +63,26 @@ If no configuration file is found in any of the above locations, the default con
 
 #### Options
 
-|        Name          | Configuration File Section |      Environment Variable Name        |  Type   | Required |     Default      | Description |
-|:--------------------:|:--------------------------:|:-------------------------------------:|:-------:|:--------:|:----------------:|-------------|
-|      `account`       |        `[database]`        |    `FIDESLOG__DATABASE_ACCOUNT`       | String  |    Yes   |                  | The Snowflake account in which the fideslog database can be found. Ethyca employees may access this value internally. |
-|      `database`      |        `[database]`        |    `FIDESLOG__DATABASE_DATABASE`      | String  |    No    |      `"raw"`     | The name of the Snowflake database in which analytics events should be stored. |
-|     `db_schema`      |        `[database]`        |   `FIDESLOG__DATABASE_DB_SCHEMA`      | String  |    No    |     `"fides"`    | The Snowflake database schema to target. |
-|   `encryption_key`   |        `[database]`        |  `FIDESLOG__DATABASE_ENCRYPTION_KEY`  | String  |    No    |     `"fides"`    | The AES encryption key to use when encrypting user email addresses at rest. |
-|     `password`       |        `[database]`        |    `FIDESLOG__DATABASE_PASSWORD`      | String  |    Yes   |                  | The password associated with the Snowflake account for `user`. Ethyca employees may access this value internally. |
-|       `role`         |        `[database]`        |      `FIDESLOG__DATABASE_ROLE`        | String  |    No    | `"event_writer"` | The permissions with which to access the specified Snowflake `database`.  |
-|       `user`         |        `[database]`        |      `FIDESLOG__DATABASE_USER`        | String  |    Yes   |                  | The ID of the user with which to authenticate to Snowflake. Ethyca employees may access this value internally. |
-|     `warehouse`      |        `[database]`        |   `FIDESLOG__DATABASE_WAREHOUSE`      | String  |    No    |   `"fides_log"`  | The Snowflake data warehouse in which the fideslog database can be found. |
-|    `destination`     |        `[logging]`         |   `FIDESLOG__LOGGING_DESTINATION`     | String  |    No    |    `"stdout"`    | The absolute path to a file or directory in which logs should be stored. If a directory is passed, a `fideslog.log` file will be created in that directory. |
-|       `level`        |        `[logging]`         |      `FIDESLOG__LOGGING_LEVEL`        | String  |    No    |     `"INFO"`     | The desired logging level. Accepts `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`. Case insensitive. |
-|       `host `        |         `[server]`         |       `FIDESLOG__SERVER_HOST`         | String  |    No    |    `"0.0.0.0"`   | The hostname on which the API server should respond. |
-|    `hot_reload`      |         `[server]`         |     `FIDESLOG__SERVER_HOT_RELOAD`     | Boolean |    No    |      `False`     | Whether or not to automatically apply code changes during local development. |
-|       `port`         |         `[server]`         |        `FIDESLOG__SERVER_PORT`        | Integer |    No    |      `8080`      | The port number on which the API server should listen. |
-| `request_rate_limit` |         `[server]`         | `FIDESLOG__SERVER_REQUEST_RATE_LIMIT` | String  |    No    |  `"100/minute"`  | The amount of requests allowed per IP address per unit time. |
+|        Name               | Configuration File Section |      Environment Variable Name              |  Type   | Required |     Default      | Description |
+|:-------------------------:|:--------------------------:|:-------------------------------------------:|:-------:|:--------:|:----------------:|-------------|
+|      `account`            |        `[database]`        |    `FIDESLOG__DATABASE_ACCOUNT`             | String  |    Yes   |                  | The Snowflake account in which the fideslog database can be found. Ethyca employees may access this value internally. |
+|      `database`           |        `[database]`        |    `FIDESLOG__DATABASE_DATABASE`            | String  |    No    |      `"raw"`     | The name of the Snowflake database in which analytics events should be stored. |
+|     `db_schema`           |        `[database]`        |   `FIDESLOG__DATABASE_DB_SCHEMA`            | String  |    No    |     `"fides"`    | The Snowflake database schema to target. |
+|   `encryption_key`        |        `[database]`        |  `FIDESLOG__DATABASE_ENCRYPTION_KEY`        | String  |    No    |     `"fides"`    | The AES encryption key to use when encrypting user email addresses at rest. |
+|     `password`            |        `[database]`        |    `FIDESLOG__DATABASE_PASSWORD`            | String  |    Yes   |                  | The password associated with the Snowflake account for `user`. Ethyca employees may access this value internally. |
+|       `role`              |        `[database]`        |      `FIDESLOG__DATABASE_ROLE`              | String  |    No    | `"event_writer"` | The permissions with which to access the specified Snowflake `database`.  |
+|       `user`              |        `[database]`        |      `FIDESLOG__DATABASE_USER`              | String  |    Yes   |                  | The ID of the user with which to authenticate to Snowflake. Ethyca employees may access this value internally. |
+|     `warehouse`           |        `[database]`        |   `FIDESLOG__DATABASE_WAREHOUSE`            | String  |    No    |   `"fides_log"`  | The Snowflake data warehouse in which the fideslog database can be found. |
+|    `destination`          |        `[logging]`         |   `FIDESLOG__LOGGING_DESTINATION`           | String  |    No    |    `"stdout"`    | The absolute path to a file or directory in which logs should be stored. If a directory is passed, a `fideslog.log` file will be created in that directory. |
+|       `level`             |        `[logging]`         |      `FIDESLOG__LOGGING_LEVEL`              | String  |    No    |     `"INFO"`     | The desired logging level. Accepts `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`. Case insensitive. |
+|       `host `             |         `[server]`         |       `FIDESLOG__SERVER_HOST`               | String  |    No    |    `"0.0.0.0"`   | The hostname on which the API server should respond. |
+|    `hot_reload`           |         `[server]`         |     `FIDESLOG__SERVER_HOT_RELOAD`           | Boolean |    No    |      `False`     | Whether or not to automatically apply code changes during local development. |
+|       `port`              |         `[server]`         |        `FIDESLOG__SERVER_PORT`              | Integer |    No    |      `8080`      | The port number on which the API server should listen. |
+| `request_rate_limit`      |         `[server]`         | `FIDESLOG__SERVER_REQUEST_RATE_LIMIT`       | String  |    No    |  `"100/minute"`  | The amount of requests allowed per IP address per unit time. |
+| `bucket_name`             |         `[storage]`        | `FIDESLOG__STORAGE_BUCKET_NAME`             | String  |    Yes   |                  | The name of the bucket to be used to store event data in. |
+| `region_name`             |         `[storage]`        | `FIDESLOG__STORAGE_REGION_NAME`             | String  |    No    |                  | The AWS region to be used. Optional in the case that the default AWS env var option is used. |
+| `aws_access_key_id`       |         `[storage]`        | `FIDESLOG__STORAGE_AWS_ACCESS_KEY_ID`       | String  |    No    |                  | The AWS access key to be used. Optional in the case that the default AWS env var option is used. |
+| `aws_secret_access_key`   |         `[storage]`        | `FIDESLOG__STORAGE_AWS_SECRET_ACCESS_KEY`   | String  |    No    |                  | The AWS secret access key to be used. Optional in the case that the default AWS env var option is used. |
 
 #### Example Configuration File
 
@@ -104,11 +108,14 @@ level = "info"
 host = "localhost"
 hot_reload = true
 port = 8080
+
+[storage]
+bucket_name = "fideslog-test"
 ```
 
-#### Enabling Database Access for Local Development
+#### Enabling Database / S3 Access for Local Development
 
-The `account`, `user`, and `password` configuration options mentioned above must be populated for the fideslog API server to successfully connect to the supporting database. Only Ethyca employees may access these values internally. For convenience, the included [`fideslog.env` file](./fideslog.env) will automate the process of populating the required values as environment variables, as long as the user's local environment includes the following:
+The `account`, `user`, and `password` configuration options mentioned above must be populated for the fideslog API server to successfully connect to the supporting database. In regard to S3, the `bucket_name`, `region_name`, `aws_access_key_id`, and `aws_secret_access_key` will be required. Only Ethyca employees may access these values internally. For convenience, the included [`fideslog.env` file](./fideslog.env) will automate the process of populating the required values as environment variables, as long as the user's local environment includes the following:
 
 ```sh
 # Add to .zshrc, .bash_profile, etc.
@@ -116,7 +123,13 @@ The `account`, `user`, and `password` configuration options mentioned above must
 export SNOWFLAKE_ACCOUNT="--REDACTED--"
 export SNOWFLAKE_DB_USER="--REDACTED--"
 export SNOWFLAKE_DB_PASSWORD="--REDACTED--"
+export AWS_DEFAULT_REGION="--REDACTED--"
+export AWS_ACCESS_KEY_ID="--REDACTED--"
+export AWS_SECRET_ACCESS_KEY="--REDACTED--"
+export FIDESLOG__STORAGE_BUCKET_NAME="--REDACTED--"
 ```
+
+
 
 ### Deployment
 

@@ -5,7 +5,7 @@ from typing import Optional
 from urllib.parse import urlparse
 from uuid import uuid1
 
-from boto3 import Session
+from mypy_boto3_s3.client import S3Client
 
 from ..schemas.analytics_event import AnalyticsEvent
 
@@ -22,7 +22,7 @@ def file_name_random() -> str:
     return uuid1().hex + ".json"
 
 
-def create(session: Session, bucket: str, event: AnalyticsEvent) -> None:
+def create(client: S3Client, bucket: str, event: AnalyticsEvent) -> None:
     """Create a new analytics event."""
 
     logged_event = event.dict(exclude=EXCLUDED_ATTRIBUTES)
@@ -37,12 +37,11 @@ def create(session: Session, bucket: str, event: AnalyticsEvent) -> None:
 
     new_file = file_name_random()
 
-    with session.client("s3") as client:
-        client.put_object(
-            Bucket=bucket,
-            Key=f"{date_dir}/{new_file}",
-            Body=dumps(event.dict(), indent=4, sort_keys=True, default=str),
-        )
+    client.put_object(
+        Bucket=bucket,
+        Key=f"{date_dir}/{new_file}",
+        Body=dumps(event.dict(), indent=4, sort_keys=True, default=str),
+    )
 
     log.debug("Event created: %s", logged_event)
 

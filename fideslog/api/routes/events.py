@@ -4,13 +4,13 @@ from boto3 import Session
 from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends, Request, status
 
+from ..config import config
 from ..database import get_storage
 from ..database.events import create
 from ..errors import InternalServerError, TooManyRequestsError
 from ..schemas.analytics_event import AnalyticsEvent
 
-LOG_BUCKET = "fideslog-test"
-# TODO - replace with an env var and load via config
+LOG_BUCKET = config.storage.bucket_name
 
 log = getLogger(__name__)
 event_router = APIRouter(tags=["Events"], prefix="/events")
@@ -34,9 +34,20 @@ async def add_event(
     """
     Create a new analytics event.
     """
+    config_dict = (
+        {
+            "region_name": config.storage.region_name,
+            "aws_access_key_id": config.storage.aws_access_key_id,
+            "aws_secret_access_key": config.storage.aws_secret_access_key,
+        }
+        if config.storage.region_name
+        else {}
+    )
 
+    client = session.client("s3", **config_dict)  # type: ignore
     try:
-        create(session=session, bucket=LOG_BUCKET, event=event)
+        create(client=client, bucket=LOG_BUCKET, event=event)
+        client.close()
     except ClientError as err:
         raise InternalServerError(err) from err
 

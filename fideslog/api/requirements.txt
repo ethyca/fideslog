@@ -1,3 +1,4 @@
+boto3==1.26.1
 fastapi-pagination[sqlalchemy]== 0.10.0
 fastapi==0.82.0
 pydantic[email]==1.9.1

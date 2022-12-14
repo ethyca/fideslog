@@ -270,9 +270,9 @@ client.register(user_registration)
 
 ## Contributing
 
-We welcome and encourage all types of contributions and improvements!  Please see our [contribution guide](https://ethyca.github.io/fides/development/overview/) to opening issues for bugs, new features, and security or experience enhancements.
+We welcome and encourage all types of contributions and improvements!  Please see our [contribution guide](https://docs.ethyca.com/fides/community/development/overview) to opening issues for bugs, new features, and security or experience enhancements.
 
-Read about the [Fides community](https://ethyca.github.io/fides/community/hints_tips/) or dive into the [development guides](https://ethyca.github.io/fides/development/overview) for information about contributions, documentation, code style, testing and more. Ethyca is committed to fostering a safe and collaborative environment, such that all interactions are governed by the [Fides Code of Conduct](https://ethyca.github.io/fides/community/code_of_conduct/).
+Read about the [Fides community](https://docs.ethyca.com/fides/community/hints_tips) or dive into the [development guides](https://docs.ethyca.com/fides/community/development/overview) for information about contributions, documentation, code style, testing and more. Ethyca is committed to fostering a safe and collaborative environment, such that all interactions are governed by the [Fides Code of Conduct](https://docs.ethyca.com/fides/community/code_of_conduct/).
 
 ### Support
 
@@ -280,8 +280,8 @@ Join the conversation on [Slack](https://fid.es/join-slack) and [Twitter](https:
 
 ## License
 
-Fideslog and the fides ecosystem of tools are licensed under the [Apache Software License Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
-Fides tools are built on [fideslang](https://github.com/ethyca/privacy-taxonomy), the fides language specification, which is licensed under [CC by 4](https://github.com/ethyca/privacy-taxonomy/blob/main/LICENSE).
+The [Fides](https://github.com/ethyca/fides) ecosystem of tools, including Fideslog, are licensed under the [Apache Software License Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+Fides tools are built on [Fideslang](https://github.com/ethyca/fideslang), the Fides language specification, which is licensed under [CC by 4](https://github.com/ethyca/fideslang/blob/main/LICENSE).
 
 Fides is created and sponsored by [Ethyca](https://ethyca.com/): a developer tools company building the trust infrastructure of the internet. If you have questions or need assistance getting started, let us know at fides@ethyca.com!
 

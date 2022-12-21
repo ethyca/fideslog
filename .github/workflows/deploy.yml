@@ -61,6 +61,10 @@ jobs:
           sed -i "s%<snowflake_db_user>%$SNOWFLAKE_DB_USER%g" task-definition.json
           sed -i "s%<snowflake_db_password>%$SNOWFLAKE_DB_PASSWORD%g" task-definition.json
           sed -i "s%<fideslog_security_access_token>%$FIDESLOG__SECURITY__ACCESS_TOKEN%g" task-definition.json
+          sed -i "s%<fideslog_storage_bucket_name>%$FIDESLOG__STORAGE_BUCKET_NAME%g" task-definition.json
+          sed -i "s%<fideslog_storage_region_name>%$FIDESLOG__STORAGE_REGION_NAME%g" task-definition.json
+          sed -i "s%<fideslog_storage_aws_access_key_id>%$FIDESLOG__STORAGE_AWS_ACCESS_KEY_ID%g" task-definition.json
+          sed -i "s%<fideslog_storage_aws_secret_access_key>%$FIDESLOG__STORAGE_AWS_SECRET_ACCESS_KEY%g" task-definition.json
           sed -i "s%<cluster_name>%$ECS_CLUSTER_NAME%g" task-definition.json
           sed -i "s%<role_arn>%$ROLE_ARN%g" task-definition.json
         env:
@@ -70,6 +74,10 @@ jobs:
           SNOWFLAKE_ACCOUNT: ${{secrets.SNOWFLAKE_ACCOUNT}}
           SNOWFLAKE_DB_PASSWORD: ${{secrets.SNOWFLAKE_DB_PASSWORD}}
           SNOWFLAKE_DB_USER: ${{secrets.SNOWFLAKE_DB_USER}}
+          FIDESLOG__STORAGE_BUCKET_NAME: ${{secrets.FIDESLOG__STORAGE_BUCKET_NAME}}
+          FIDESLOG__STORAGE_REGION_NAME: ${{secrets.FIDESLOG__STORAGE_REGION_NAME}}
+          FIDESLOG__STORAGE_AWS_ACCESS_KEY_ID: ${{secrets.FIDESLOG__STORAGE_AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.FIDESLOG__STORAGE_AWS_SECRET_ACCESS_KEY}}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

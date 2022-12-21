@@ -29,6 +29,22 @@
                 {
                     "name": "FIDESLOG__SERVER_HOST",
                     "value": "0.0.0.0"
+                },
+                {
+                    "name": "FIDESLOG__STORAGE_BUCKET_NAME",
+                    "value": "<fideslog_storage_bucket_name>"
+                },
+                {
+                    "name": "FIDESLOG__STORAGE_REGION_NAME",
+                    "value": "<fideslog_storage_region_name>"
+                },
+                {
+                    "name": "FIDESLOG__STORAGE_AWS_ACCESS_KEY_ID",
+                    "value": "<fideslog_storage_aws_access_key_id>"
+                },
+                {
+                    "name": "FIDESLOG__STORAGE_AWS_SECRET_ACCESS_KEY",
+                    "value": "<fideslog_storage_aws_secret_access_key>"
                 }
             ],
             "image": "ethyca/fideslog:latest",

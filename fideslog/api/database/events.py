@@ -1,25 +1,17 @@
 from datetime import datetime, timezone
-from json import dumps
 from logging import getLogger
 from typing import Optional
 from urllib.parse import urlparse
-from uuid import uuid1
 
 from mypy_boto3_s3.client import S3Client
 
 from ..schemas.analytics_event import AnalyticsEvent
+from .csv_writer import file_name_random, write_csv_object
 
 EXCLUDED_ATTRIBUTES = set(("client_id", "endpoint", "extra_data", "os"))
 
 
 log = getLogger(__name__)
-
-
-def file_name_random() -> str:
-    """
-    Generates a random uuid to be passed as the filename
-    """
-    return uuid1().hex + ".json"
 
 
 def create(client: S3Client, bucket: str, event: AnalyticsEvent) -> None:
@@ -40,7 +32,8 @@ def create(client: S3Client, bucket: str, event: AnalyticsEvent) -> None:
     client.put_object(
         Bucket=bucket,
         Key=f"{date_dir}/{new_file}",
-        Body=dumps(event.dict(), indent=4, sort_keys=True, default=str),
+        Body=write_csv_object(event),
+        ContentType="text/csv",
     )
 
     log.debug("Event created: %s", logged_event)

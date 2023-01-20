@@ -5,8 +5,8 @@ from urllib.parse import urlparse
 
 from mypy_boto3_s3.client import S3Client
 
-from ..schemas.analytics_event import AnalyticsEvent
-from .csv_writer import file_name_random, write_csv_object
+from fideslog.api.database.csv_writer import file_name_random, write_csv_object
+from fideslog.api.schemas.analytics_event import AnalyticsEvent
 
 EXCLUDED_ATTRIBUTES = set(("client_id", "endpoint", "extra_data", "os"))
 

@@ -1,7 +1,7 @@
 import csv
 from uuid import uuid1
 
-from ..schemas.analytics_event import AnalyticsEvent
+from fideslog.api.schemas.analytics_event import AnalyticsEvent
 
 
 class Pipe:

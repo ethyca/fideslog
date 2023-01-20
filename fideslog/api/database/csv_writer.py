@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime, timezone
 from uuid import uuid1
 
 from fideslog.api.schemas.analytics_event import AnalyticsEvent
@@ -23,7 +24,8 @@ def file_name_random() -> str:
     """
     Generates a random uuid to be passed as the filename
     """
-    return uuid1().hex + ".csv"
+    utc_datetime = datetime.now(timezone.utc)
+    return utc_datetime.strftime("%H-%M-") + uuid1().hex + ".csv"
 
 
 def write_csv_object(event: AnalyticsEvent) -> str:

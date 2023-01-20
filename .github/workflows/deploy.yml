@@ -77,7 +77,7 @@ jobs:
           FIDESLOG__STORAGE_BUCKET_NAME: ${{secrets.FIDESLOG__STORAGE_BUCKET_NAME}}
           FIDESLOG__STORAGE_REGION_NAME: ${{secrets.FIDESLOG__STORAGE_REGION_NAME}}
           FIDESLOG__STORAGE_AWS_ACCESS_KEY_ID: ${{secrets.FIDESLOG__STORAGE_AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.FIDESLOG__STORAGE_AWS_SECRET_ACCESS_KEY}}
+          FIDESLOG__STORAGE_AWS_SECRET_ACCESS_KEY: ${{secrets.FIDESLOG__STORAGE_AWS_SECRET_ACCESS_KEY}}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

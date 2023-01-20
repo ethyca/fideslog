@@ -27,6 +27,7 @@ Ethyca's mission is to build trustworthy software. Fideslog requires that analyt
 ### The Fideslog API
 
 <!-- The ReDoc version of the documentation is embedded here because it doesn't allow users to easily make requests, and it looks prettier than the default documentation. -->
+
 The fideslog API server exposes the endpoints that handle interactions with analytics event data. For a complete list of available endpoints, as well as request requirements and response details, see [the automatically generated API spec documentation](https://fideslog.ethyca.com/redoc).
 
 ### The Fideslog SDKs
@@ -48,7 +49,7 @@ make api
 By default, this will start an instance of the fideslog API server on `localhost:8080`, and attach to the container. Log output will be written to `stdout` within the container instance.
 
 | :memo: Note | The API server will error when using only the provided [`fideslog.toml` configuration file](./fideslog.toml) and no additional environment variables. See [Enabling Database Access for Local Development](#enabling-database-access-for-local-development) below for configuration changes necessary to ensure a successful connection to the supporting database. |
-|:-----------:|:---|
+| :---------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 
 ### Configuration
 
@@ -63,31 +64,31 @@ If no configuration file is found in any of the above locations, the default con
 
 #### Options
 
-|        Name               | Configuration File Section |      Environment Variable Name              |  Type   | Required |     Default      | Description |
-|:-------------------------:|:--------------------------:|:-------------------------------------------:|:-------:|:--------:|:----------------:|-------------|
-|      `account`            |        `[database]`        |    `FIDESLOG__DATABASE_ACCOUNT`             | String  |    Yes   |                  | The Snowflake account in which the fideslog database can be found. Ethyca employees may access this value internally. |
-|      `database`           |        `[database]`        |    `FIDESLOG__DATABASE_DATABASE`            | String  |    No    |      `"raw"`     | The name of the Snowflake database in which analytics events should be stored. |
-|     `db_schema`           |        `[database]`        |   `FIDESLOG__DATABASE_DB_SCHEMA`            | String  |    No    |     `"fides"`    | The Snowflake database schema to target. |
-|   `encryption_key`        |        `[database]`        |  `FIDESLOG__DATABASE_ENCRYPTION_KEY`        | String  |    No    |     `"fides"`    | The AES encryption key to use when encrypting user email addresses at rest. |
-|     `password`            |        `[database]`        |    `FIDESLOG__DATABASE_PASSWORD`            | String  |    Yes   |                  | The password associated with the Snowflake account for `user`. Ethyca employees may access this value internally. |
-|       `role`              |        `[database]`        |      `FIDESLOG__DATABASE_ROLE`              | String  |    No    | `"event_writer"` | The permissions with which to access the specified Snowflake `database`.  |
-|       `user`              |        `[database]`        |      `FIDESLOG__DATABASE_USER`              | String  |    Yes   |                  | The ID of the user with which to authenticate to Snowflake. Ethyca employees may access this value internally. |
-|     `warehouse`           |        `[database]`        |   `FIDESLOG__DATABASE_WAREHOUSE`            | String  |    No    |   `"fides_log"`  | The Snowflake data warehouse in which the fideslog database can be found. |
-|    `destination`          |        `[logging]`         |   `FIDESLOG__LOGGING_DESTINATION`           | String  |    No    |    `"stdout"`    | The absolute path to a file or directory in which logs should be stored. If a directory is passed, a `fideslog.log` file will be created in that directory. |
-|       `level`             |        `[logging]`         |      `FIDESLOG__LOGGING_LEVEL`              | String  |    No    |     `"INFO"`     | The desired logging level. Accepts `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`. Case insensitive. |
-|       `host `             |         `[server]`         |       `FIDESLOG__SERVER_HOST`               | String  |    No    |    `"0.0.0.0"`   | The hostname on which the API server should respond. |
-|    `hot_reload`           |         `[server]`         |     `FIDESLOG__SERVER_HOT_RELOAD`           | Boolean |    No    |      `False`     | Whether or not to automatically apply code changes during local development. |
-|       `port`              |         `[server]`         |        `FIDESLOG__SERVER_PORT`              | Integer |    No    |      `8080`      | The port number on which the API server should listen. |
-| `request_rate_limit`      |         `[server]`         | `FIDESLOG__SERVER_REQUEST_RATE_LIMIT`       | String  |    No    |  `"100/minute"`  | The amount of requests allowed per IP address per unit time. |
-| `bucket_name`             |         `[storage]`        | `FIDESLOG__STORAGE_BUCKET_NAME`             | String  |    Yes   |                  | The name of the bucket to be used to store event data in. |
-| `region_name`             |         `[storage]`        | `FIDESLOG__STORAGE_REGION_NAME`             | String  |    No    |                  | The AWS region to be used. Optional in the case that the default AWS env var option is used. |
-| `aws_access_key_id`       |         `[storage]`        | `FIDESLOG__STORAGE_AWS_ACCESS_KEY_ID`       | String  |    No    |                  | The AWS access key to be used. Optional in the case that the default AWS env var option is used. |
-| `aws_secret_access_key`   |         `[storage]`        | `FIDESLOG__STORAGE_AWS_SECRET_ACCESS_KEY`   | String  |    No    |                  | The AWS secret access key to be used. Optional in the case that the default AWS env var option is used. |
+|          Name           | Configuration File Section |         Environment Variable Name         |  Type   | Required |     Default      | Description                                                                                                                                                 |
+| :---------------------: | :------------------------: | :---------------------------------------: | :-----: | :------: | :--------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|        `account`        |        `[database]`        |       `FIDESLOG__DATABASE_ACCOUNT`        | String  |   Yes    |                  | The Snowflake account in which the fideslog database can be found. Ethyca employees may access this value internally.                                       |
+|       `database`        |        `[database]`        |       `FIDESLOG__DATABASE_DATABASE`       | String  |    No    |     `"raw"`      | The name of the Snowflake database in which analytics events should be stored.                                                                              |
+|       `db_schema`       |        `[database]`        |      `FIDESLOG__DATABASE_DB_SCHEMA`       | String  |    No    |    `"fides"`     | The Snowflake database schema to target.                                                                                                                    |
+|    `encryption_key`     |        `[database]`        |    `FIDESLOG__DATABASE_ENCRYPTION_KEY`    | String  |    No    |    `"fides"`     | The AES encryption key to use when encrypting user email addresses at rest.                                                                                 |
+|       `password`        |        `[database]`        |       `FIDESLOG__DATABASE_PASSWORD`       | String  |   Yes    |                  | The password associated with the Snowflake account for `user`. Ethyca employees may access this value internally.                                           |
+|         `role`          |        `[database]`        |         `FIDESLOG__DATABASE_ROLE`         | String  |    No    | `"event_writer"` | The permissions with which to access the specified Snowflake `database`.                                                                                    |
+|         `user`          |        `[database]`        |         `FIDESLOG__DATABASE_USER`         | String  |   Yes    |                  | The ID of the user with which to authenticate to Snowflake. Ethyca employees may access this value internally.                                              |
+|       `warehouse`       |        `[database]`        |      `FIDESLOG__DATABASE_WAREHOUSE`       | String  |    No    |  `"fides_log"`   | The Snowflake data warehouse in which the fideslog database can be found.                                                                                   |
+|      `destination`      |        `[logging]`         |      `FIDESLOG__LOGGING_DESTINATION`      | String  |    No    |    `"stdout"`    | The absolute path to a file or directory in which logs should be stored. If a directory is passed, a `fideslog.log` file will be created in that directory. |
+|         `level`         |        `[logging]`         |         `FIDESLOG__LOGGING_LEVEL`         | String  |    No    |     `"INFO"`     | The desired logging level. Accepts `DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`. Case insensitive.                                                    |
+|         `host `         |         `[server]`         |          `FIDESLOG__SERVER_HOST`          | String  |    No    |   `"0.0.0.0"`    | The hostname on which the API server should respond.                                                                                                        |
+|      `hot_reload`       |         `[server]`         |       `FIDESLOG__SERVER_HOT_RELOAD`       | Boolean |    No    |     `False`      | Whether or not to automatically apply code changes during local development.                                                                                |
+|         `port`          |         `[server]`         |          `FIDESLOG__SERVER_PORT`          | Integer |    No    |      `8080`      | The port number on which the API server should listen.                                                                                                      |
+|  `request_rate_limit`   |         `[server]`         |   `FIDESLOG__SERVER_REQUEST_RATE_LIMIT`   | String  |    No    |  `"100/minute"`  | The amount of requests allowed per IP address per unit time.                                                                                                |
+|      `bucket_name`      |        `[storage]`         |      `FIDESLOG__STORAGE_BUCKET_NAME`      | String  |   Yes    |                  | The name of the bucket to be used to store event data in.                                                                                                   |
+|      `region_name`      |        `[storage]`         |      `FIDESLOG__STORAGE_REGION_NAME`      | String  |    No    |                  | The AWS region to be used. Optional in the case that the default AWS env var option is used.                                                                |
+|   `aws_access_key_id`   |        `[storage]`         |   `FIDESLOG__STORAGE_AWS_ACCESS_KEY_ID`   | String  |    No    |                  | The AWS access key to be used. Optional in the case that the default AWS env var option is used.                                                            |
+| `aws_secret_access_key` |        `[storage]`         | `FIDESLOG__STORAGE_AWS_SECRET_ACCESS_KEY` | String  |    No    |                  | The AWS secret access key to be used. Optional in the case that the default AWS env var option is used.                                                     |
 
 #### Example Configuration File
 
 | :warning: WARNING | Never commit changes to the included [`fideslog.toml` file](./fideslog.toml) to version control! |
-|:-----------------:|:-------------------------------------------------------------------------------------------------|
+| :---------------: | :----------------------------------------------------------------------------------------------- |
 
 ```toml
 # fideslog.toml
@@ -123,13 +124,11 @@ The `account`, `user`, and `password` configuration options mentioned above must
 export SNOWFLAKE_ACCOUNT="--REDACTED--"
 export SNOWFLAKE_DB_USER="--REDACTED--"
 export SNOWFLAKE_DB_PASSWORD="--REDACTED--"
-export AWS_DEFAULT_REGION="--REDACTED--"
-export AWS_ACCESS_KEY_ID="--REDACTED--"
-export AWS_SECRET_ACCESS_KEY="--REDACTED--"
+export FIDESLOG__STORAGE_AWS_DEFAULT_REGION="--REDACTED--"
+export FIDESLOG__STORAGE_AWS_ACCESS_KEY_ID="--REDACTED--"
+export FIDESLOG__STORAGE_AWS_SECRET_ACCESS_KEY="--REDACTED--"
 export FIDESLOG__STORAGE_BUCKET_NAME="--REDACTED--"
 ```
-
-
 
 ### Deployment
 
@@ -139,7 +138,7 @@ In general, tags are only created as part of creating a new release. All release
 
 ## Learn More
 
-The Fides core team is committed to providing a variety of documentation to help get you started using Fideslog.  As such, all interactions are governed by the [Fides Code of Conduct](https://ethyca.github.io/fides/community/code_of_conduct/).
+The Fides core team is committed to providing a variety of documentation to help get you started using Fideslog. As such, all interactions are governed by the [Fides Code of Conduct](https://ethyca.github.io/fides/community/code_of_conduct/).
 
 ### Support
 
@@ -147,7 +146,7 @@ Join the conversation on [Slack](https://fid.es/join-slack) and [Twitter](https:
 
 ### Contributing
 
-We welcome and encourage all types of contributions and improvements!  Please see our [contribution guide](https://ethyca.github.io/fides/development/overview/) to opening issues for bugs, new features, and security or experience enhancements.
+We welcome and encourage all types of contributions and improvements! Please see our [contribution guide](https://ethyca.github.io/fides/development/overview/) to opening issues for bugs, new features, and security or experience enhancements.
 
 Read about the [Fides community](https://ethyca.github.io/fides/community/hints_tips/) or dive into the [development guides](https://ethyca.github.io/fides/development/overview) for information about contributions, documentation, code style, testing and more. Ethyca is committed to fostering a safe and collaborative environment, such that all interactions are governed by the [Fides Code of Conduct](https://ethyca.github.io/fides/community/code_of_conduct/).
 
@@ -158,9 +157,7 @@ Fides tools are built on [Fideslang](https://github.com/ethyca/fideslang), the F
 
 Fides is created and sponsored by Ethyca: a developer tools company building the trust infrastructure of the internet. If you have questions or need assistance getting started, let us know at fides@ethyca.com!
 
-
-
-[release-image]:https://img.shields.io/github/v/release/ethyca/fideslog
+[release-image]: https://img.shields.io/github/v/release/ethyca/fideslog
 [release-url]: https://github.com/ethyca/fideslog/releases
 [deploy-image]: https://github.com/ethyca/fideslog/actions/workflows/deploy.yml/badge.svg
 [actions-url]: https://github.com/ethyca/fideslog/actions

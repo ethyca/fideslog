@@ -1,12 +1,12 @@
-from json import dumps
+from datetime import datetime, timezone
 from logging import getLogger
 from typing import Optional
 from urllib.parse import urlparse
 
-from sqlalchemy.orm import Session
+from mypy_boto3_s3.client import S3Client
 
-from ..models.models import AnalyticsEvent as AnalyticsEventORM
-from ..schemas.analytics_event import AnalyticsEvent
+from fideslog.api.database.csv_writer import file_name_random, write_csv_object
+from fideslog.api.schemas.analytics_event import AnalyticsEvent
 
 EXCLUDED_ATTRIBUTES = set(("client_id", "endpoint", "extra_data", "os"))
 
@@ -14,7 +14,7 @@ EXCLUDED_ATTRIBUTES = set(("client_id", "endpoint", "extra_data", "os"))
 log = getLogger(__name__)
 
 
-def create(database: Session, event: AnalyticsEvent) -> None:
+def create(client: S3Client, bucket: str, event: AnalyticsEvent) -> None:
     """Create a new analytics event."""
 
     logged_event = event.dict(exclude=EXCLUDED_ATTRIBUTES)
@@ -23,35 +23,19 @@ def create(database: Session, event: AnalyticsEvent) -> None:
         "The following attributes have been excluded as PII: %s", EXCLUDED_ATTRIBUTES
     )
 
-    extra_data = dumps(event.extra_data) if event.extra_data else None
-    flags = ", ".join(event.flags) if event.flags else None
-    resource_counts = (
-        dumps(event.resource_counts.dict()) if event.resource_counts else None
-    )
-    endpoint = truncate_endpoint_url(event.endpoint)
+    event.endpoint = truncate_endpoint_url(event.endpoint)
 
-    database.add(
-        AnalyticsEventORM(
-            client_id=event.client_id,
-            command=event.command,
-            developer=event.developer,
-            docker=event.docker,
-            endpoint=endpoint,
-            error=event.error,
-            event=event.event,
-            event_created_at=event.event_created_at,
-            extra_data=extra_data,
-            flags=flags,
-            local_host=event.local_host,
-            os=event.os,
-            product_name=event.product_name,
-            production_version=event.production_version,
-            resource_counts=resource_counts,
-            status_code=event.status_code,
-        )
+    date_dir = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    new_file = file_name_random()
+
+    client.put_object(
+        Bucket=bucket,
+        Key=f"{date_dir}/{new_file}",
+        Body=write_csv_object(event),
+        ContentType="text/csv",
     )
 
-    database.commit()
     log.debug("Event created: %s", logged_event)
 
 

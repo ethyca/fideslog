@@ -1,5 +1,7 @@
 import logging
+from typing import Generator
 
+from boto3 import Session as aws_session
 from snowflake.sqlalchemy.snowdialect import SnowflakeDialect
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -28,3 +30,11 @@ def get_db() -> Session:
         yield database
     finally:
         database.close()
+
+
+def get_storage() -> Generator:
+    """
+    Return a boto3 session.
+    """
+
+    yield aws_session()

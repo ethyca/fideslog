@@ -49,6 +49,15 @@ api: build-local
 	@docker compose up $(IMAGE_NAME)
 	@make teardown
 
+lint:
+	@echo "Running all static checks..."
+	@$(RUN_NO_DEPS) black --exclude="sdk/python/_version\.py" fideslog/ tests/
+	@$(RUN_NO_DEPS) isort fideslog/ tests/
+	@$(RUN_NO_DEPS) mypy
+	@$(RUN_NO_DEPS) pylint fideslog/
+	@$(RUN_NO_DEPS) xenon fideslog --max-absolute B --max-modules B --max-average A --ignore "tests" --exclude "fideslog/sdk/python/_version.py"
+	@echo "Completed all static checks!"
+
 ####################
 # CI
 ####################

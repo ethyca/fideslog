@@ -43,6 +43,19 @@ class TestAnalyticsEventSchema:
 
         assert AnalyticsEvent.parse_obj(analytics_event_payload) is not None
 
+    def test_analytic_event_endpoint_validation(
+        self, analytics_event_payload: dict
+    ) -> None:
+        event_with_invalid_endpoint = {
+            **analytics_event_payload,
+            "endpoint": "GET: not-a-valid-url",
+        }
+
+        with pytest.raises(ValidationError) as err:
+            AnalyticsEvent.parse_obj(event_with_invalid_endpoint)
+
+        assert "endpoint URL must be a valid URL" in str(err)
+
 
 class TestUserRegistrationEventSchema:
     @pytest.fixture()

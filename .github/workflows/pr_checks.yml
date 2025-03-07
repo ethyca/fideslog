@@ -6,7 +6,8 @@ on:
       - main
     paths:
       - fideslog/**
-      - .github/workflows/pr_checks.yaml
+      - .github/workflows/pr_checks.yml
+      - .github/workflows/deploy.yml
 
 env:
   CONTAINER: fideslog-local
